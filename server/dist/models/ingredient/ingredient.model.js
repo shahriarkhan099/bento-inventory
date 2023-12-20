@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const __1 = __importDefault(require(".."));
+const category_model_1 = __importDefault(require("../category/category.model"));
 ;
 const Ingredient = __1.default.define('ingredients', {
     id: {
@@ -18,7 +19,7 @@ const Ingredient = __1.default.define('ingredients', {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
     },
-    name: {
+    ingredientName: {
         type: sequelize_1.DataTypes.TEXT,
         allowNull: false,
     },
@@ -49,9 +50,6 @@ const Ingredient = __1.default.define('ingredients', {
     description: {
         type: sequelize_1.DataTypes.TEXT,
     },
-    imageUrl: {
-        type: sequelize_1.DataTypes.STRING,
-    },
     idealStoringTemperature: {
         type: sequelize_1.DataTypes.INTEGER,
     },
@@ -61,18 +59,11 @@ const Ingredient = __1.default.define('ingredients', {
         defaultValue: new Date(),
     },
 });
-// Ingredient.hasOne(Category, {
-//     sourceKey: 'id',
-//     foreignKey: 'ingredientId',
-// });
-// Category.belongsTo(Ingredient, {
-//     foreignKey: 'ingredientId',
-// })
-// Ingredient.hasOne(Supplier, {
-//     sourceKey: 'id',
-//     foreignKey: 'ingredientId',
-// });
-// Supplier.belongsTo(Ingredient, {
-//     foreignKey: 'ingredientId',
-// });
+Ingredient.hasOne(category_model_1.default, {
+    sourceKey: 'id',
+    foreignKey: 'ingredientId',
+});
+category_model_1.default.belongsTo(Ingredient, {
+    foreignKey: 'ingredientId',
+});
 exports.default = Ingredient;

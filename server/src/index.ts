@@ -7,7 +7,7 @@ const app : Express = express();
 
 app.use(express.json());
 
-app.use('/ingredient', ingredientRouter);
+app.use('/v1/ingredient', ingredientRouter);
 
 
 (async function bootstrap () {

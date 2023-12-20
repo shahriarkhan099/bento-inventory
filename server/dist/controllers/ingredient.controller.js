@@ -36,9 +36,9 @@ function postIngredientToRestaurant(req, res) {
             let id = req.params.id;
             const restaurantId = Number(id);
             if (id && restaurantId) {
-                const { name, unit, stockQuantity, purchasePrice, costPerUnit, caloriesPerUnit, expirationDate, reorderPoint, description, imageUrl, idealStoringTemperature } = req.body;
-                if (typeof name === 'string' && typeof purchasePrice === 'number') {
-                    const ingredient = yield (0, ingredient_query_1.addIngredientToRestaurant)(restaurantId, { name, unit, stockQuantity, purchasePrice, costPerUnit, caloriesPerUnit, expirationDate, reorderPoint, description, imageUrl, idealStoringTemperature });
+                const { ingredientName, unit, stockQuantity, purchasePrice, costPerUnit, caloriesPerUnit, expirationDate, reorderPoint, description, idealStoringTemperature } = req.body;
+                if (typeof ingredientName === 'string' && typeof purchasePrice === 'number') {
+                    const ingredient = yield (0, ingredient_query_1.addIngredientToRestaurant)(restaurantId, { ingredientName, unit, stockQuantity, purchasePrice, costPerUnit, caloriesPerUnit, expirationDate, reorderPoint, description, idealStoringTemperature });
                     res.status(201).json(ingredient);
                 }
                 else

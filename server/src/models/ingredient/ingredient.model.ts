@@ -1,8 +1,7 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import { IIngredient } from '../../interfaces/ingredient.interface';
 import sequelize from '..';
-// import Category from '../category/category.model';
-// import Supplier from '../supplier/supplier.model';
+import Category from '../category/category.model';
 
 interface IngredientCreationAttributes extends Optional<IIngredient, 'id'> {};
 
@@ -23,7 +22,7 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      name: {
+      ingredientName: {
         type: DataTypes.TEXT,
         allowNull: false,
       },
@@ -54,9 +53,6 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
       description: {
         type: DataTypes.TEXT,
       },
-      imageUrl: {
-        type: DataTypes.STRING,
-      },
       idealStoringTemperature: {
         type: DataTypes.INTEGER,
       },
@@ -67,22 +63,13 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
       },
 });
 
-// Ingredient.hasOne(Category, {
-//     sourceKey: 'id',
-//     foreignKey: 'ingredientId',
-// });
+Ingredient.hasOne(Category, {
+    sourceKey: 'id',
+    foreignKey: 'ingredientId',
+});
   
-// Category.belongsTo(Ingredient, {
-//     foreignKey: 'ingredientId',
-// })
-  
-// Ingredient.hasOne(Supplier, {
-//     sourceKey: 'id',
-//     foreignKey: 'ingredientId',
-// });
-  
-// Supplier.belongsTo(Ingredient, {
-//     foreignKey: 'ingredientId',
-// });
+Category.belongsTo(Ingredient, {
+    foreignKey: 'ingredientId',
+});
 
 export default Ingredient;

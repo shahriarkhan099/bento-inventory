@@ -48,7 +48,7 @@ function findIngredientBySearchTerm(searchTerm) {
         try {
             const ingredient = yield ingredient_model_1.default.findAll({
                 where: {
-                    name: { [sequelize_1.Op.iLike]: `%${searchTerm}%` }
+                    ingredientName: { [sequelize_1.Op.iLike]: `%${searchTerm}%` }
                 },
                 // include: [Restaurant]
             });
