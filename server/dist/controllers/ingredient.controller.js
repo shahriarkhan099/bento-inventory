@@ -57,10 +57,12 @@ exports.postIngredientToRestaurant = postIngredientToRestaurant;
 function searchIngredient(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            let id = req.params.id;
+            const restaurantId = Number(id);
             const search = req.query.q;
             const searchTerm = search === null || search === void 0 ? void 0 : search.toString();
             if (searchTerm) {
-                const ingredient = yield (0, ingredient_query_1.findIngredientBySearchTerm)(searchTerm);
+                const ingredient = yield (0, ingredient_query_1.findIngredientBySearchTerm)(restaurantId, searchTerm);
                 res.json({ data: ingredient });
             }
             else

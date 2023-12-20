@@ -43,14 +43,14 @@ function addIngredientToRestaurant(restaurantId, data) {
     });
 }
 exports.addIngredientToRestaurant = addIngredientToRestaurant;
-function findIngredientBySearchTerm(searchTerm) {
+function findIngredientBySearchTerm(id, searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const ingredient = yield ingredient_model_1.default.findAll({
                 where: {
-                    ingredientName: { [sequelize_1.Op.iLike]: `%${searchTerm}%` }
-                },
-                // include: [Restaurant]
+                    ingredientName: { [sequelize_1.Op.iLike]: `%${searchTerm}%` },
+                    restaurantId: id
+                }
             });
             return ingredient;
         }
