@@ -16,9 +16,11 @@ const express_1 = __importDefault(require("express"));
 const config_1 = __importDefault(require("./config"));
 const models_1 = __importDefault(require("./models"));
 const ingredient_router_1 = __importDefault(require("./routers/ingredient.router"));
+const category_router_1 = __importDefault(require("./routers/category.router"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use('/v1/ingredient', ingredient_router_1.default);
+app.use('/v1/category', category_router_1.default);
 (function bootstrap() {
     return __awaiter(this, void 0, void 0, function* () {
         try {

@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const __1 = __importDefault(require(".."));
-const category_model_1 = __importDefault(require("../category/category.model"));
 ;
 const Ingredient = __1.default.define('ingredients', {
     id: {
@@ -15,20 +14,20 @@ const Ingredient = __1.default.define('ingredients', {
         type: sequelize_1.DataTypes.INTEGER,
         unique: true,
     },
-    restaurantId: {
-        type: sequelize_1.DataTypes.INTEGER,
-        allowNull: false,
-    },
     ingredientName: {
         type: sequelize_1.DataTypes.TEXT,
         allowNull: false,
     },
-    unit: {
-        type: sequelize_1.DataTypes.STRING,
+    unitOfStock: {
+        type: sequelize_1.DataTypes.ENUM('gm', 'ml', 'piece'),
         allowNull: false,
     },
-    stockQuantity: {
+    currentStockQuantity: {
         type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
+    },
+    unitOfPrice: {
+        type: sequelize_1.DataTypes.ENUM('cents'),
         allowNull: false,
     },
     purchasePrice: {
@@ -50,20 +49,27 @@ const Ingredient = __1.default.define('ingredients', {
     description: {
         type: sequelize_1.DataTypes.TEXT,
     },
+    unitOfIdealStoringTemperature: {
+        type: sequelize_1.DataTypes.ENUM('Celsius', 'Fahrenheit'),
+        allowNull: false,
+        defaultValue: 'Celsius',
+    },
     idealStoringTemperature: {
         type: sequelize_1.DataTypes.INTEGER,
     },
-    receivedAt: {
-        type: sequelize_1.DataTypes.DATE,
-        allowNull: false,
-        defaultValue: new Date(),
+    expectedStockForToday: {
+        type: sequelize_1.DataTypes.INTEGER,
     },
-});
-Ingredient.hasOne(category_model_1.default, {
-    sourceKey: 'id',
-    foreignKey: 'ingredientId',
-});
-category_model_1.default.belongsTo(Ingredient, {
-    foreignKey: 'ingredientId',
+    expectedStockForTomorrow: {
+        type: sequelize_1.DataTypes.INTEGER,
+    },
+    restaurantId: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
+    },
+    categoryId: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
+    },
 });
 exports.default = Ingredient;

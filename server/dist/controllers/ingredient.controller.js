@@ -9,16 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = void 0;
+exports.deleteIngredient = exports.updateIngredient = exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = void 0;
 const ingredient_query_1 = require("../models/ingredient/ingredient.query");
 function getAllIngredientOfRestaurant(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let id = req.params.id;
-            const restaurantId = Number(id);
-            if (id && restaurantId) {
+            const restaurantId = Number(req.params.restaurantId);
+            if (restaurantId) {
                 const ingredient = yield (0, ingredient_query_1.findAllIngredientOfRestaurant)(restaurantId);
-                res.json({ data: ingredient });
+                res.json({ ingredients: ingredient });
             }
             else
                 res.status(400).json({ message: "Invalid restaurant ID." });
@@ -33,13 +32,13 @@ exports.getAllIngredientOfRestaurant = getAllIngredientOfRestaurant;
 function postIngredientToRestaurant(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let id = req.params.id;
-            const restaurantId = Number(id);
-            if (id && restaurantId) {
-                const { ingredientName, unit, stockQuantity, purchasePrice, costPerUnit, caloriesPerUnit, expirationDate, reorderPoint, description, idealStoringTemperature } = req.body;
-                if (typeof ingredientName === 'string' && typeof purchasePrice === 'number') {
-                    const ingredient = yield (0, ingredient_query_1.addIngredientToRestaurant)(restaurantId, { ingredientName, unit, stockQuantity, purchasePrice, costPerUnit, caloriesPerUnit, expirationDate, reorderPoint, description, idealStoringTemperature });
-                    res.status(201).json(ingredient);
+            const restaurantId = Number(req.params.restaurantId);
+            if (restaurantId) {
+                let ingredient = req.body;
+                ingredient.restaurantId = restaurantId;
+                if (typeof ingredient.ingredientName === 'string' && typeof ingredient.purchasePrice === 'number') {
+                    const newIngredient = yield (0, ingredient_query_1.addIngredientToRestaurant)(ingredient);
+                    res.status(201).json("Created");
                 }
                 else
                     res.status(400).json({ message: "Invalid ingredient information." });
@@ -57,16 +56,15 @@ exports.postIngredientToRestaurant = postIngredientToRestaurant;
 function searchIngredient(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let id = req.params.id;
-            const restaurantId = Number(id);
+            const restaurantId = Number(req.params.restaurantId);
             const search = req.query.q;
             const searchTerm = search === null || search === void 0 ? void 0 : search.toString();
             if (searchTerm) {
                 const ingredient = yield (0, ingredient_query_1.findIngredientBySearchTerm)(restaurantId, searchTerm);
-                res.json({ data: ingredient });
+                res.json({ ingredients: ingredient });
             }
             else
-                res.json({ data: [] });
+                res.json({ ingredients: [] });
         }
         catch (error) {
             console.log(error);
@@ -75,3 +73,44 @@ function searchIngredient(req, res) {
     });
 }
 exports.searchIngredient = searchIngredient;
+function updateIngredient(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const ingredientId = Number(req.params.ingredientId);
+            if (ingredientId) {
+                let ingredient = req.body;
+                if (typeof ingredient.ingredientName === 'string' && typeof ingredient.purchasePrice === 'number') {
+                    const updatedIngredient = yield (0, ingredient_query_1.updateIngredientOfRestaurant)(ingredientId, ingredient);
+                    res.status(201).json(updatedIngredient);
+                }
+                else
+                    res.status(400).json({ message: "Invalid ingredient information." });
+            }
+            else
+                res.status(400).json({ message: "Invalid ingredient ID." });
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.updateIngredient = updateIngredient;
+function deleteIngredient(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const ingredientId = Number(req.params.ingredientId);
+            if (ingredientId) {
+                const deletedIngredient = yield (0, ingredient_query_1.deleteIngredientOfRestaurant)(ingredientId);
+                res.status(201).json(deletedIngredient);
+            }
+            else
+                res.status(400).json({ message: "Invalid ingredient ID." });
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.deleteIngredient = deleteIngredient;

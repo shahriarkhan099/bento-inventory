@@ -1,43 +1,67 @@
 import { Op } from "sequelize";
 import Ingredient from "./ingredient.model";
+import { IIngredient } from "../../interfaces/ingredient.interface";
 
-export async function findAllIngredientOfRestaurant (id: number) {
+export async function findAllIngredientOfRestaurant (restaurantId: number) {
     try {
       const ingredient = await Ingredient.findAll({
         where: {
-          restaurantId: id
+          restaurantId: restaurantId
         }
       });
   
       return ingredient;
     } catch (error) {
-      throw new Error('Error finding ingredient of the restaurant.');
+      throw new Error('Error finding ingredients.');
     }
 }
-  
 
-export async function addIngredientToRestaurant (restaurantId: number, 
-    data: { ingredientName: string, unit: string, stockQuantity: number,  purchasePrice: number, costPerUnit?: number, 
-        caloriesPerUnit?: number, expirationDate?: Date, reorderPoint?: number, description?: string, idealStoringTemperature?: number }) {
+export async function addIngredientToRestaurant (ingredient: IIngredient) {
     try {
-      const newIngredient = await Ingredient.create({ ...data, restaurantId, receivedAt: new Date() });
+      const newIngredient = await Ingredient.create(ingredient);
       return newIngredient;
     } catch (error) {
-      throw new Error('Error adding ingredient to the restaurant.');
+      console.log(error)
+      throw new Error('Error creating ingredient.');
     }
 }
-  
-  
-export async function findIngredientBySearchTerm (id: number, searchTerm: string) {
-    try {
-      const ingredient = await Ingredient.findAll({
-        where: {
-          ingredientName: {[Op.iLike]: `%${searchTerm}%`},
-          restaurantId: id
-        }
-      });
-      return ingredient;
-    } catch (error) {
-      throw new Error('Error searching for ingredient.');
-    }
+
+export async function findIngredientBySearchTerm (restaurantId: number, searchTerm: string) {
+  try {
+    const ingredient = await Ingredient.findAll({
+      where: {
+        ingredientName: {[Op.iLike]: `%${searchTerm}%`},
+        restaurantId: restaurantId
+      }
+    });
+    return ingredient;
+  } catch (error) {
+    throw new Error('Error searching for ingredient.');
+  }
+}
+
+export async function updateIngredientOfRestaurant (ingredientId: number, ingredient: IIngredient) {
+  try {
+    const updatedIngredient = await Ingredient.update(ingredient, {
+      where: {
+        id: ingredientId
+      }
+    });
+    return updatedIngredient;
+  } catch (error) {
+    throw new Error('Error updating ingredient.');
+  }
+}
+
+export async function deleteIngredientOfRestaurant (ingredientId: number) {
+  try {
+    const deletedIngredient = await Ingredient.destroy({
+      where: {
+        id: ingredientId
+      }
+    });
+    return deletedIngredient;
+  } catch (error) {
+    throw new Error('Error deleting ingredient.');
+  }
 }

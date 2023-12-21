@@ -1,7 +1,6 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import { IIngredient } from '../../interfaces/ingredient.interface';
 import sequelize from '..';
-import Category from '../category/category.model';
 
 interface IngredientCreationAttributes extends Optional<IIngredient, 'id'> {};
 
@@ -18,20 +17,20 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
         type: DataTypes.INTEGER,
         unique: true,
       },
-      restaurantId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
       ingredientName: {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      unit: {
-        type: DataTypes.STRING,
+      unitOfStock: {
+        type: DataTypes.ENUM('gm', 'ml', 'piece'),
         allowNull: false,
       },
-      stockQuantity: {
+      currentStockQuantity: {
         type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      unitOfPrice: {
+        type: DataTypes.ENUM('cents'),
         allowNull: false,
       },
       purchasePrice: {
@@ -53,23 +52,29 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
       description: {
         type: DataTypes.TEXT,
       },
+      unitOfIdealStoringTemperature: {
+        type: DataTypes.ENUM('Celsius', 'Fahrenheit'),
+        allowNull: false,
+        defaultValue: 'Celsius', 
+      },
       idealStoringTemperature: {
         type: DataTypes.INTEGER,
       },
-      receivedAt: {
-        type: DataTypes.DATE,
+      expectedStockForToday: {
+        type: DataTypes.INTEGER,
+      },
+      expectedStockForTomorrow: {
+        type: DataTypes.INTEGER,
+      },
+      restaurantId: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: new Date(),
+      },
+      categoryId: { 
+        type: DataTypes.INTEGER,
+        allowNull: false,
       },
 });
 
-Ingredient.hasOne(Category, {
-    sourceKey: 'id',
-    foreignKey: 'ingredientId',
-});
-  
-Category.belongsTo(Ingredient, {
-    foreignKey: 'ingredientId',
-});
 
 export default Ingredient;

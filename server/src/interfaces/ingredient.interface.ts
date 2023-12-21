@@ -1,15 +1,19 @@
 export interface IIngredient {
-    id: number;
-    restaurantId: number;
+    id?: number;
     ingredientName: string;
-    unit: string;
-    stockQuantity: number;
+    unitOfStock: string;
+    currentStockQuantity: number;
+    unitOfPrice: string;
     purchasePrice: number;
     costPerUnit?: number;
     caloriesPerUnit?: number;
     expirationDate?: Date; 
     reorderPoint?: number;
     description?: string;
+    unitOfIdealStoringTemperature?: string;
     idealStoringTemperature?: number;
-    receivedAt: Date;
+    expectedStockForToday?: number;
+    expectedStockForTomorrow?: number;
+    restaurantId?: number;
+    categoryId: number;
 }

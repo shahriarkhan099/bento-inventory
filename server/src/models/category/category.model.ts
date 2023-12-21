@@ -1,6 +1,7 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import { ICategory } from '../../interfaces/category.interface';
 import sequelize from '..';
+import Ingredient from '../ingredient/ingredient.model';
 
 interface CategoryCreationAttributes extends Optional<ICategory, 'id'> {};
 
@@ -16,14 +17,6 @@ const Category = sequelize.define<CategoryInstance>('categories', {
         primaryKey: true,
         type: DataTypes.INTEGER,
         unique: true,
-      },
-      restaurantId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      ingredientId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
       },
       categoryName: {
         type: DataTypes.STRING,
@@ -42,15 +35,25 @@ const Category = sequelize.define<CategoryInstance>('categories', {
         allowNull: false,
         defaultValue: 'refrigerated',
       },
-      description: {
-        type: DataTypes.TEXT,
-      },
       vegetarian: {
         type: DataTypes.BOOLEAN,
       },
       vegan: {
         type: DataTypes.BOOLEAN,
-    }
+    },
+    restaurantId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+});
+
+Category.hasMany(Ingredient, {
+  sourceKey: 'id',
+  foreignKey: 'categoryId',
+});
+
+Ingredient.belongsTo(Category, {
+  foreignKey: 'categoryId',
 });
 
 export default Category;

@@ -12,54 +12,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findCategoryBySearchTerm = exports.addCategoryToRestaurant = exports.findAllIngredientOfCategoryOfRestaurant = exports.findAllCategoryOfRestaurant = void 0;
+exports.findCategoryBySearchTerm = exports.addCategoryToRestaurant = exports.findAllCategoryOfRestaurant = void 0;
 const sequelize_1 = require("sequelize");
 const category_model_1 = __importDefault(require("./category.model"));
-const category_model_2 = __importDefault(require("../category/category.model"));
-function findAllCategoryOfRestaurant(id) {
+function findAllCategoryOfRestaurant(restaurantId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const category = yield category_model_1.default.findAll({
                 where: {
-                    restaurantId: id
+                    restaurantId: restaurantId
                 }
             });
             return category;
         }
         catch (error) {
-            throw new Error('Error finding category of the restaurant.');
+            throw new Error('Error finding category.');
         }
     });
 }
 exports.findAllCategoryOfRestaurant = findAllCategoryOfRestaurant;
-function findAllIngredientOfCategoryOfRestaurant(categoryId, restaurantId) {
+function addCategoryToRestaurant(category) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const category = yield category_model_1.default.findAll({
-                where: {
-                    id: categoryId,
-                    restaurantId: restaurantId
-                }, include: [{
-                        model: category_model_2.default,
-                        required: true
-                    }]
-            });
-            return category;
-        }
-        catch (error) {
-            throw new Error('Error finding ingredient of the category.');
-        }
-    });
-}
-exports.findAllIngredientOfCategoryOfRestaurant = findAllIngredientOfCategoryOfRestaurant;
-function addCategoryToRestaurant(restaurantId, data) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const newCategory = yield category_model_1.default.create(Object.assign(Object.assign({}, data), { restaurantId }));
+            const newCategory = yield category_model_1.default.create(category);
             return newCategory;
         }
         catch (error) {
-            throw new Error('Error adding category to the restaurant.');
+            console.log(error);
+            throw new Error('Error creating category.');
         }
     });
 }

@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { getAllIngredientOfRestaurant, postIngredientToRestaurant, searchIngredient } from '../controllers/ingredient.controller';
+import { getAllIngredientOfRestaurant, postIngredientToRestaurant, searchIngredient, updateIngredient, deleteIngredient } from '../controllers/ingredient.controller';
 const router = Router();
 
-router.get('/restaurant/:id', getAllIngredientOfRestaurant);
-router.post('/restaurant/:id', postIngredientToRestaurant);
-// router.put('/restaurant/:restaurantId/:ingredientId', updateIngredient);
-// router.delete('/restaurant/:restaurantId/:ingredientId', deleteIngredient);
+router.get('/:restaurantId', getAllIngredientOfRestaurant);
+router.post('/:restaurantId', postIngredientToRestaurant);
+router.put('/ingredientId', updateIngredient);
+router.delete('/ingredientId', deleteIngredient);
 router.get('/search', searchIngredient);
 
 export default router;

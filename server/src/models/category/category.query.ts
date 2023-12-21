@@ -1,49 +1,29 @@
 import { Op } from "sequelize";
 import Category from "./category.model";
-import Ingredient from "../category/category.model";
+import { ICategory } from "../../interfaces/category.interface";
 
-export async function findAllCategoryOfRestaurant (id: number) {
+export async function findAllCategoryOfRestaurant (restaurantId: number) {
     try {
       const category = await Category.findAll({
         where: {
-          restaurantId: id
+          restaurantId: restaurantId
         }
       });
   
       return category;
     } catch (error) {
-      throw new Error('Error finding category of the restaurant.');
-    }
-}
-
-export async function findAllIngredientOfCategoryOfRestaurant (categoryId: number, restaurantId: number) {
-    try {
-      const category = await Category.findAll({
-        where: {
-          id: categoryId,
-          restaurantId: restaurantId
-        }, include: [{
-            model: Ingredient,
-            required: true
-           }]
-
-      });
-  
-      return category;
-    } catch (error) {
-      throw new Error('Error finding ingredient of the category.');
+      throw new Error('Error finding category.');
     }
 }
   
 
-export async function addCategoryToRestaurant (restaurantId: number, 
-    data: { ingredientId: number, categoryName: string, imageUrl?: string, storageShelf?: string, storageType?: string, description?: 
-        string, vegetarian?: boolean, vegan?: boolean }) {
+export async function addCategoryToRestaurant (category: ICategory) {
     try {
-      const newCategory = await Category.create({ ...data, restaurantId });
+      const newCategory = await Category.create(category);
       return newCategory;
     } catch (error) {
-      throw new Error('Error adding category to the restaurant.');
+      console.log(error);
+      throw new Error('Error creating category.');
     }
 }
   

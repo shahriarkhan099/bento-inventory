@@ -12,44 +12,45 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findIngredientBySearchTerm = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = void 0;
+exports.deleteIngredientOfRestaurant = exports.updateIngredientOfRestaurant = exports.findIngredientBySearchTerm = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = void 0;
 const sequelize_1 = require("sequelize");
 const ingredient_model_1 = __importDefault(require("./ingredient.model"));
-function findAllIngredientOfRestaurant(id) {
+function findAllIngredientOfRestaurant(restaurantId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const ingredient = yield ingredient_model_1.default.findAll({
                 where: {
-                    restaurantId: id
+                    restaurantId: restaurantId
                 }
             });
             return ingredient;
         }
         catch (error) {
-            throw new Error('Error finding ingredient of the restaurant.');
+            throw new Error('Error finding ingredients.');
         }
     });
 }
 exports.findAllIngredientOfRestaurant = findAllIngredientOfRestaurant;
-function addIngredientToRestaurant(restaurantId, data) {
+function addIngredientToRestaurant(ingredient) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const newIngredient = yield ingredient_model_1.default.create(Object.assign(Object.assign({}, data), { restaurantId, receivedAt: new Date() }));
+            const newIngredient = yield ingredient_model_1.default.create(ingredient);
             return newIngredient;
         }
         catch (error) {
-            throw new Error('Error adding ingredient to the restaurant.');
+            console.log(error);
+            throw new Error('Error creating ingredient.');
         }
     });
 }
 exports.addIngredientToRestaurant = addIngredientToRestaurant;
-function findIngredientBySearchTerm(id, searchTerm) {
+function findIngredientBySearchTerm(restaurantId, searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const ingredient = yield ingredient_model_1.default.findAll({
                 where: {
                     ingredientName: { [sequelize_1.Op.iLike]: `%${searchTerm}%` },
-                    restaurantId: id
+                    restaurantId: restaurantId
                 }
             });
             return ingredient;
@@ -60,3 +61,35 @@ function findIngredientBySearchTerm(id, searchTerm) {
     });
 }
 exports.findIngredientBySearchTerm = findIngredientBySearchTerm;
+function updateIngredientOfRestaurant(ingredientId, ingredient) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const updatedIngredient = yield ingredient_model_1.default.update(ingredient, {
+                where: {
+                    id: ingredientId
+                }
+            });
+            return updatedIngredient;
+        }
+        catch (error) {
+            throw new Error('Error updating ingredient.');
+        }
+    });
+}
+exports.updateIngredientOfRestaurant = updateIngredientOfRestaurant;
+function deleteIngredientOfRestaurant(ingredientId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const deletedIngredient = yield ingredient_model_1.default.destroy({
+                where: {
+                    id: ingredientId
+                }
+            });
+            return deletedIngredient;
+        }
+        catch (error) {
+            throw new Error('Error deleting ingredient.');
+        }
+    });
+}
+exports.deleteIngredientOfRestaurant = deleteIngredientOfRestaurant;

@@ -1,8 +1,10 @@
 import { Router } from 'express';
-import { getAllCategoryOfRestaurant, postCategoryToRestaurant, searchCategory, getAllIngredientOfCategoryOfRestaurant } from '../controllers/category.controller';
+import { getAllCategoryOfRestaurant, postCategoryToRestaurant, searchCategory } from '../controllers/category.controller';
 const router = Router();
 
-router.get('/restaurant/:id', getAllCategoryOfRestaurant);
-router.post('/restaurant/:id', postCategoryToRestaurant);
-router.get('/restaurant/:restaurantId/:id', getAllIngredientOfCategoryOfRestaurant);
+router.get('/:restaurantId', getAllCategoryOfRestaurant);
+router.post('/:restaurantId', postCategoryToRestaurant);
+// router.get('/restaurant/:restaurantId/:categoryId', getAllIngredientOfCategoryOfRestaurant);
 router.get('/search', searchCategory);
+
+export default router;
