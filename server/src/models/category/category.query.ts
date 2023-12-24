@@ -28,12 +28,12 @@ export async function addCategoryToRestaurant (category: ICategory) {
 }
   
   
-export async function findCategoryBySearchTerm (id: number, searchTerm: string) {
+export async function findCategoryBySearchTerm (restaurantId: number, searchTerm: string) {
     try {
       const category = await Category.findAll({
         where: {
           categoryName: {[Op.iLike]: `%${searchTerm}%`},
-          restaurantId: id
+          restaurantId: restaurantId
         }
       });
       return category;
@@ -41,3 +41,31 @@ export async function findCategoryBySearchTerm (id: number, searchTerm: string) 
       throw new Error('Error searching for category.');
     }
 }
+
+export async function updateCategoryOfRestaurant (categoryId: number, category: ICategory) {
+    try {
+      const updatedCategory = await Category.update(category, {
+        where: {
+          id: categoryId
+        }
+      });
+      return updatedCategory;
+    } catch (error) {
+      throw new Error('Error updating category.');
+    }
+}
+
+export async function deleteCategoryOfRestaurant (categoryId: number) {
+    try {
+      const deletedCategory = await Category.destroy({
+        where: {
+          id: categoryId
+        }
+      });
+      return deletedCategory;
+    } catch (error) {
+      throw new Error('Error deleting category.');
+    }
+}
+
+

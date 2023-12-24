@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { findAllCategoryOfRestaurant, addCategoryToRestaurant, findCategoryBySearchTerm } from "../models/category/category.query";
+import { findAllCategoryOfRestaurant, addCategoryToRestaurant, findCategoryBySearchTerm, updateCategoryOfRestaurant, deleteCategoryOfRestaurant } from "../models/category/category.query";
 
 export async function getAllCategoryOfRestaurant (req: Request, res: Response) {
     try {
@@ -46,6 +46,35 @@ export async function searchCategory (req: Request, res: Response) {
         const categories = await findCategoryBySearchTerm(restaurantId, searchTerm);
         res.json({ categories: categories });
       } else res.json({ categories: [] });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+}
+
+export async function updateCategory (req: Request, res: Response) {
+    try {
+      const categoryId = Number(req.params.categoryId);
+      if (categoryId) {
+        let category = req.body;
+        if (typeof category.categoryName === 'string') {
+          const updatedCategory = await updateCategoryOfRestaurant(categoryId, category);
+          res.status(200).json(updatedCategory);
+        } else res.status(400).json({ message: "Invalid category information." });
+      } else res.status(400).json({ message: "Invalid category ID." });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+}
+
+export async function deleteCategory (req: Request, res: Response) {
+    try {
+      const categoryId = Number(req.params.categoryId);
+      if (categoryId) {
+        const deletedCategory = await deleteCategoryOfRestaurant(categoryId);
+        res.status(200).json(deletedCategory);
+      } else res.status(400).json({ message: "Invalid category ID." });
     } catch (error) {
       console.log(error);
       res.status(500).json(error);

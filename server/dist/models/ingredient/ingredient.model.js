@@ -27,7 +27,7 @@ const Ingredient = __1.default.define('ingredients', {
         allowNull: false,
     },
     unitOfPrice: {
-        type: sequelize_1.DataTypes.ENUM('cents'),
+        type: sequelize_1.DataTypes.ENUM('cents', 'usd'),
         allowNull: false,
     },
     purchasePrice: {

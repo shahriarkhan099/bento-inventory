@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchCategory = exports.postCategoryToRestaurant = exports.getAllCategoryOfRestaurant = void 0;
+exports.deleteCategory = exports.updateCategory = exports.searchCategory = exports.postCategoryToRestaurant = exports.getAllCategoryOfRestaurant = void 0;
 const category_query_1 = require("../models/category/category.query");
 function getAllCategoryOfRestaurant(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -74,3 +74,44 @@ function searchCategory(req, res) {
     });
 }
 exports.searchCategory = searchCategory;
+function updateCategory(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const categoryId = Number(req.params.categoryId);
+            if (categoryId) {
+                let category = req.body;
+                if (typeof category.categoryName === 'string') {
+                    const updatedCategory = yield (0, category_query_1.updateCategoryOfRestaurant)(categoryId, category);
+                    res.status(201).json(updatedCategory);
+                }
+                else
+                    res.status(400).json({ message: "Invalid category information." });
+            }
+            else
+                res.status(400).json({ message: "Invalid category ID." });
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.updateCategory = updateCategory;
+function deleteCategory(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const categoryId = Number(req.params.categoryId);
+            if (categoryId) {
+                const deletedCategory = yield (0, category_query_1.deleteCategoryOfRestaurant)(categoryId);
+                res.status(201).json(deletedCategory);
+            }
+            else
+                res.status(400).json({ message: "Invalid category ID." });
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.deleteCategory = deleteCategory;

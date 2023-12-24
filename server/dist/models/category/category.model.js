@@ -32,12 +32,6 @@ const Category = __1.default.define('categories', {
         allowNull: false,
         defaultValue: 'refrigerated',
     },
-    vegetarian: {
-        type: sequelize_1.DataTypes.BOOLEAN,
-    },
-    vegan: {
-        type: sequelize_1.DataTypes.BOOLEAN,
-    },
     restaurantId: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,

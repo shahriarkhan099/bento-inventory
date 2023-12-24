@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { findAllIngredientOfRestaurant, addIngredientToRestaurant, findIngredientBySearchTerm, updateIngredientOfRestaurant, deleteIngredientOfRestaurant } from "../models/ingredient/ingredient.query";
+import { findAllIngredientOfRestaurant, addIngredientToRestaurant, findIngredientBySearchTerm, 
+  updateIngredientOfRestaurant, deleteIngredientOfRestaurant, findIngredientWithCategory, findIngredientsByCategoryName } from "../models/ingredient/ingredient.query";
 
 
 export async function getAllIngredientOfRestaurant (req: Request, res: Response) {
@@ -57,7 +58,7 @@ export async function updateIngredient (req: Request, res: Response) {
       let ingredient = req.body;
       if (typeof ingredient.ingredientName === 'string' && typeof ingredient.purchasePrice === 'number') {
         const updatedIngredient = await updateIngredientOfRestaurant(ingredientId, ingredient);
-        res.status(201).json(updatedIngredient);
+        res.status(200).json(updatedIngredient);
       } else res.status(400).json({ message: "Invalid ingredient information." });
     } else res.status(400).json({ message: "Invalid ingredient ID." });
   } catch (error) {
@@ -71,8 +72,37 @@ export async function deleteIngredient (req: Request, res: Response) {
     const ingredientId = Number(req.params.ingredientId);
     if (ingredientId) {
       const deletedIngredient = await deleteIngredientOfRestaurant(ingredientId);
-      res.status(201).json(deletedIngredient);
+      res.status(200).json(deletedIngredient);
     } else res.status(400).json({ message: "Invalid ingredient ID." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
+export async function getIngredientWithCategory (req: Request, res: Response) {
+  try {
+    const restaurantId = Number(req.params.restaurantId);
+    if (restaurantId) {
+      const ingredient = await findIngredientWithCategory(restaurantId);
+      res.json({ ingredients: ingredient });
+    } else res.status(400).json({ message: "Invalid restaurant ID." });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
+export async function getIngredientsByCategoryName (req: Request, res: Response) {
+  try {
+    const restaurantId = Number(req.params.restaurantId);
+    const categoryName = req.params.categoryName;
+    if (restaurantId) {
+      const ingredient = await findIngredientsByCategoryName(restaurantId, categoryName);
+      res.json({ ingredients: ingredient });
+    } else res.status(400).json({ message: "Invalid restaurant ID." });
+
   } catch (error) {
     console.log(error);
     res.status(500).json(error);

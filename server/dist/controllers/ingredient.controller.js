@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteIngredient = exports.updateIngredient = exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = void 0;
+exports.getIngredientsByCategoryName = exports.getIngredientWithCategory = exports.deleteIngredient = exports.updateIngredient = exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = void 0;
 const ingredient_query_1 = require("../models/ingredient/ingredient.query");
 function getAllIngredientOfRestaurant(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -114,3 +114,40 @@ function deleteIngredient(req, res) {
     });
 }
 exports.deleteIngredient = deleteIngredient;
+function getIngredientWithCategory(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const restaurantId = Number(req.params.restaurantId);
+            if (restaurantId) {
+                const ingredient = yield (0, ingredient_query_1.findIngredientWithCategory)(restaurantId);
+                res.json({ ingredients: ingredient });
+            }
+            else
+                res.status(400).json({ message: "Invalid restaurant ID." });
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.getIngredientWithCategory = getIngredientWithCategory;
+function getIngredientsByCategoryName(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const restaurantId = Number(req.params.restaurantId);
+            const categoryName = req.params.categoryName;
+            if (restaurantId) {
+                const ingredient = yield (0, ingredient_query_1.findIngredientsByCategoryName)(restaurantId, categoryName);
+                res.json({ ingredients: ingredient });
+            }
+            else
+                res.status(400).json({ message: "Invalid restaurant ID." });
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.getIngredientsByCategoryName = getIngredientsByCategoryName;

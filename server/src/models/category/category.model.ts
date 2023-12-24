@@ -35,16 +35,10 @@ const Category = sequelize.define<CategoryInstance>('categories', {
         allowNull: false,
         defaultValue: 'refrigerated',
       },
-      vegetarian: {
-        type: DataTypes.BOOLEAN,
+      restaurantId: {
+       type: DataTypes.INTEGER,
+       allowNull: false,
       },
-      vegan: {
-        type: DataTypes.BOOLEAN,
-    },
-    restaurantId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
 });
 
 Category.hasMany(Ingredient, {

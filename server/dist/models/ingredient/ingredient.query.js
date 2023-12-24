@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteIngredientOfRestaurant = exports.updateIngredientOfRestaurant = exports.findIngredientBySearchTerm = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = void 0;
+exports.findIngredientsByCategoryName = exports.findIngredientWithCategory = exports.deleteIngredientOfRestaurant = exports.updateIngredientOfRestaurant = exports.findIngredientBySearchTerm = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = void 0;
 const sequelize_1 = require("sequelize");
 const ingredient_model_1 = __importDefault(require("./ingredient.model"));
+const category_model_1 = __importDefault(require("../category/category.model"));
 function findAllIngredientOfRestaurant(restaurantId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -34,6 +35,7 @@ exports.findAllIngredientOfRestaurant = findAllIngredientOfRestaurant;
 function addIngredientToRestaurant(ingredient) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            ingredient.costPerUnit = ingredient.purchasePrice / ingredient.currentStockQuantity;
             const newIngredient = yield ingredient_model_1.default.create(ingredient);
             return newIngredient;
         }
@@ -93,3 +95,42 @@ function deleteIngredientOfRestaurant(ingredientId) {
     });
 }
 exports.deleteIngredientOfRestaurant = deleteIngredientOfRestaurant;
+function findIngredientWithCategory(restaurantId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const ingredient = yield ingredient_model_1.default.findAll({
+                where: {
+                    restaurantId: restaurantId
+                },
+                include: [category_model_1.default]
+            });
+            return ingredient;
+        }
+        catch (error) {
+            throw new Error('Error finding ingredient.');
+        }
+    });
+}
+exports.findIngredientWithCategory = findIngredientWithCategory;
+function findIngredientsByCategoryName(restaurantId, categoryName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const ingredient = yield ingredient_model_1.default.findAll({
+                where: {
+                    restaurantId: restaurantId
+                },
+                include: [{
+                        model: category_model_1.default,
+                        where: {
+                            categoryName: categoryName
+                        }
+                    }]
+            });
+            return ingredient;
+        }
+        catch (error) {
+            throw new Error('Error finding ingredient.');
+        }
+    });
+}
+exports.findIngredientsByCategoryName = findIngredientsByCategoryName;

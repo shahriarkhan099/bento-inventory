@@ -30,7 +30,7 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
         allowNull: false,
       },
       unitOfPrice: {
-        type: DataTypes.ENUM('cents'),
+        type: DataTypes.ENUM('cents', 'usd'),
         allowNull: false,
       },
       purchasePrice: {
