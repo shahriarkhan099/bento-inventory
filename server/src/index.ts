@@ -6,6 +6,8 @@ import config from './config';
 import sequelize from './models';
 import ingredientRouter from './routers/ingredient.router';
 import categoryRouter from './routers/category.router';
+import cron from 'node-cron';
+import checkExpiryAndMove from './utils/expiryCheck.util';
 
 const app : Express = express();
 
@@ -20,6 +22,8 @@ app.use(express.json());
 app.use('/v1/ingredient', ingredientRouter);
 app.use('/v1/category', categoryRouter);
 
+// cron.schedule('*/2 * * * * *', checkExpiryAndMove);
+cron.schedule('59 23 * * *', checkExpiryAndMove);
 
 async function bootstrap() {
   try {
