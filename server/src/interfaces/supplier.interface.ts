@@ -5,6 +5,7 @@ export interface ISupplier {
     contactNumber: string;
     email: string;
     label: string;
+    restaurantId: number;
 }
 
 

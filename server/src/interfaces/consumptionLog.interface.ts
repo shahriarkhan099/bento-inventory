@@ -1,4 +1,4 @@
-export interface IWasteLog {
+export interface IConsumptionLog {
     id: number;
     ingredientName: string;
     unitOfStock: string;

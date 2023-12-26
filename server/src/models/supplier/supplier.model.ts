@@ -37,6 +37,10 @@ const Supplier = sequelize.define<SupplierInstance>('suppliers', {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      restaurantId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
 });
 
 export default Supplier;

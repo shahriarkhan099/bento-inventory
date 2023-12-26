@@ -6,6 +6,11 @@ import config from './config';
 import sequelize from './models';
 import ingredientRouter from './routers/ingredient.router';
 import categoryRouter from './routers/category.router';
+import orderRouter from './routers/order.router';
+import supplierRouter from './routers/supplier.router';
+import wasteLogRouter from './routers/wasteLog.router';
+// import consumptionRouter from './routers/consumption.router';
+// import purchaseLogRouter from './routers/purchaseLog.router';
 import cron from 'node-cron';
 import checkExpiryAndMove from './utils/expiryCheck.util';
 
@@ -21,6 +26,11 @@ app.use(express.json());
 
 app.use('/v1/ingredient', ingredientRouter);
 app.use('/v1/category', categoryRouter);
+app.use('/v1/order', orderRouter);
+app.use('/v1/supplier', supplierRouter);
+app.use('/v1/wasteLog', wasteLogRouter);
+// app.use('/v1/consumption', consumptionRouter);
+// app.use('/v1/purchaseLog', purchaseLogRouter);
 
 // cron.schedule('*/2 * * * * *', checkExpiryAndMove);
 cron.schedule('59 23 * * *', checkExpiryAndMove);
