@@ -1,10 +1,11 @@
-// import { Router } from 'express';
-// import { getAllConsumptionLogWithIngredient, createConsumptionLog, editConsumptionLog, searchConsumptionLog } from '../controllers/consumptionLog.controller';
-// const router = Router();
+import { Router } from 'express';
+import { getAllConsumptionLogsOfRestaurant, searchConsumptionLogs, postConsumptionLogToRestaurant, putConsumptionLog, deleteConsumptionLogOfRestaurant } from '../controllers/consumptionLog.controller';
+const router = Router();
 
-// router.get('/restaurant/:restaurantId', getAllConsumptionLogWithIngredient);
-// router.post('/restaurant/:restaurantId', createConsumptionLog);
-// router.put('/restaurant/:consumptionLogId', editConsumptionLog);
-// router.get('/restaurant/:restaurantId/search', searchConsumptionLog);
+router.get('/:restaurantId', getAllConsumptionLogsOfRestaurant);
+router.get('/:restaurantId/search', searchConsumptionLogs);
+router.post('/:restaurantId', postConsumptionLogToRestaurant);
+router.put('/:consumptionLogId', putConsumptionLog);
+router.delete('/:consumptionLogId', deleteConsumptionLogOfRestaurant);
 
-// export default router;
+export default router;

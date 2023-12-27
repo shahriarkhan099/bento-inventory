@@ -67,5 +67,3 @@ export async function deleteCategoryOfRestaurant (categoryId: number) {
       throw new Error('Error deleting category.');
     }
 }
-
-

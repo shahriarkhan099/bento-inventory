@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { findAllIngredientOfRestaurant, addIngredientToRestaurant, findIngredientBySearchTerm, 
-  updateIngredientOfRestaurant, deleteIngredientOfRestaurant, findIngredientWithCategory, findIngredientsByCategoryName } from "../models/ingredient/ingredient.query";
+  updateIngredientOfRestaurant, deleteIngredientOfRestaurant, findIngredientWithCategory, findIngredientsByCategoryName, addIngredientToCategory } from "../models/ingredient/ingredient.query";
 
 
 export async function getAllIngredientOfRestaurant (req: Request, res: Response) {
@@ -100,6 +100,21 @@ export async function getIngredientsByCategoryName (req: Request, res: Response)
     const categoryName = req.params.categoryName;
     if (restaurantId) {
       const ingredient = await findIngredientsByCategoryName(restaurantId, categoryName);
+      res.json({ ingredients: ingredient });
+    } else res.status(400).json({ message: "Invalid restaurant ID." });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
+export async function insertIngredientToCategory (req: Request, res: Response) {
+  try {
+    const restaurantId = Number(req.params.restaurantId);
+    const categoryId = Number(req.params.categoryId);
+    if (restaurantId) {
+      const ingredient = await addIngredientToCategory(restaurantId, categoryId);
       res.json({ ingredients: ingredient });
     } else res.status(400).json({ message: "Invalid restaurant ID." });
 

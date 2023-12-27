@@ -1,6 +1,8 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import { IPurchaseLog } from '../../interfaces/purchaseLog.interface';
 import sequelize from '..';
+import Supplier from '../supplier/supplier.model';
+import Ingredient from '../ingredient/ingredient.model';
 
 interface PurchaseLogCreationAttributes extends Optional<IPurchaseLog, 'id'> {};
 
@@ -16,10 +18,6 @@ const PurchaseLog = sequelize.define<PurchaseLogInstance>('purchaseLogs', {
         primaryKey: true,
         type: DataTypes.INTEGER,
         unique: true,
-      },
-      ingredientName: {
-        type: DataTypes.TEXT,
-        allowNull: false,
       },
       quantity: {
         type: DataTypes.INTEGER,
@@ -51,7 +49,24 @@ const PurchaseLog = sequelize.define<PurchaseLogInstance>('purchaseLogs', {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-    },
-  );
+});
+
+PurchaseLog.hasOne(Supplier, {
+  sourceKey: 'id',
+  foreignKey: 'purchaseId',
+});
+
+Supplier.belongsTo(PurchaseLog, {
+  foreignKey: 'purchaseId',
+});
+
+PurchaseLog.hasMany(Ingredient, {
+  sourceKey: 'id',
+  foreignKey: 'purchaseId',
+});
+
+Ingredient.belongsTo(PurchaseLog, {
+  foreignKey: 'purchaseId',
+});
 
 export default PurchaseLog;

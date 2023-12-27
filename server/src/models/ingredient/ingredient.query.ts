@@ -100,3 +100,16 @@ export async function findIngredientsByCategoryName (restaurantId: number, categ
     throw new Error('Error finding ingredient.');
   }
 }
+
+export async function addIngredientToCategory (ingredientId: number, categoryId: number) {
+  try {
+    const ingredient = await Ingredient.findByPk(ingredientId);
+    if (ingredient) {
+      ingredient.categoryId = categoryId;
+      await updateIngredientOfRestaurant(ingredient.id, ingredient);
+    }
+    return ingredient;
+  } catch (error) {
+    throw new Error('Error adding ingredient to category.');
+  }
+}

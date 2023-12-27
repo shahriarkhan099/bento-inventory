@@ -72,7 +72,7 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
       },
       categoryId: { 
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
 });
 

@@ -1,6 +1,5 @@
 export interface IPurchaseLog {
     id: number;
-    ingredientName: string;
     quantity: number;
     unit: string;
     expirationDate: Date;
