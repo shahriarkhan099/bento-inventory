@@ -13,59 +13,58 @@ export async function findAllIngredientOfRestaurant (restaurantId: number) {
   
       return ingredient;
     } catch (error) {
-      throw new Error('Error finding ingredients.');
+      throw new Error('Error finding global ingredient.');
     }
 }
 
 export async function addIngredientToRestaurant (ingredient: IIngredient) {
     try {
-      ingredient.costPerUnit = ingredient.purchasePrice / ingredient.currentStockQuantity;
       const newIngredient = await Ingredient.create(ingredient);
       return newIngredient;
     } catch (error) {
-      console.log(error)
-      throw new Error('Error creating ingredient.');
+      console.log(error);
+      throw new Error('Error creating global ingredient.');
     }
 }
 
 export async function findIngredientBySearchTerm (restaurantId: number, searchTerm: string) {
-  try {
-    const ingredient = await Ingredient.findAll({
-      where: {
-        ingredientName: {[Op.iLike]: `%${searchTerm}%`},
-        restaurantId: restaurantId
-      }
-    });
-    return ingredient;
-  } catch (error) {
-    throw new Error('Error searching for ingredient.');
-  }
+    try {
+      const ingredient = await Ingredient.findAll({
+        where: {
+          ingredientName: {[Op.iLike]: `%${searchTerm}%`},
+          restaurantId: restaurantId
+        }
+      });
+      return ingredient;
+    } catch (error) {
+      throw new Error('Error searching for global ingredient.');
+    }
 }
 
 export async function updateIngredientOfRestaurant (ingredientId: number, ingredient: IIngredient) {
-  try {
-    const updatedIngredient = await Ingredient.update(ingredient, {
-      where: {
-        id: ingredientId
-      }
-    });
-    return updatedIngredient;
-  } catch (error) {
-    throw new Error('Error updating ingredient.');
-  }
+    try {
+      const updatedIngredient = await Ingredient.update(ingredient, {
+        where: {
+          id: ingredientId
+        }
+      });
+      return updatedIngredient;
+    } catch (error) {
+      throw new Error('Error updating global ingredient.');
+    }
 }
 
 export async function deleteIngredientOfRestaurant (ingredientId: number) {
-  try {
-    const deletedIngredient = await Ingredient.destroy({
-      where: {
-        id: ingredientId
-      }
-    });
-    return deletedIngredient;
-  } catch (error) {
-    throw new Error('Error deleting ingredient.');
-  }
+    try {
+      const deletedIngredient = await Ingredient.destroy({
+        where: {
+          id: ingredientId
+        }
+      });
+      return deletedIngredient;
+    } catch (error) {
+      throw new Error('Error deleting global ingredient.');
+    }
 }
 
 export async function findIngredientWithCategory (restaurantId: number) {
@@ -78,7 +77,21 @@ export async function findIngredientWithCategory (restaurantId: number) {
     });
     return ingredient;
   } catch (error) {
-    throw new Error('Error finding ingredient.');
+    throw new Error('Error finding global ingredient.');
+  }
+}
+
+export async function findIngredientsByIngredientName (restaurantId: number, ingredientName: string) {
+  try {
+    const ingredient = await Ingredient.findAll({
+      where: {
+        ingredientName: ingredientName,
+        restaurantId: restaurantId
+      }
+    });
+    return ingredient;
+  } catch (error) {
+    throw new Error('Error finding global ingredient.');
   }
 }
 
@@ -97,19 +110,6 @@ export async function findIngredientsByCategoryName (restaurantId: number, categ
     });
     return ingredient;
   } catch (error) {
-    throw new Error('Error finding ingredient.');
-  }
-}
-
-export async function addIngredientToCategory (ingredientId: number, categoryId: number) {
-  try {
-    const ingredient = await Ingredient.findByPk(ingredientId);
-    if (ingredient) {
-      ingredient.categoryId = categoryId;
-      await updateIngredientOfRestaurant(ingredient.id, ingredient);
-    }
-    return ingredient;
-  } catch (error) {
-    throw new Error('Error adding ingredient to category.');
+    throw new Error('Error finding global ingredient.');
   }
 }

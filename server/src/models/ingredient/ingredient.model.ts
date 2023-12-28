@@ -1,6 +1,8 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import { IIngredient } from '../../interfaces/ingredient.interface';
 import sequelize from '..';
+import IngredientBatch from '../ingredientBatch/ingredientBatch.model';
+import Category from '../category/category.model';
 
 interface IngredientCreationAttributes extends Optional<IIngredient, 'id'> {};
 
@@ -9,7 +11,7 @@ interface IngredientInstance extends Model<IIngredient, IngredientCreationAttrib
   updatedAt?: Date;
 }
 
-const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
+const Ingredient = sequelize.define<IngredientInstance>('Ingredients', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -22,7 +24,7 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
         allowNull: false,
       },
       unitOfStock: {
-        type: DataTypes.ENUM('gm', 'ml', 'piece'),
+        type: DataTypes.ENUM('gm', 'ml', 'piece', 'kg', 'litre'),
         allowNull: false,
       },
       currentStockQuantity: {
@@ -43,11 +45,11 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
       caloriesPerUnit: {
         type: DataTypes.INTEGER,
       },
-      expirationDate: {
-        type: DataTypes.DATE,
-      },
       reorderPoint: {
         type: DataTypes.INTEGER,
+      },
+      perishable: {
+        type: DataTypes.BOOLEAN,
       },
       description: {
         type: DataTypes.TEXT,
@@ -55,7 +57,6 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
       unitOfIdealStoringTemperature: {
         type: DataTypes.ENUM('Celsius', 'Fahrenheit'),
         allowNull: false,
-        defaultValue: 'Celsius', 
       },
       idealStoringTemperature: {
         type: DataTypes.INTEGER,
@@ -76,5 +77,22 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
       },
 });
 
+Ingredient.hasMany(IngredientBatch, {
+    sourceKey: 'id',
+    foreignKey: 'ingredientId',
+});
+  
+IngredientBatch.belongsTo(Ingredient, {
+    foreignKey: 'ingredientId',
+});
+
+Category.hasMany(Ingredient, {
+  sourceKey: 'id',
+  foreignKey: 'categoryId',
+});
+
+Ingredient.belongsTo(Category, {
+  foreignKey: 'categoryId',
+});
 
 export default Ingredient;

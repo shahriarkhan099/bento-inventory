@@ -7,13 +7,13 @@ export interface IIngredient {
     purchasePrice: number;
     costPerUnit: number;
     caloriesPerUnit: number;
-    expirationDate: Date; 
     reorderPoint: number;
+    expectedStockForToday: number;
+    expectedStockForTomorrow: number;
+    perishable: boolean;
     description: string;
     unitOfIdealStoringTemperature: string;
     idealStoringTemperature: number;
-    expectedStockForToday: number;
-    expectedStockForTomorrow: number;
     restaurantId: number;
     categoryId: number;
 }

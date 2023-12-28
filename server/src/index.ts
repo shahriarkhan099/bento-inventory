@@ -5,6 +5,7 @@ import cors from 'cors';
 import config from './config';
 import sequelize from './models';
 import ingredientRouter from './routers/ingredient.router';
+import ingredientBatchRouter from './routers/ingredientBatch.router';
 import categoryRouter from './routers/category.router';
 import orderRouter from './routers/order.router';
 import supplierRouter from './routers/supplier.router';
@@ -25,6 +26,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use('/v1/ingredient', ingredientRouter);
+app.use('/v1/ingredientBatch', ingredientBatchRouter);
 app.use('/v1/category', categoryRouter);
 app.use('/v1/order', orderRouter);
 app.use('/v1/supplier', supplierRouter);

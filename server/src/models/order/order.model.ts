@@ -1,7 +1,7 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import { IOrder } from '../../interfaces/order.interface';
 import sequelize from '..';
-import Ingredient from '../ingredient/ingredient.model';
+import IngredientBatch from '../ingredientBatch/ingredientBatch.model';
 import Supplier from '../supplier/supplier.model';
 
 interface OrderCreationAttributes extends Optional<IOrder, 'id'> {};
@@ -41,11 +41,11 @@ const Order = sequelize.define<OrderInstance>('orders', {
       },
 });
 
-Order.hasMany(Ingredient, {
+Order.hasMany(IngredientBatch, {
     foreignKey: 'orderId'
 });
 
-Ingredient.belongsTo(Order, {
+IngredientBatch.belongsTo(Order, {
     foreignKey: 'orderId'
 });
 

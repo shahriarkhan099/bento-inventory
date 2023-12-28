@@ -1,6 +1,6 @@
 import { Op } from "sequelize";
 import WasteLog from "./wasteLog.model";
-import Ingredient from "../ingredient/ingredient.model";
+import Ingredient from "../ingredientBatch/ingredientBatch.model";
 import { IWasteLog } from "../../interfaces/wasteLog.interface";
 
 export async function findAllWasteLogWithIngredient (restaurantId: number) {

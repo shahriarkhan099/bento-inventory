@@ -2,7 +2,7 @@ import { Model, DataTypes, Optional } from 'sequelize';
 import { IPurchaseLog } from '../../interfaces/purchaseLog.interface';
 import sequelize from '..';
 import Supplier from '../supplier/supplier.model';
-import Ingredient from '../ingredient/ingredient.model';
+import Ingredient from '../ingredientBatch/ingredientBatch.model';
 
 interface PurchaseLogCreationAttributes extends Optional<IPurchaseLog, 'id'> {};
 

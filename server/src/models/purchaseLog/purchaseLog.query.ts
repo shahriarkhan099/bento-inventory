@@ -2,7 +2,7 @@ import { Op } from "sequelize";
 import PurchaseLog from "./purchaseLog.model";
 import { IPurchaseLog } from "../../interfaces/purchaseLog.interface";
 import Supplier from "../supplier/supplier.model";
-import Ingredient from "../ingredient/ingredient.model";
+import Ingredient from "../ingredientBatch/ingredientBatch.model";
 
 export async function findAllPurchaseLogsOfRestaurant (restaurantId: number) {
   try {
