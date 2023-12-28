@@ -24,16 +24,16 @@ const Category = sequelize.define<CategoryInstance>('categories', {
       },
       imageUrl: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        allowNull: true,
       },
       storageShelf: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       storageType: {
         type: DataTypes.ENUM('refrigerated', 'nonrefrigerated'),
-        allowNull: false,
-        defaultValue: 'refrigerated',
+        allowNull: true,
+        // defaultValue: 'refrigerated',
       },
       restaurantId: {
        type: DataTypes.INTEGER,
