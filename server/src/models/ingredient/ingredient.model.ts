@@ -11,7 +11,7 @@ interface IngredientInstance extends Model<IIngredient, IngredientCreationAttrib
   updatedAt?: Date;
 }
 
-const Ingredient = sequelize.define<IngredientInstance>('Ingredients', {
+const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -84,15 +84,6 @@ Ingredient.hasMany(IngredientBatch, {
   
 IngredientBatch.belongsTo(Ingredient, {
     foreignKey: 'ingredientId',
-});
-
-Category.hasMany(Ingredient, {
-  sourceKey: 'id',
-  foreignKey: 'categoryId',
-});
-
-Ingredient.belongsTo(Category, {
-  foreignKey: 'categoryId',
 });
 
 export default Ingredient;

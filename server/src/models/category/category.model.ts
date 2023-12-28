@@ -41,4 +41,13 @@ const Category = sequelize.define<CategoryInstance>('categories', {
       },
 });
 
+Category.hasMany(Ingredient, {
+  sourceKey: 'id',
+  foreignKey: 'categoryId',
+});
+
+Ingredient.belongsTo(Category, {
+  foreignKey: 'categoryId',
+});
+
 export default Category;

@@ -57,4 +57,5 @@ const IngredientBatch = sequelize.define<IngredientBatchInstance>('ingredientBat
       },
 });
 
+
 export default IngredientBatch;
