@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { findAllConsumptionLogsOfRestaurant, findConsumptionLogsByIngredientName, createConsumptionLogOfRestaurant, updateConsumptionLog, deleteConsumptionLog } from "../models/consumptionLog/consumptionLog.query";
+import { findAllConsumptionLogsOfRestaurant, findConsumptionLogsByIngredientName, createConsumptionLogOfRestaurant, 
+  updateConsumptionLog, deleteConsumptionLog } from "../models/consumptionLog/consumptionLog.query";
 
 export async function getAllConsumptionLogsOfRestaurant (req: Request, res: Response) {
     try {

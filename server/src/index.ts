@@ -12,6 +12,7 @@ import supplierRouter from './routers/supplier.router';
 import wasteLogRouter from './routers/wasteLog.router';
 import consumptionRouter from './routers/consumptionLog.router';
 import purchaseLogRouter from './routers/purchaseLog.router';
+import deliveryBox from './routers/deliveryBox.router';
 import cron from 'node-cron';
 import checkExpiryAndMove from './utils/expiryCheck.util';
 
@@ -33,6 +34,7 @@ app.use('/v1/supplier', supplierRouter);
 app.use('/v1/wasteLog', wasteLogRouter);
 app.use('/v1/consumptionLog', consumptionRouter);
 app.use('/v1/purchaseLog', purchaseLogRouter);
+app.use('/v1/deliveryBox', deliveryBox);
 
 // cron.schedule('*/2 * * * * *', checkExpiryAndMove);
 cron.schedule('59 23 * * *', checkExpiryAndMove);
