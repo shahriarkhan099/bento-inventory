@@ -4,5 +4,6 @@ export interface IOrder {
     status: string;
     orderDate : Date;
     deliveryDate : Date;
+    supplierId: number;
     restaurantId: number;
 }

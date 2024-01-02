@@ -1,10 +1,12 @@
 import { Router } from 'express';
-import { getAllOrderOfRestaurant, createOrderToRestaurant, editOrderOfRestaurant, removeOrderOfRestaurant } from '../controllers/order.controller';
+import { getAllSuppliers, createSupplier, editSupplier, searchSupplier, deleteSupplierById, getSupplierByLabel } from '../controllers/supplier.controller';
 const router = Router();
 
-router.get('/restaurant/:restaurantId', getAllOrderOfRestaurant);
-router.post('/restaurant/:restaurantId', createOrderToRestaurant);
-router.put('/restaurant/:orderId', editOrderOfRestaurant);
-router.delete('/restaurant/:orderId', removeOrderOfRestaurant);
+router.get('/restaurant/:restaurantId', getAllSuppliers);
+router.post('/restaurant/:restaurantId', createSupplier);
+router.put('/restaurant/:supplierId', editSupplier);
+router.delete('/restaurant/supplier/:supplierId', deleteSupplierById);
+router.get('/restaurant/:restaurantId/search', searchSupplier);
+router.get('/restaurant/:restaurantId/label/:label', getSupplierByLabel);
 
 export default router;

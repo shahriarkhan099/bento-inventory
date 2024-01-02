@@ -9,7 +9,7 @@ interface IngredientBatchInstance extends Model<IIngredientBatch, IngredientCrea
   updatedAt?: Date;
 }
 
-const IngredientBatch = sequelize.define<IngredientBatchInstance>('ingredientBatchs', {
+const IngredientBatch = sequelize.define<IngredientBatchInstance>('ingredientBatches', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -25,9 +25,12 @@ const IngredientBatch = sequelize.define<IngredientBatchInstance>('ingredientBat
         type: DataTypes.ENUM('gm', 'ml', 'piece', 'kg', 'litre'),
         allowNull: false,
       },
-      currentStockQuantity: {
+      purchaseQuantity: {
         type: DataTypes.INTEGER,
         allowNull: false,
+      },
+      currentStockQuantity: {
+        type: DataTypes.INTEGER,
       },
       unitOfPrice: {
         type: DataTypes.ENUM('cents', 'usd'),
@@ -45,17 +48,18 @@ const IngredientBatch = sequelize.define<IngredientBatchInstance>('ingredientBat
       },
       supplierId: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
       },
-      globalIngredientId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-      restaurantId: {
+      ingredientId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      orderId: {
+        type: DataTypes.INTEGER,
+      },
+      restaurantId: {
+        type: DataTypes.INTEGER,
+      },
 });
-
 
 export default IngredientBatch;

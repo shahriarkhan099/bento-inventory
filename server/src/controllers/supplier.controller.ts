@@ -14,7 +14,8 @@ export async function createSupplier (req: Request, res: Response) {
   try {
     const restaurantId = Number(req.params.restaurantId);
     const supplier = req.body;
-    if (typeof supplier.label === 'string' && typeof supplier.address === 'string' && typeof supplier.contact === 'string' && typeof supplier.restaurantId === 'number') {
+    supplier.restaurantId = restaurantId;
+    if (typeof restaurantId === 'number') {
       const newSupplier = await addSupplier(supplier, restaurantId);
       res.status(201).json(newSupplier);
     } else res.status(400).json({ message: "Invalid supplier information." });

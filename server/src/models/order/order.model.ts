@@ -2,7 +2,6 @@ import { Model, DataTypes, Optional } from 'sequelize';
 import { IOrder } from '../../interfaces/order.interface';
 import sequelize from '..';
 import IngredientBatch from '../ingredientBatch/ingredientBatch.model';
-import Supplier from '../supplier/supplier.model';
 
 interface OrderCreationAttributes extends Optional<IOrder, 'id'> {};
 
@@ -35,10 +34,14 @@ const Order = sequelize.define<OrderInstance>('orders', {
         type: DataTypes.DATE,
         allowNull: false,
       },
-      restaurantId: {
+      supplierId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      restaurantId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      }
 });
 
 Order.hasMany(IngredientBatch, {
@@ -46,10 +49,6 @@ Order.hasMany(IngredientBatch, {
 });
 
 IngredientBatch.belongsTo(Order, {
-    foreignKey: 'orderId'
-});
-
-Order.hasOne(Supplier, { 
     foreignKey: 'orderId'
 });
 

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { findAllIngredientOfRestaurant, addIngredientToRestaurant, findIngredientBySearchTerm, 
-  updateIngredientOfRestaurant, deleteIngredientOfRestaurant, findIngredientWithCategory, findIngredientsByCategoryName } from "../models/ingredient/ingredient.query";
+  updateIngredientOfRestaurant, deleteIngredientOfRestaurant, findIngredientWithCategory, findIngredientsByCategoryName,
+  findAllIngredientOfRestaurantWithCategoryAndIngredientBatch } from "../models/ingredient/ingredient.query";
 
 
 export async function getAllIngredientOfRestaurant (req: Request, res: Response) {
@@ -107,3 +108,16 @@ export async function getIngredientsByCategoryName (req: Request, res: Response)
     }
 }
 
+
+export async function getAllIngredientOfRestaurantWithCategoryAndIngredientBatch (req: Request, res: Response) {
+    try {
+        const restaurantId = Number(req.params.restaurantId);
+        if (restaurantId) {
+        const ingredient = await findAllIngredientOfRestaurantWithCategoryAndIngredientBatch(restaurantId);
+        res.json({ ingredients: ingredient });
+        } else res.status(400).json({ message: "Invalid restaurant ID." });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+    }
+}

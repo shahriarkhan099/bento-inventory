@@ -2,6 +2,7 @@ import { Op } from "sequelize";
 import Ingredient from "./ingredient.model";
 import Category from "../category/category.model";
 import { IIngredient } from "../../interfaces/ingredient.interface";
+import IngredientBatch from "../ingredientBatch/ingredientBatch.model";
 
 export async function findAllIngredientOfRestaurant (restaurantId: number) {
     try {
@@ -106,6 +107,24 @@ export async function findIngredientsByCategoryName (restaurantId: number, categ
         where: {
           categoryName: categoryName
         }
+      }]
+    });
+    return ingredient;
+  } catch (error) {
+    throw new Error('Error finding global ingredient.');
+  }
+}
+
+export async function findAllIngredientOfRestaurantWithCategoryAndIngredientBatch (restaurantId: number) {
+  try {
+    const ingredient = await Ingredient.findAll({
+      where: {
+        restaurantId: restaurantId
+      },
+      include: [{
+        model: Category
+      }, {
+        model: IngredientBatch
       }]
     });
     return ingredient;

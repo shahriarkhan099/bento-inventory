@@ -23,6 +23,8 @@ export async function postIngredientToRestaurant (req: Request, res: Response) {
     if (restaurantId) {
       let ingredient = req.body;
       ingredient.restaurantId = restaurantId;
+      ingredient.currentStockQuantity = ingredient.purchaseQuantity;
+      ingredient.costPerUnit = ingredient.purchasePrice / ingredient.purchaseQuantity;
       if (typeof ingredient.ingredientName === 'string' && typeof ingredient.purchasePrice === 'number') {
         const newIngredient = await addIngredientToRestaurant(ingredient);
         res.status(201).json("Created");

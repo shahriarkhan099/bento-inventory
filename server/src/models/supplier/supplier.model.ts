@@ -1,7 +1,8 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import { ISupplier } from '../../interfaces/supplier.interface';
 import sequelize from '..';
-import Ingredient from '../ingredientBatch/ingredientBatch.model';
+import IngredientBatch from '../ingredientBatch/ingredientBatch.model';
+import Order from '../order/order.model';
 
 interface SupplierCreationAttributes extends Optional<ISupplier, 'id'> {};
 
@@ -42,15 +43,26 @@ const Supplier = sequelize.define<SupplierInstance>('suppliers', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+
 });
 
-Supplier.hasMany(Ingredient, {
+Supplier.hasMany(IngredientBatch, {
   sourceKey: 'id',
   foreignKey: 'supplierId',
 });
 
-Ingredient.belongsTo(Supplier, {
+IngredientBatch.belongsTo(Supplier, {
   foreignKey: 'supplierId',
 });
+
+Supplier.hasMany(Order, {
+  sourceKey: 'id',
+  foreignKey: 'supplierId',
+});
+
+Order.belongsTo(Supplier, {
+  foreignKey: 'supplierId',
+});
+
 
 export default Supplier;

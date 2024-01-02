@@ -1,25 +1,17 @@
 import { Request, Response } from "express";
-import { findAllOrderOfRestaurant, addOrderToRestaurant, updateOrderOfRestaurant, deleteOrderOfRestaurant } from "../models/order/order.query";
+import { findAllOrderOfRestaurantWithBatch, updateOrderOfRestaurant, 
+         addOrderToRestaurantWithIngredientBatches, deleteOrderOfRestaurant } from "../models/order/order.query";
 
-export async function getAllOrderOfRestaurant (req: Request, res: Response) {
+export async function getAllOrderOfRestaurantWithBatch (req: Request, res: Response) {
     try {
-      const orders = await findAllOrderOfRestaurant(parseInt(req.params.restaurantId));
-      res.status(200).json(orders);
+        const restaurantId = Number(req.params.restaurantId);
+        if (restaurantId) {
+        const order = await findAllOrderOfRestaurantWithBatch(restaurantId);
+        res.status(200).json(order);
+        } else res.status(400).json({ message: "Invalid restaurant ID." });
     } catch (error) {
-      res.status(500).json(error);
-    }
-}
-
-export async function createOrderToRestaurant (req: Request, res: Response) {
-    try {
-      const order = req.body;
-      if (typeof order.totalPrice === 'number' && typeof order.status === 'string' && typeof order.orderDate === 'string' && typeof order.deliveryDate === 'string' && typeof order.restaurantId === 'number') {
-        const newOrder = await addOrderToRestaurant(order);
-        res.status(201).json(newOrder);
-      } else res.status(400).json({ message: "Invalid order information." });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json(error);
+        console.log(error);
+        res.status(500).json(error);
     }
 }
  
@@ -28,7 +20,7 @@ export async function editOrderOfRestaurant (req: Request, res: Response) {
     const orderId = Number(req.params.orderId);
     if (orderId) {
       let order = req.body;
-      if (typeof order.totalPrice === 'number' && typeof order.status === 'string' && typeof order.orderDate === 'string' && typeof order.deliveryDate === 'string' && typeof order.restaurantId === 'number') {
+      if (typeof order.restaurantId === 'number') {
         const updatedOrder = await updateOrderOfRestaurant(orderId, order);
         res.status(200).json(updatedOrder);
       } else res.status(400).json({ message: "Invalid order information." });
@@ -50,4 +42,20 @@ export async function removeOrderOfRestaurant (req: Request, res: Response) {
         console.log(error);
         res.status(500).json(error);
     }
+}
+
+export async function createOrderToRestaurantWithIngredientBatches (req: Request, res: Response) {
+  try {
+    const order = req.body;
+    const ingredientBatches = req.body.ingredientBatches;
+    const restaurantId = Number(req.params.restaurantId);
+    order.restaurantId = restaurantId;
+    if (typeof order.restaurantId === 'number') {
+      const newOrder = await addOrderToRestaurantWithIngredientBatches(order, ingredientBatches);
+      res.status(201).json(newOrder);
+    } else res.status(400).json({ message: "Invalid order information." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
 }
