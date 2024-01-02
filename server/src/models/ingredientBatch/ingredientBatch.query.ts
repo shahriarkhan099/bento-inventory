@@ -27,20 +27,6 @@ export async function addIngredientToRestaurant (ingredient: IIngredientBatch) {
     }
 }
 
-export async function findIngredientBySearchTerm (restaurantId: number, searchTerm: string) {
-  try {
-    const ingredient = await Ingredient.findAll({
-      where: {
-        ingredientName: {[Op.iLike]: `%${searchTerm}%`},
-        restaurantId: restaurantId
-      }
-    });
-    return ingredient;
-  } catch (error) {
-    throw new Error('Error searching for ingredient.');
-  }
-}
-
 export async function updateIngredientOfRestaurant (ingredientId: number, ingredient: IIngredientBatch) {
   try {
     const updatedIngredient = await Ingredient.update(ingredient, {

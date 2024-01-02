@@ -6,8 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const __1 = __importDefault(require(".."));
 const ingredientBatch_model_1 = __importDefault(require("../ingredientBatch/ingredientBatch.model"));
+const order_model_1 = __importDefault(require("../order/order.model"));
 ;
-const Order = __1.default.define('orders', {
+const Supplier = __1.default.define('suppliers', {
     id: {
         allowNull: false,
         autoIncrement: true,
@@ -15,36 +16,43 @@ const Order = __1.default.define('orders', {
         type: sequelize_1.DataTypes.INTEGER,
         unique: true,
     },
-    totalPrice: {
-        type: sequelize_1.DataTypes.FLOAT,
+    name: {
+        type: sequelize_1.DataTypes.STRING,
         allowNull: false,
     },
-    status: {
-        type: sequelize_1.DataTypes.ENUM('pending', 'received', 'cancelled'),
+    address: {
+        type: sequelize_1.DataTypes.TEXT,
         allowNull: false,
     },
-    orderDate: {
-        type: sequelize_1.DataTypes.DATE,
+    contactNumber: {
+        type: sequelize_1.DataTypes.STRING,
         allowNull: false,
     },
-    deliveryDate: {
-        type: sequelize_1.DataTypes.DATE,
+    email: {
+        type: sequelize_1.DataTypes.STRING,
         allowNull: false,
     },
-    supplierId: {
-        type: sequelize_1.DataTypes.INTEGER,
+    label: {
+        type: sequelize_1.DataTypes.ENUM('Good', 'Best', 'Bad', 'Worst'),
         allowNull: false,
     },
     restaurantId: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
-    }
+    },
 });
-Order.hasMany(ingredientBatch_model_1.default, {
+Supplier.hasMany(ingredientBatch_model_1.default, {
     sourceKey: 'id',
-    foreignKey: 'orderId'
+    foreignKey: 'supplierId',
 });
-ingredientBatch_model_1.default.belongsTo(Order, {
-    foreignKey: 'orderId'
+ingredientBatch_model_1.default.belongsTo(Supplier, {
+    foreignKey: 'supplierId',
 });
-exports.default = Order;
+Supplier.hasMany(order_model_1.default, {
+    sourceKey: 'id',
+    foreignKey: 'supplierId',
+});
+order_model_1.default.belongsTo(Supplier, {
+    foreignKey: 'supplierId',
+});
+exports.default = Supplier;

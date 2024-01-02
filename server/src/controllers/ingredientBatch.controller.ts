@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { findAllIngredientOfRestaurant, addIngredientToRestaurant, findIngredientBySearchTerm, 
+import { findAllIngredientOfRestaurant, addIngredientToRestaurant, 
   updateIngredientOfRestaurant, deleteIngredientOfRestaurant, findIngredientWithCategory, findIngredientsByCategoryName } from "../models/ingredientBatch/ingredientBatch.query";
 
 
@@ -30,23 +30,6 @@ export async function postIngredientToRestaurant (req: Request, res: Response) {
         res.status(201).json("Created");
       } else res.status(400).json({ message: "Invalid ingredient information." });
     } else res.status(400).json({ message: "Invalid restaurant ID." });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
-  }
-}
-
-export async function searchIngredient (req: Request, res: Response) {
-  try {
-    const restaurantId = Number(req.params.restaurantId);
-    
-    const search = req.query.q;
-    const searchTerm = search?.toString();
-
-    if (searchTerm) {
-      const ingredient = await findIngredientBySearchTerm(restaurantId, searchTerm);
-      res.json({ ingredients: ingredient });
-    } else res.json({ ingredients: [] });
   } catch (error) {
     console.log(error);
     res.status(500).json(error);

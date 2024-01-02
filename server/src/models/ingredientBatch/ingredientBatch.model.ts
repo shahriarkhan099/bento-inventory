@@ -43,6 +43,10 @@ const IngredientBatch = sequelize.define<IngredientBatchInstance>('ingredientBat
       costPerUnit: {
         type: DataTypes.FLOAT,
       },
+      receivedAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
       expirationDate: {
         type: DataTypes.DATE,
       },

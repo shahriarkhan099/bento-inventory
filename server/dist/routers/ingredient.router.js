@@ -10,4 +10,5 @@ router.delete('/restaurant/:ingredientId', ingredient_controller_1.deleteIngredi
 router.get('/restaurant/:restaurantId/ingredients/search', ingredient_controller_1.searchIngredient);
 router.get('/restaurant/:restaurantId/ingredients/categories', ingredient_controller_1.getIngredientWithCategory);
 router.get('/restaurant/:restaurantId/ingredients/categories/:categoryName', ingredient_controller_1.getIngredientsByCategoryName);
+router.get('/restaurant/:restaurantId/ingredients', ingredient_controller_1.getAllIngredientOfRestaurantWithCategoryAndIngredientBatch);
 exports.default = router;

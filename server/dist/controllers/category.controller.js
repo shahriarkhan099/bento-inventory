@@ -82,7 +82,7 @@ function updateCategory(req, res) {
                 let category = req.body;
                 if (typeof category.categoryName === 'string') {
                     const updatedCategory = yield (0, category_query_1.updateCategoryOfRestaurant)(categoryId, category);
-                    res.status(201).json(updatedCategory);
+                    res.status(200).json(updatedCategory);
                 }
                 else
                     res.status(400).json({ message: "Invalid category information." });
@@ -103,7 +103,7 @@ function deleteCategory(req, res) {
             const categoryId = Number(req.params.categoryId);
             if (categoryId) {
                 const deletedCategory = yield (0, category_query_1.deleteCategoryOfRestaurant)(categoryId);
-                res.status(201).json(deletedCategory);
+                res.status(200).json(deletedCategory);
             }
             else
                 res.status(400).json({ message: "Invalid category ID." });

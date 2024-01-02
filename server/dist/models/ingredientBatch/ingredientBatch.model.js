@@ -5,9 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const __1 = __importDefault(require(".."));
-const ingredientBatch_model_1 = __importDefault(require("../ingredientBatch/ingredientBatch.model"));
 ;
-const Ingredient = __1.default.define('ingredients', {
+const IngredientBatch = __1.default.define('ingredientBatches', {
     id: {
         allowNull: false,
         autoIncrement: true,
@@ -23,56 +22,43 @@ const Ingredient = __1.default.define('ingredients', {
         type: sequelize_1.DataTypes.ENUM('gm', 'ml', 'piece', 'kg', 'litre'),
         allowNull: false,
     },
-    currentStockQuantity: {
+    purchaseQuantity: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
+    },
+    currentStockQuantity: {
+        type: sequelize_1.DataTypes.INTEGER,
     },
     unitOfPrice: {
         type: sequelize_1.DataTypes.ENUM('cents', 'usd'),
         allowNull: false,
     },
+    purchasePrice: {
+        type: sequelize_1.DataTypes.FLOAT,
+        allowNull: false,
+    },
     costPerUnit: {
         type: sequelize_1.DataTypes.FLOAT,
     },
-    caloriesPerUnit: {
+    receivedAt: {
+        type: sequelize_1.DataTypes.DATE,
+    },
+    expirationDate: {
+        type: sequelize_1.DataTypes.DATE,
+    },
+    supplierId: {
         type: sequelize_1.DataTypes.INTEGER,
-    },
-    reorderPoint: {
-        type: sequelize_1.DataTypes.INTEGER,
-    },
-    perishable: {
-        type: sequelize_1.DataTypes.BOOLEAN,
-    },
-    description: {
-        type: sequelize_1.DataTypes.TEXT,
-    },
-    unitOfIdealStoringTemperature: {
-        type: sequelize_1.DataTypes.ENUM('Celsius', 'Fahrenheit'),
         allowNull: false,
     },
-    idealStoringTemperature: {
+    ingredientId: {
         type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
     },
-    expectedStockForToday: {
-        type: sequelize_1.DataTypes.INTEGER,
-    },
-    expectedStockForTomorrow: {
+    orderId: {
         type: sequelize_1.DataTypes.INTEGER,
     },
     restaurantId: {
         type: sequelize_1.DataTypes.INTEGER,
-        allowNull: false,
-    },
-    categoryId: {
-        type: sequelize_1.DataTypes.INTEGER,
-        allowNull: true,
     },
 });
-Ingredient.hasMany(ingredientBatch_model_1.default, {
-    sourceKey: 'id',
-    foreignKey: 'ingredientId',
-});
-ingredientBatch_model_1.default.belongsTo(Ingredient, {
-    foreignKey: 'ingredientId',
-});
-exports.default = Ingredient;
+exports.default = IngredientBatch;

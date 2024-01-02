@@ -9,14 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.getIngredientsByCategoryName = exports.getIngredientWithCategory = exports.deleteIngredient = exports.updateIngredient = exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = void 0;
-const ingredient_query_1 = require("../models/ingredient/ingredient.query");
+exports.getIngredientsByCategoryName = exports.getIngredientWithCategory = exports.deleteIngredient = exports.updateIngredient = exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = void 0;
+const ingredientBatch_query_1 = require("../models/ingredientBatch/ingredientBatch.query");
 function getAllIngredientOfRestaurant(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const restaurantId = Number(req.params.restaurantId);
             if (restaurantId) {
-                const ingredient = yield (0, ingredient_query_1.findAllIngredientOfRestaurant)(restaurantId);
+                const ingredient = yield (0, ingredientBatch_query_1.findAllIngredientOfRestaurant)(restaurantId);
                 res.json({ ingredients: ingredient });
             }
             else
@@ -36,8 +36,10 @@ function postIngredientToRestaurant(req, res) {
             if (restaurantId) {
                 let ingredient = req.body;
                 ingredient.restaurantId = restaurantId;
+                ingredient.currentStockQuantity = ingredient.purchaseQuantity;
+                ingredient.costPerUnit = ingredient.purchasePrice / ingredient.purchaseQuantity;
                 if (typeof ingredient.ingredientName === 'string' && typeof ingredient.purchasePrice === 'number') {
-                    const newIngredient = yield (0, ingredient_query_1.addIngredientToRestaurant)(ingredient);
+                    const newIngredient = yield (0, ingredientBatch_query_1.addIngredientToRestaurant)(ingredient);
                     res.status(201).json("Created");
                 }
                 else
@@ -60,7 +62,7 @@ function searchIngredient(req, res) {
             const search = req.query.q;
             const searchTerm = search === null || search === void 0 ? void 0 : search.toString();
             if (searchTerm) {
-                const ingredient = yield (0, ingredient_query_1.findIngredientBySearchTerm)(restaurantId, searchTerm);
+                const ingredient = yield (0, ingredientBatch_query_1.findIngredientBySearchTerm)(restaurantId, searchTerm);
                 res.json({ ingredients: ingredient });
             }
             else
@@ -80,8 +82,8 @@ function updateIngredient(req, res) {
             if (ingredientId) {
                 let ingredient = req.body;
                 if (typeof ingredient.ingredientName === 'string' && typeof ingredient.purchasePrice === 'number') {
-                    const updatedIngredient = yield (0, ingredient_query_1.updateIngredientOfRestaurant)(ingredientId, ingredient);
-                    res.status(200).json("Updated");
+                    const updatedIngredient = yield (0, ingredientBatch_query_1.updateIngredientOfRestaurant)(ingredientId, ingredient);
+                    res.status(200).json(updatedIngredient);
                 }
                 else
                     res.status(400).json({ message: "Invalid ingredient information." });
@@ -101,8 +103,8 @@ function deleteIngredient(req, res) {
         try {
             const ingredientId = Number(req.params.ingredientId);
             if (ingredientId) {
-                const deletedIngredient = yield (0, ingredient_query_1.deleteIngredientOfRestaurant)(ingredientId);
-                res.status(200).json("Deleted");
+                const deletedIngredient = yield (0, ingredientBatch_query_1.deleteIngredientOfRestaurant)(ingredientId);
+                res.status(200).json(deletedIngredient);
             }
             else
                 res.status(400).json({ message: "Invalid ingredient ID." });
@@ -119,7 +121,7 @@ function getIngredientWithCategory(req, res) {
         try {
             const restaurantId = Number(req.params.restaurantId);
             if (restaurantId) {
-                const ingredient = yield (0, ingredient_query_1.findIngredientWithCategory)(restaurantId);
+                const ingredient = yield (0, ingredientBatch_query_1.findIngredientWithCategory)(restaurantId);
                 res.json({ ingredients: ingredient });
             }
             else
@@ -138,7 +140,7 @@ function getIngredientsByCategoryName(req, res) {
             const restaurantId = Number(req.params.restaurantId);
             const categoryName = req.params.categoryName;
             if (restaurantId) {
-                const ingredient = yield (0, ingredient_query_1.findIngredientsByCategoryName)(restaurantId, categoryName);
+                const ingredient = yield (0, ingredientBatch_query_1.findIngredientsByCategoryName)(restaurantId, categoryName);
                 res.json({ ingredients: ingredient });
             }
             else
@@ -151,21 +153,16 @@ function getIngredientsByCategoryName(req, res) {
     });
 }
 exports.getIngredientsByCategoryName = getIngredientsByCategoryName;
-function getAllIngredientOfRestaurantWithCategoryAndIngredientBatch(req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const restaurantId = Number(req.params.restaurantId);
-            if (restaurantId) {
-                const ingredient = yield (0, ingredient_query_1.findAllIngredientOfRestaurantWithCategoryAndIngredientBatch)(restaurantId);
-                res.json({ ingredients: ingredient });
-            }
-            else
-                res.status(400).json({ message: "Invalid restaurant ID." });
-        }
-        catch (error) {
-            console.log(error);
-            res.status(500).json(error);
-        }
-    });
-}
-exports.getAllIngredientOfRestaurantWithCategoryAndIngredientBatch = getAllIngredientOfRestaurantWithCategoryAndIngredientBatch;
+// export async function insertIngredientToCategory (req: Request, res: Response) {
+//   try {
+//     const restaurantId = Number(req.params.restaurantId);
+//     const categoryId = Number(req.params.categoryId);
+//     if (restaurantId) {
+//       const ingredient = await addIngredientToCategory(restaurantId, categoryId);
+//       res.json({ ingredients: ingredient });
+//     } else res.status(400).json({ message: "Invalid restaurant ID." });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json(error);
+//   }
+// }

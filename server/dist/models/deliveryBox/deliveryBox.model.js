@@ -5,9 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const __1 = __importDefault(require(".."));
-const ingredientBatch_model_1 = __importDefault(require("../ingredientBatch/ingredientBatch.model"));
 ;
-const Order = __1.default.define('orders', {
+const DeliveryBox = __1.default.define('deliveryBoxes', {
     id: {
         allowNull: false,
         autoIncrement: true,
@@ -15,36 +14,40 @@ const Order = __1.default.define('orders', {
         type: sequelize_1.DataTypes.INTEGER,
         unique: true,
     },
-    totalPrice: {
-        type: sequelize_1.DataTypes.FLOAT,
+    boxName: {
+        type: sequelize_1.DataTypes.TEXT,
         allowNull: false,
     },
-    status: {
-        type: sequelize_1.DataTypes.ENUM('pending', 'received', 'cancelled'),
-        allowNull: false,
-    },
-    orderDate: {
-        type: sequelize_1.DataTypes.DATE,
-        allowNull: false,
-    },
-    deliveryDate: {
-        type: sequelize_1.DataTypes.DATE,
-        allowNull: false,
-    },
-    supplierId: {
+    height: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
+    },
+    width: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
+    },
+    length: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
+    },
+    weightLimit: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
+    },
+    temperatureLimit: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
+    },
+    waterproof: {
+        type: sequelize_1.DataTypes.BOOLEAN,
+        allowNull: false,
+    },
+    specialInstructions: {
+        type: sequelize_1.DataTypes.TEXT,
     },
     restaurantId: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
-    }
+    },
 });
-Order.hasMany(ingredientBatch_model_1.default, {
-    sourceKey: 'id',
-    foreignKey: 'orderId'
-});
-ingredientBatch_model_1.default.belongsTo(Order, {
-    foreignKey: 'orderId'
-});
-exports.default = Order;
+exports.default = DeliveryBox;

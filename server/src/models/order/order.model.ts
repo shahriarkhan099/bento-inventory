@@ -23,7 +23,7 @@ const Order = sequelize.define<OrderInstance>('orders', {
         allowNull: false,
       },
       status: {
-        type: DataTypes.ENUM('pending', 'delivered'),
+        type: DataTypes.ENUM('pending', 'received', 'cancelled'),
         allowNull: false,
       },
       orderDate: {
@@ -45,6 +45,7 @@ const Order = sequelize.define<OrderInstance>('orders', {
 });
 
 Order.hasMany(IngredientBatch, {
+    sourceKey: 'id',
     foreignKey: 'orderId'
 });
 

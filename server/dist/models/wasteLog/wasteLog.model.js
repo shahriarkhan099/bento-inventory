@@ -5,9 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const __1 = __importDefault(require(".."));
-const ingredientBatch_model_1 = __importDefault(require("../ingredientBatch/ingredientBatch.model"));
 ;
-const Order = __1.default.define('orders', {
+const WasteLog = __1.default.define('wasteLogs', {
     id: {
         allowNull: false,
         autoIncrement: true,
@@ -15,36 +14,39 @@ const Order = __1.default.define('orders', {
         type: sequelize_1.DataTypes.INTEGER,
         unique: true,
     },
-    totalPrice: {
+    ingredientName: {
+        type: sequelize_1.DataTypes.TEXT,
+        allowNull: false,
+    },
+    unitOfStock: {
+        type: sequelize_1.DataTypes.ENUM('gm', 'ml', 'piece'),
+        allowNull: false,
+    },
+    totalQuantity: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
+    },
+    unitOfCost: {
+        type: sequelize_1.DataTypes.ENUM('cents', 'usd'),
+        allowNull: false,
+    },
+    totalCost: {
         type: sequelize_1.DataTypes.FLOAT,
         allowNull: false,
     },
-    status: {
-        type: sequelize_1.DataTypes.ENUM('pending', 'received', 'cancelled'),
-        allowNull: false,
+    costPerUnit: {
+        type: sequelize_1.DataTypes.FLOAT,
     },
-    orderDate: {
+    expirationDate: {
         type: sequelize_1.DataTypes.DATE,
-        allowNull: false,
     },
-    deliveryDate: {
-        type: sequelize_1.DataTypes.DATE,
-        allowNull: false,
-    },
-    supplierId: {
+    ingredientId: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
     },
     restaurantId: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
-    }
+    },
 });
-Order.hasMany(ingredientBatch_model_1.default, {
-    sourceKey: 'id',
-    foreignKey: 'orderId'
-});
-ingredientBatch_model_1.default.belongsTo(Order, {
-    foreignKey: 'orderId'
-});
-exports.default = Order;
+exports.default = WasteLog;

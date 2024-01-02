@@ -3,6 +3,8 @@ import Order from "./order.model";
 import { IOrder } from "../../interfaces/order.interface";
 import IngredientBatch from "../ingredientBatch/ingredientBatch.model";
 import { IIngredientBatch } from "../../interfaces/ingredientBatch.interface";
+import { updateIngredientInfoOfRestaurantWithNewIngredientBatch } from "../ingredient/ingredient.query";
+import { addIngredientToRestaurant } from "../ingredientBatch/ingredientBatch.query";
 
 export async function findAllOrderOfRestaurantWithBatch (restaurantId: number) {
     try {
@@ -16,6 +18,7 @@ export async function findAllOrderOfRestaurantWithBatch (restaurantId: number) {
       });
       return order;
     } catch (error) {
+      console.log(error);
       throw new Error('Error finding order.');
     }
 }
@@ -29,6 +32,7 @@ export async function addOrderToRestaurantWithIngredientBatches (order: IOrder, 
       ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
       ingredientBatch.costPerUnit = ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
       const newIngredientBatch = await IngredientBatch.create(ingredientBatch);
+      updateIngredientInfoOfRestaurantWithNewIngredientBatch(newIngredientBatch);
     });
     return newOrder;
   } catch (error) {

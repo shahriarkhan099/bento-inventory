@@ -24,7 +24,7 @@ export async function postIngredientToRestaurant (req: Request, res: Response) {
         if (restaurantId) {
         let ingredient = req.body;
         ingredient.restaurantId = restaurantId;
-        if (typeof ingredient.ingredientName === 'string' && typeof ingredient.purchasePrice === 'number') {
+        if (restaurantId) {
             const newIngredient = await addIngredientToRestaurant(ingredient);
             res.status(201).json("Created");
         } else res.status(400).json({ message: "Invalid ingredient information." });
