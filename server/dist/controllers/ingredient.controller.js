@@ -36,7 +36,7 @@ function postIngredientToRestaurant(req, res) {
             if (restaurantId) {
                 let ingredient = req.body;
                 ingredient.restaurantId = restaurantId;
-                if (typeof ingredient.ingredientName === 'string' && typeof ingredient.purchasePrice === 'number') {
+                if (restaurantId) {
                     const newIngredient = yield (0, ingredient_query_1.addIngredientToRestaurant)(ingredient);
                     res.status(201).json("Created");
                 }

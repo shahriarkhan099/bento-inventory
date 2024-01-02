@@ -12,8 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findIngredientsByCategoryName = exports.findIngredientWithCategory = exports.deleteIngredientOfRestaurant = exports.updateIngredientOfRestaurant = exports.findIngredientBySearchTerm = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = void 0;
-const sequelize_1 = require("sequelize");
+exports.findIngredientsByCategoryName = exports.findIngredientWithCategory = exports.deleteIngredientOfRestaurant = exports.updateIngredientOfRestaurant = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = void 0;
 const ingredientBatch_model_1 = __importDefault(require("./ingredientBatch.model"));
 const category_model_1 = __importDefault(require("../category/category.model"));
 function findAllIngredientOfRestaurant(restaurantId) {
@@ -45,23 +44,6 @@ function addIngredientToRestaurant(ingredient) {
     });
 }
 exports.addIngredientToRestaurant = addIngredientToRestaurant;
-function findIngredientBySearchTerm(restaurantId, searchTerm) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const ingredient = yield ingredientBatch_model_1.default.findAll({
-                where: {
-                    ingredientName: { [sequelize_1.Op.iLike]: `%${searchTerm}%` },
-                    restaurantId: restaurantId
-                }
-            });
-            return ingredient;
-        }
-        catch (error) {
-            throw new Error('Error searching for ingredient.');
-        }
-    });
-}
-exports.findIngredientBySearchTerm = findIngredientBySearchTerm;
 function updateIngredientOfRestaurant(ingredientId, ingredient) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

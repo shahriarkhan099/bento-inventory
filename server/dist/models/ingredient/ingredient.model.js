@@ -26,6 +26,7 @@ const Ingredient = __1.default.define('ingredients', {
     currentStockQuantity: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
+        defaultValue: 0,
     },
     unitOfPrice: {
         type: sequelize_1.DataTypes.ENUM('cents', 'usd'),

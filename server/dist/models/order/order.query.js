@@ -45,7 +45,6 @@ function addOrderToRestaurantWithIngredientBatches(order, ingredientBatches) {
                 ingredientBatch.restaurantId = newOrder.restaurantId;
                 ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
                 ingredientBatch.costPerUnit = ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
-                ingredientBatch.receivedAt = new Date();
                 const newIngredientBatch = yield ingredientBatch_model_1.default.create(ingredientBatch);
                 (0, ingredient_query_1.updateIngredientInfoOfRestaurantWithNewIngredientBatch)(newIngredientBatch);
             }));

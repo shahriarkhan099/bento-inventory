@@ -7,7 +7,6 @@ router.get('/restaurant/:restaurantId', ingredientBatch_controller_1.getAllIngre
 router.post('/restaurant/:restaurantId', ingredientBatch_controller_1.postIngredientToRestaurant);
 router.put('/restaurant/:ingredientId', ingredientBatch_controller_1.updateIngredient);
 router.delete('/restaurant/:ingredientId', ingredientBatch_controller_1.deleteIngredient);
-router.get('/restaurant/:restaurantId/ingredients/search', ingredientBatch_controller_1.searchIngredient);
 router.get('/restaurant/:restaurantId/ingredients/categories', ingredientBatch_controller_1.getIngredientWithCategory);
 router.get('/restaurant/:restaurantId/ingredients/categories/:categoryName', ingredientBatch_controller_1.getIngredientsByCategoryName);
 exports.default = router;

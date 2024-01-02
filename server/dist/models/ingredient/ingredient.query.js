@@ -99,12 +99,8 @@ exports.updateIngredientOfRestaurant = updateIngredientOfRestaurant;
 function updateIngredientInfoOfRestaurantWithNewIngredientBatch(ingredientBatch) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            // const ingredient = await Ingredient.findOne({
-            //   where: {
-            //     id: ingredientBatch.ingredientId
-            //   }
-            // });
             const ingredient = yield findOneIngredientOfRestaurant(ingredientBatch.ingredientId);
+            let updatedIngredient;
             if (ingredient) {
                 const totalStockQuantity = yield ingredientBatch_model_1.default.sum('currentStockQuantity', {
                     where: {
@@ -125,21 +121,19 @@ function updateIngredientInfoOfRestaurantWithNewIngredientBatch(ingredientBatch)
                         }
                     }
                 });
-                ingredient.currentStockQuantity = totalStockQuantity;
-                ingredient.costPerUnit = averageCostPerUnit ? averageCostPerUnit.dataValues.costPerUnit : 0;
-                console.log(ingredient.currentStockQuantity);
-                console.log(ingredient.costPerUnit);
-                yield ingredient_model_1.default.update(ingredient, {
+                updatedIngredient = yield ingredient_model_1.default.update({
+                    currentStockQuantity: totalStockQuantity,
+                    costPerUnit: averageCostPerUnit ? averageCostPerUnit.dataValues.costPerUnit : 0
+                }, {
                     where: {
-                        id: ingredient.id
+                        id: ingredientBatch.ingredientId
                     }
                 });
-                yield updateIngredientOfRestaurant(ingredient.id, ingredient);
             }
             else {
                 throw new Error('Ingredient not found.');
             }
-            return ingredient;
+            return updatedIngredient;
         }
         catch (error) {
             console.log(error);

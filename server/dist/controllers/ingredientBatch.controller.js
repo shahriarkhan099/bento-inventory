@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getIngredientsByCategoryName = exports.getIngredientWithCategory = exports.deleteIngredient = exports.updateIngredient = exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = void 0;
+exports.getIngredientsByCategoryName = exports.getIngredientWithCategory = exports.deleteIngredient = exports.updateIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = void 0;
 const ingredientBatch_query_1 = require("../models/ingredientBatch/ingredientBatch.query");
 function getAllIngredientOfRestaurant(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -55,26 +55,6 @@ function postIngredientToRestaurant(req, res) {
     });
 }
 exports.postIngredientToRestaurant = postIngredientToRestaurant;
-function searchIngredient(req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const restaurantId = Number(req.params.restaurantId);
-            const search = req.query.q;
-            const searchTerm = search === null || search === void 0 ? void 0 : search.toString();
-            if (searchTerm) {
-                const ingredient = yield (0, ingredientBatch_query_1.findIngredientBySearchTerm)(restaurantId, searchTerm);
-                res.json({ ingredients: ingredient });
-            }
-            else
-                res.json({ ingredients: [] });
-        }
-        catch (error) {
-            console.log(error);
-            res.status(500).json(error);
-        }
-    });
-}
-exports.searchIngredient = searchIngredient;
 function updateIngredient(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
