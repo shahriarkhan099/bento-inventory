@@ -28,7 +28,7 @@ export async function addOrderToRestaurantWithIngredientBatches (order: IOrder, 
       ingredientBatch.restaurantId = newOrder.restaurantId;
       ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
       ingredientBatch.costPerUnit = ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
-      await IngredientBatch.create(ingredientBatch);
+      const newIngredientBatch = await IngredientBatch.create(ingredientBatch);
     });
     return newOrder;
   } catch (error) {

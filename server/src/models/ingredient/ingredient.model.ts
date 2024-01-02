@@ -35,10 +35,6 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
         type: DataTypes.ENUM('cents', 'usd'),
         allowNull: false,
       },
-      purchasePrice: {
-        type: DataTypes.FLOAT, 
-        allowNull: false,
-      },
       costPerUnit: {
         type: DataTypes.FLOAT,
       },

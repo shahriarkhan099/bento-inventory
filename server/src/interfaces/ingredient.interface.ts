@@ -4,7 +4,6 @@ export interface IIngredient {
     unitOfStock: string;
     currentStockQuantity: number;
     unitOfPrice: string;
-    purchasePrice: number;
     costPerUnit: number;
     caloriesPerUnit: number;
     reorderPoint: number;
