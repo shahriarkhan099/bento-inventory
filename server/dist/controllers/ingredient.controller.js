@@ -9,8 +9,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.getIngredientsByCategoryName = exports.getIngredientWithCategory = exports.deleteIngredient = exports.updateIngredient = exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = void 0;
+exports.getAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.getIngredientsByCategoryName = exports.getIngredientWithCategory = exports.deleteIngredient = exports.updateIngredient = exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = exports.deductIngredientsController = void 0;
 const ingredient_query_1 = require("../models/ingredient/ingredient.query");
+function deductIngredientsController(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { orderType, restaurantId, ingredientsToReduce } = req.body;
+            if (!restaurantId || !ingredientsToReduce) {
+                res.status(400).json({ error: "Missing required parameters" });
+                return;
+            }
+            const order = {
+                orderType: orderType,
+                restaurantId: restaurantId,
+                ingredientsToReduce: ingredientsToReduce,
+            };
+            const deductedIngredients = yield (0, ingredient_query_1.deductIngredientsFromOrder)(order);
+            res.status(200).json({ deductedIngredients });
+        }
+        catch (error) {
+            console.error(error);
+            res.status(500).json({ error: "Internal Server Error" });
+        }
+    });
+}
+exports.deductIngredientsController = deductIngredientsController;
 function getAllIngredientOfRestaurant(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -79,7 +102,8 @@ function updateIngredient(req, res) {
             const ingredientId = Number(req.params.ingredientId);
             if (ingredientId) {
                 let ingredient = req.body;
-                if (typeof ingredient.ingredientName === 'string' && typeof ingredient.purchasePrice === 'number') {
+                if (typeof ingredient.ingredientName === "string" &&
+                    typeof ingredient.purchasePrice === "number") {
                     const updatedIngredient = yield (0, ingredient_query_1.updateIngredientOfRestaurant)(ingredientId, ingredient);
                     res.status(200).json("Updated");
                 }

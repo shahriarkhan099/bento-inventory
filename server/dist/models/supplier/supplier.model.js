@@ -33,8 +33,9 @@ const Supplier = __1.default.define('suppliers', {
         allowNull: false,
     },
     label: {
-        type: sequelize_1.DataTypes.ENUM('Good', 'Best', 'Bad', 'Worst'),
+        type: sequelize_1.DataTypes.ENUM('Good', 'Best', 'Bad', 'Worst', 'New'),
         allowNull: false,
+        defaultValue: 'New',
     },
     restaurantId: {
         type: sequelize_1.DataTypes.INTEGER,

@@ -5,8 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const __1 = __importDefault(require(".."));
-;
-const ConsumptionLog = __1.default.define('consumptionLogs', {
+const ConsumptionLog = __1.default.define("consumptionLogs", {
     id: {
         allowNull: false,
         autoIncrement: true,
@@ -19,22 +18,23 @@ const ConsumptionLog = __1.default.define('consumptionLogs', {
         allowNull: false,
     },
     unitOfStock: {
-        type: sequelize_1.DataTypes.ENUM('gm', 'ml', 'piece'),
+        type: sequelize_1.DataTypes.ENUM("gm", "ml", "piece"),
         allowNull: false,
     },
-    currentStockQuantity: {
+    quantity: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
     },
-    unitOfPrice: {
-        type: sequelize_1.DataTypes.ENUM('cents', 'usd'),
+    orderType: {
+        type: sequelize_1.DataTypes.ENUM("inhouse", "marketplace"),
         allowNull: false,
     },
     costPerUnit: {
         type: sequelize_1.DataTypes.FLOAT,
     },
-    expirationDate: {
+    consumedAt: {
         type: sequelize_1.DataTypes.DATE,
+        defaultValue: sequelize_1.DataTypes.NOW,
     },
     ingredientId: {
         type: sequelize_1.DataTypes.INTEGER,

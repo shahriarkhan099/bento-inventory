@@ -12,9 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findIngredientsByCategoryName = exports.findIngredientWithCategory = exports.deleteIngredientOfRestaurant = exports.updateIngredientOfRestaurant = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = void 0;
+exports.findIngredientsByCategoryName = exports.findIngredientWithCategory = exports.deleteIngredientOfRestaurant = exports.deductIngredientBatchesInFIFO = exports.updateIngredientOfRestaurant = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = void 0;
+const sequelize_1 = require("sequelize");
 const ingredientBatch_model_1 = __importDefault(require("./ingredientBatch.model"));
 const category_model_1 = __importDefault(require("../category/category.model"));
+const consumptionLog_query_1 = require("../consumptionLog/consumptionLog.query");
 function findAllIngredientOfRestaurant(restaurantId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -60,6 +62,54 @@ function updateIngredientOfRestaurant(ingredientId, ingredient) {
     });
 }
 exports.updateIngredientOfRestaurant = updateIngredientOfRestaurant;
+function deductIngredientBatchesInFIFO(ingredientId, quantity, orderType) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const ingredientBatches = yield ingredientBatch_model_1.default.findAll({
+                where: {
+                    ingredientId: ingredientId,
+                    currentStockQuantity: {
+                        [sequelize_1.Op.gt]: 0
+                    },
+                },
+                order: [
+                    ['createdAt', 'ASC']
+                ]
+            });
+            let remainingQuantity = quantity;
+            for (let i = 0; i < ingredientBatches.length; i++) {
+                if (remainingQuantity === 0) {
+                    break;
+                }
+                if (ingredientBatches[i].currentStockQuantity > remainingQuantity) {
+                    ingredientBatches[i].currentStockQuantity -= remainingQuantity;
+                    remainingQuantity = 0;
+                }
+                else {
+                    remainingQuantity -= ingredientBatches[i].currentStockQuantity;
+                    ingredientBatches[i].currentStockQuantity = 0;
+                }
+                yield ingredientBatches[i].save();
+                yield (0, consumptionLog_query_1.createConsumptionLogOfRestaurantFromDeduction)({
+                    restaurantId: ingredientBatches[i].restaurantId,
+                    ingredientId: ingredientId,
+                    quantity: quantity,
+                    orderType: orderType,
+                    ingredientName: ingredientBatches[i].ingredientName,
+                    unitOfStock: ingredientBatches[i].unitOfStock,
+                    costPerUnit: ingredientBatches[i].costPerUnit
+                });
+                console.log('consumption log created');
+            }
+            return ingredientBatches;
+        }
+        catch (error) {
+            console.log(error);
+            throw new Error('Error deducting ingredient batches.');
+        }
+    });
+}
+exports.deductIngredientBatchesInFIFO = deductIngredientBatchesInFIFO;
 function deleteIngredientOfRestaurant(ingredientId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

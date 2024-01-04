@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { findAllSuppliers, addSupplier, updateSupplier, findSupplierBySearchTerm, deleteSupplier, findSupplierByLabel } from "../models/supplier/supplier.query";
 
+
+
 export async function getAllSuppliers (req: Request, res: Response) {
   try {
     const supplier = await findAllSuppliers(parseInt(req.params.restaurantId));

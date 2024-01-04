@@ -23,23 +23,42 @@ export async function findAllOrderOfRestaurantWithBatch (restaurantId: number) {
     }
 }
 
+export async function addOrderToRestaurant (order: IOrder) {
+    try {
+      const newOrder = await Order.create(order);
+      return newOrder;
+    } catch (error) {
+      console.log(error)
+      throw new Error('Error creating order.');
+    }
+}
+
+
 export async function addOrderToRestaurantWithIngredientBatches (order: IOrder, ingredientBatches: IIngredientBatch[]) {
   try {
-    const newOrder = await Order.create(order);
+    order.totalPrice = 0;
+    ingredientBatches.forEach(async ingredientBatch => {
+      order.totalPrice += ingredientBatch.purchasePrice;
+    });
+
+    const newOrder = await addOrderToRestaurant(order);
+
     ingredientBatches.forEach(async ingredientBatch => {
       ingredientBatch.orderId = newOrder.id;
       ingredientBatch.restaurantId = newOrder.restaurantId;
       ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
       ingredientBatch.costPerUnit = ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
-      const newIngredientBatch = await IngredientBatch.create(ingredientBatch);
+      const newIngredientBatch = await addIngredientToRestaurant(ingredientBatch);
       updateIngredientInfoOfRestaurantWithNewIngredientBatch(newIngredientBatch);
     });
+
     return newOrder;
   } catch (error) {
     console.log(error)
-    throw new Error('Error creating order.');
+    throw new Error('Error creating order with IngredientBatches.');
   }
 }
+
 
 export async function updateOrderOfRestaurant (orderId: number, order: IOrder) {
   try {

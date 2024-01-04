@@ -55,12 +55,14 @@ function postConsumptionLogToRestaurant(req, res) {
             const restaurantId = Number(req.params.restaurantId);
             if (restaurantId) {
                 let consumptionLog = req.body;
-                if (typeof consumptionLog.ingredientName === 'string') {
+                if (typeof consumptionLog.ingredientName === "string") {
                     const newConsumptionLog = yield (0, consumptionLog_query_1.createConsumptionLogOfRestaurant)(consumptionLog, restaurantId);
                     res.status(201).json("Created");
                 }
                 else {
-                    res.status(400).json({ message: "Invalid consumption log information." });
+                    res
+                        .status(400)
+                        .json({ message: "Invalid consumption log information." });
                 }
             }
             else
@@ -79,12 +81,14 @@ function putConsumptionLog(req, res) {
             const consumptionLogId = Number(req.params.consumptionLogId);
             if (consumptionLogId) {
                 let consumptionLog = req.body;
-                if (typeof consumptionLog.ingredientName === 'string') {
+                if (typeof consumptionLog.ingredientName === "string") {
                     const updatedConsumptionLog = yield (0, consumptionLog_query_1.updateConsumptionLog)(consumptionLogId, consumptionLog);
                     res.json("Updated");
                 }
                 else {
-                    res.status(400).json({ message: "Invalid consumption log information." });
+                    res
+                        .status(400)
+                        .json({ message: "Invalid consumption log information." });
                 }
             }
             else

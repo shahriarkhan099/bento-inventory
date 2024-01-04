@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteConsumptionLog = exports.updateConsumptionLog = exports.createConsumptionLogOfRestaurant = exports.findConsumptionLogsByIngredientName = exports.findAllConsumptionLogsOfRestaurant = void 0;
+exports.deleteConsumptionLog = exports.updateConsumptionLog = exports.createConsumptionLogOfRestaurantFromDeduction = exports.createConsumptionLogOfRestaurant = exports.findConsumptionLogsByIngredientName = exports.findAllConsumptionLogsOfRestaurant = void 0;
 const sequelize_1 = require("sequelize");
 const consumptionLog_model_1 = __importDefault(require("./consumptionLog.model"));
 function findAllConsumptionLogsOfRestaurant(restaurantId) {
@@ -20,13 +20,13 @@ function findAllConsumptionLogsOfRestaurant(restaurantId) {
         try {
             const consumptionLogs = yield consumptionLog_model_1.default.findAll({
                 where: {
-                    restaurantId: restaurantId
-                }
+                    restaurantId: restaurantId,
+                },
             });
             return consumptionLogs;
         }
         catch (error) {
-            throw new Error('Error finding consumption logs.');
+            throw new Error("Error finding consumption logs.");
         }
     });
 }
@@ -38,14 +38,14 @@ function findConsumptionLogsByIngredientName(restaurantId, ingredientName) {
                 where: {
                     restaurantId: restaurantId,
                     ingredientName: {
-                        [sequelize_1.Op.like]: `%${ingredientName}%`
-                    }
-                }
+                        [sequelize_1.Op.like]: `%${ingredientName}%`,
+                    },
+                },
             });
             return consumptionLogs;
         }
         catch (error) {
-            throw new Error('Error finding consumption logs.');
+            throw new Error("Error finding consumption logs.");
         }
     });
 }
@@ -58,23 +58,37 @@ function createConsumptionLogOfRestaurant(consumptionLog, restaurantId) {
             return newConsumptionLog;
         }
         catch (error) {
-            throw new Error('Error creating consumption log.');
+            console.log(error);
+            throw new Error("Error creating consumption log.");
         }
     });
 }
 exports.createConsumptionLogOfRestaurant = createConsumptionLogOfRestaurant;
+function createConsumptionLogOfRestaurantFromDeduction(data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const newConsumptionLog = yield consumptionLog_model_1.default.create(Object.assign(Object.assign({}, data), { consumedAt: new Date() }));
+            return newConsumptionLog;
+        }
+        catch (error) {
+            console.log(error);
+            throw new Error("Error creating consumption log.");
+        }
+    });
+}
+exports.createConsumptionLogOfRestaurantFromDeduction = createConsumptionLogOfRestaurantFromDeduction;
 function updateConsumptionLog(consumptionLogId, consumptionLog) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const updatedConsumptionLog = yield consumptionLog_model_1.default.update(consumptionLog, {
                 where: {
-                    id: consumptionLogId
-                }
+                    id: consumptionLogId,
+                },
             });
             return updatedConsumptionLog;
         }
         catch (error) {
-            throw new Error('Error updating consumption log.');
+            throw new Error("Error updating consumption log.");
         }
     });
 }
@@ -84,13 +98,13 @@ function deleteConsumptionLog(consumptionLogId) {
         try {
             const deletedConsumptionLog = yield consumptionLog_model_1.default.destroy({
                 where: {
-                    id: consumptionLogId
-                }
+                    id: consumptionLogId,
+                },
             });
             return deletedConsumptionLog;
         }
         catch (error) {
-            throw new Error('Error deleting consumption log.');
+            throw new Error("Error deleting consumption log.");
         }
     });
 }

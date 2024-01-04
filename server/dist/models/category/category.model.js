@@ -6,8 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const __1 = __importDefault(require(".."));
 const ingredient_model_1 = __importDefault(require("../ingredient/ingredient.model"));
-;
-const Category = __1.default.define('categories', {
+const Category = __1.default.define("categories", {
     id: {
         allowNull: false,
         autoIncrement: true,
@@ -28,7 +27,7 @@ const Category = __1.default.define('categories', {
         allowNull: true,
     },
     storageType: {
-        type: sequelize_1.DataTypes.ENUM('refrigerated', 'nonrefrigerated'),
+        type: sequelize_1.DataTypes.ENUM("refrigerated", "nonrefrigerated"),
         allowNull: true,
     },
     restaurantId: {
@@ -37,10 +36,10 @@ const Category = __1.default.define('categories', {
     },
 });
 Category.hasMany(ingredient_model_1.default, {
-    sourceKey: 'id',
-    foreignKey: 'categoryId',
+    sourceKey: "id",
+    foreignKey: "categoryId",
 });
 ingredient_model_1.default.belongsTo(Category, {
-    foreignKey: 'categoryId',
+    foreignKey: "categoryId",
 });
 exports.default = Category;

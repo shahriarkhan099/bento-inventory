@@ -55,7 +55,7 @@ function postDeliveryBoxToRestaurant(req, res) {
             const restaurantId = Number(req.params.restaurantId);
             if (restaurantId) {
                 let deliveryBox = req.body;
-                if (typeof deliveryBox.boxName === 'string') {
+                if (typeof deliveryBox.boxName === "string") {
                     const newDeliveryBox = yield (0, deliveryBox_query_1.createDeliveryBoxOfRestaurant)(deliveryBox, restaurantId);
                     res.status(201).json("Created");
                 }
@@ -79,7 +79,7 @@ function putDeliveryBox(req, res) {
             const deliveryBoxId = Number(req.params.deliveryBoxId);
             if (deliveryBoxId) {
                 let deliveryBox = req.body;
-                if (typeof deliveryBox.boxName === 'string') {
+                if (typeof deliveryBox.boxName === "string") {
                     const updatedDeliveryBox = yield (0, deliveryBox_query_1.updateDeliveryBox)(deliveryBoxId, deliveryBox);
                     res.status(200).json("Updated");
                 }

@@ -20,10 +20,10 @@ const Order = sequelize.define<OrderInstance>('orders', {
       },
       totalPrice: {
         type: DataTypes.FLOAT,
-        allowNull: false,
+        defaultValue: 0,
       },
       status: {
-        type: DataTypes.ENUM('pending', 'received', 'cancelled'),
+        type: DataTypes.ENUM('pending', 'accepted', 'received', 'cancelled'),
         allowNull: false,
       },
       orderDate: {

@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const __1 = __importDefault(require(".."));
 const ingredientBatch_model_1 = __importDefault(require("../ingredientBatch/ingredientBatch.model"));
+const consumptionLog_model_1 = __importDefault(require("../consumptionLog/consumptionLog.model"));
 ;
 const Ingredient = __1.default.define('ingredients', {
     id: {
@@ -74,6 +75,13 @@ Ingredient.hasMany(ingredientBatch_model_1.default, {
     foreignKey: 'ingredientId',
 });
 ingredientBatch_model_1.default.belongsTo(Ingredient, {
+    foreignKey: 'ingredientId',
+});
+Ingredient.hasMany(consumptionLog_model_1.default, {
+    sourceKey: 'id',
+    foreignKey: 'ingredientId',
+});
+consumptionLog_model_1.default.belongsTo(Ingredient, {
     foreignKey: 'ingredientId',
 });
 exports.default = Ingredient;

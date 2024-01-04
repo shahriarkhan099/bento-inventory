@@ -36,7 +36,7 @@ function postCategoryToRestaurant(req, res) {
             if (restaurantId) {
                 let category = req.body;
                 category.restaurantId = restaurantId;
-                if (typeof category.categoryName === 'string') {
+                if (typeof category.categoryName === "string") {
                     const newCategpry = yield (0, category_query_1.addCategoryToRestaurant)(category);
                     res.status(201).json("Created");
                 }
@@ -80,7 +80,7 @@ function updateCategory(req, res) {
             const categoryId = Number(req.params.categoryId);
             if (categoryId) {
                 let category = req.body;
-                if (typeof category.categoryName === 'string') {
+                if (typeof category.categoryName === "string") {
                     const updatedCategory = yield (0, category_query_1.updateCategoryOfRestaurant)(categoryId, category);
                     res.status(200).json(updatedCategory);
                 }

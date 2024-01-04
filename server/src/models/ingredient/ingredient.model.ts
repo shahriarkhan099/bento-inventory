@@ -2,7 +2,7 @@ import { Model, DataTypes, Optional } from 'sequelize';
 import { IIngredient } from '../../interfaces/ingredient.interface';
 import sequelize from '..';
 import IngredientBatch from '../ingredientBatch/ingredientBatch.model';
-import Category from '../category/category.model';
+import ConsumptionLog from '../consumptionLog/consumptionLog.model';
 
 interface IngredientCreationAttributes extends Optional<IIngredient, 'id'> {};
 
@@ -81,6 +81,15 @@ Ingredient.hasMany(IngredientBatch, {
   
 IngredientBatch.belongsTo(Ingredient, {
     foreignKey: 'ingredientId',
+});
+
+Ingredient.hasMany(ConsumptionLog, {
+  sourceKey: 'id',
+  foreignKey: 'ingredientId',
+});
+
+ConsumptionLog.belongsTo(Ingredient, {
+  foreignKey: 'ingredientId',
 });
 
 export default Ingredient;

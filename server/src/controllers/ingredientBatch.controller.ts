@@ -3,6 +3,7 @@ import { findAllIngredientOfRestaurant, addIngredientToRestaurant,
   updateIngredientOfRestaurant, deleteIngredientOfRestaurant, findIngredientWithCategory, findIngredientsByCategoryName } from "../models/ingredientBatch/ingredientBatch.query";
 
 
+  
 export async function getAllIngredientOfRestaurant (req: Request, res: Response) {
   try {
     const restaurantId = Number(req.params.restaurantId);

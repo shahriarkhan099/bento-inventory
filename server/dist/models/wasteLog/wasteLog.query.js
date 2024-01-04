@@ -46,6 +46,44 @@ function addWasteLog(wasteLog, restaurantId) {
     });
 }
 exports.addWasteLog = addWasteLog;
+// export async function addToWasteLogByCheckingExpirationDateOfAllIngredientBatchesOfAllRestaurant () {
+//   try {
+//     const ingredientBatches = await IngredientBatch.findAll({
+//       where: {
+//         currentStockQuantity: {
+//           [Op.gt]: 0
+//         },
+//       },
+//       order: [
+//         ['createdAt', 'ASC']
+//       ]
+//     });
+//     for (let i = 0; i < ingredientBatches.length; i++) {
+//       const ingredientBatch = ingredientBatches[i];
+//       const wasteLog = await WasteLog.findOne({
+//         where: {
+//           id: ingredientBatch.id
+//         }
+//       });
+//       if (wasteLog) {
+//         continue;
+//       }
+//       const today = new Date();
+//       const expirationDate = new Date(ingredientBatch.expirationDate);
+//       if (today > expirationDate) {
+//         const wasteLog = {
+//           ingredientBatchId: ingredientBatch.id,
+//           ingredientName: ingredientBatch.ingredientName,
+//           quantity: ingredientBatch.currentStockQuantity,
+//           wasteDate: today
+//         }
+//         await addWasteLog(wasteLog, ingredientBatch.restaurantId);
+//       }
+//     }
+//   } catch (error) {
+//     throw new Error('Error creating waste log.');
+//   }
+// } 
 function updateWasteLog(wasteLogId, wasteLog) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

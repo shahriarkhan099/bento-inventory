@@ -17,10 +17,10 @@ const Order = __1.default.define('orders', {
     },
     totalPrice: {
         type: sequelize_1.DataTypes.FLOAT,
-        allowNull: false,
+        defaultValue: 0,
     },
     status: {
-        type: sequelize_1.DataTypes.ENUM('pending', 'received', 'cancelled'),
+        type: sequelize_1.DataTypes.ENUM('pending', 'accepted', 'received', 'cancelled'),
         allowNull: false,
     },
     orderDate: {
