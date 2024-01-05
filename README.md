@@ -1,1 +1,1 @@
-# Restaurant-Inventory-System
+# bento-inventory
