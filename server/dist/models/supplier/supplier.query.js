@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findSupplierByLabel = exports.deleteSupplier = exports.findSupplierBySearchTerm = exports.updateSupplier = exports.addSupplier = exports.findAllSuppliers = void 0;
+exports.findSupplierByLabel = exports.deleteSupplier = exports.findSupplierBySearchTerm = exports.updateSupplier = exports.addSupplier = exports.addSupplier2 = exports.findAllSuppliers = void 0;
 const sequelize_1 = require("sequelize");
 const supplier_model_1 = __importDefault(require("./supplier.model"));
 function findAllSuppliers(restaurantId) {
@@ -31,10 +31,22 @@ function findAllSuppliers(restaurantId) {
     });
 }
 exports.findAllSuppliers = findAllSuppliers;
-function addSupplier(supplier, restaurantId) {
+function addSupplier2(supplier, restaurantId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const createdSupplier = yield supplier_model_1.default.create(Object.assign(Object.assign({}, supplier), { restaurantId: restaurantId }));
+            return createdSupplier;
+        }
+        catch (error) {
+            throw new Error('Error creating supplier.');
+        }
+    });
+}
+exports.addSupplier2 = addSupplier2;
+function addSupplier(restaurantId, data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const createdSupplier = yield supplier_model_1.default.create(Object.assign(Object.assign({}, data), { restaurantId }));
             return createdSupplier;
         }
         catch (error) {

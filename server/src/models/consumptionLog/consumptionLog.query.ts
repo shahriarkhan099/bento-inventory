@@ -1,13 +1,14 @@
 import { Op } from "sequelize";
 import ConsumptionLog from "./consumptionLog.model";
 import { IConsumptionLog } from "../../interfaces/consumptionLog.interface";
+import Ingredient from "../ingredient/ingredient.model";
 
 export async function findAllConsumptionLogsOfRestaurant(restaurantId: number) {
   try {
     const consumptionLogs = await ConsumptionLog.findAll({
       where: {
         restaurantId: restaurantId,
-      },
+      }
     });
 
     return consumptionLogs;
@@ -44,7 +45,7 @@ export async function createConsumptionLogOfRestaurant(consumptionLog: IConsumpt
   }
 }
 
-export async function createConsumptionLogOfRestaurantFromDeduction( 
+export async function createConsumptionLogOfRestaurantFromDeduction ( 
   data: { ingredientName: string, unitOfStock: string, quantity: number,  orderType: string, 
     costPerUnit: number, ingredientId: number, restaurantId: number }) {
   try {

@@ -6,7 +6,7 @@ import { findAllSuppliers, addSupplier, updateSupplier, findSupplierBySearchTerm
 export async function getAllSuppliers (req: Request, res: Response) {
   try {
     const supplier = await findAllSuppliers(parseInt(req.params.restaurantId));
-    res.status(200).json(supplier);
+    res.status(200).json({ suppliers: supplier });
   } catch (error) {
     res.status(500).json(error);
   }
@@ -18,8 +18,8 @@ export async function createSupplier (req: Request, res: Response) {
     const supplier = req.body;
     supplier.restaurantId = restaurantId;
     if (typeof restaurantId === 'number') {
-      const newSupplier = await addSupplier(supplier, restaurantId);
-      res.status(201).json(newSupplier);
+      const newSupplier = await addSupplier(restaurantId, supplier);
+      res.status(201).json({ supplier: newSupplier });
     } else res.status(400).json({ message: "Invalid supplier information." });
   } catch (error) {
     console.log(error);

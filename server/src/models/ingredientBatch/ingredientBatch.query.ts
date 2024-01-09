@@ -79,10 +79,9 @@ export async function deductIngredientBatchesInFIFO (ingredientId: number, quant
         unitOfStock: ingredientBatches[i].unitOfStock, 
         costPerUnit: ingredientBatches[i].costPerUnit 
       });
-      console.log('consumption log created');
-      
-    }
 
+      console.log('consumption log created');
+    }
     return ingredientBatches;
 
   } catch (error) {

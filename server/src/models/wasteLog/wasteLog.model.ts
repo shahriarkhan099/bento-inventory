@@ -29,7 +29,7 @@ const WasteLog = sequelize.define<WasteLogInstance>('wasteLogs', {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        unitOfCost: {
+        unitOfPrice: {
             type: DataTypes.ENUM('cents', 'usd'),
             allowNull: false,
         },
@@ -50,7 +50,9 @@ const WasteLog = sequelize.define<WasteLogInstance>('wasteLogs', {
         restaurantId: {
             type: DataTypes.INTEGER,
             allowNull: false,
-        },
+        }
 });
+
+
 
 export default WasteLog;

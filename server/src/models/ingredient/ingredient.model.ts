@@ -3,6 +3,7 @@ import { IIngredient } from '../../interfaces/ingredient.interface';
 import sequelize from '..';
 import IngredientBatch from '../ingredientBatch/ingredientBatch.model';
 import ConsumptionLog from '../consumptionLog/consumptionLog.model';
+import WasteLog from '../wasteLog/wasteLog.model';
 
 interface IngredientCreationAttributes extends Optional<IIngredient, 'id'> {};
 
@@ -35,6 +36,7 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
       unitOfPrice: {
         type: DataTypes.ENUM('cents', 'usd'),
         allowNull: false,
+        defaultValue: 'cents',
       },
       costPerUnit: {
         type: DataTypes.FLOAT,
@@ -46,7 +48,8 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
         type: DataTypes.INTEGER,
       },
       perishable: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.ENUM('Yes', 'No'),
+        allowNull: false,
       },
       description: {
         type: DataTypes.TEXT,
@@ -89,6 +92,15 @@ Ingredient.hasMany(ConsumptionLog, {
 });
 
 ConsumptionLog.belongsTo(Ingredient, {
+  foreignKey: 'ingredientId',
+});
+
+Ingredient.hasMany(WasteLog, {
+  sourceKey: 'id',
+  foreignKey: 'ingredientId',
+});
+
+WasteLog.belongsTo(Ingredient, {
   foreignKey: 'ingredientId',
 });
 

@@ -8,10 +8,23 @@ import {
   findIngredientWithCategory,
   findIngredientsByCategoryName,
   findAllIngredientOfRestaurantWithCategoryAndIngredientBatch,
-  deductIngredientsFromOrder
+  deductIngredientsFromOrder,
+  findIngredientbyId
 } from "../models/ingredient/ingredient.query";
 import { IngredientToReduce, DeductedIngredient } from "../interfaces/deductIngredient.interface";
 
+export async function getIngredientbyId(req: Request, res: Response) {
+  try {
+    const ingredientId = Number(req.params.ingredientId);
+    if (ingredientId) {
+      const ingredient = await findIngredientbyId(ingredientId);
+      res.json({ ingredient: ingredient });
+    } else res.status(400).json({ message: "Invalid ingredient ID." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
 
 export async function deductIngredientsController(req: Request, res: Response) {
   try {
@@ -95,10 +108,7 @@ export async function updateIngredient(req: Request, res: Response) {
     const ingredientId = Number(req.params.ingredientId);
     if (ingredientId) {
       let ingredient = req.body;
-      if (
-        typeof ingredient.ingredientName === "string" &&
-        typeof ingredient.purchasePrice === "number"
-      ) {
+      if (typeof ingredientId === "number") {
         const updatedIngredient = await updateIngredientOfRestaurant(
           ingredientId,
           ingredient

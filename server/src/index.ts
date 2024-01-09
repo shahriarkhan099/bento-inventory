@@ -13,7 +13,7 @@ import wasteLogRouter from './routers/wasteLog.router';
 import consumptionRouter from './routers/consumptionLog.router';
 import deliveryBox from './routers/deliveryBox.router';
 import cron from 'node-cron';
-import checkExpiryAndMove from './utils/expiryCheck.util';
+import checkExpiryDateAndRemove from './utils/expiryCheck.util';
 
 const app : Express = express();
 
@@ -34,7 +34,7 @@ app.use('/v1/wasteLog', wasteLogRouter);
 app.use('/v1/consumptionLog', consumptionRouter);
 app.use('/v1/deliveryBox', deliveryBox);
 
-cron.schedule('59 23 * * *', checkExpiryAndMove);
+cron.schedule('0 0 * * *', checkExpiryDateAndRemove);
 
 async function bootstrap() {
   try {

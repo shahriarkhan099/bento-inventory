@@ -3,7 +3,7 @@ export interface IWasteLog {
   ingredientName: string;
   unitOfStock: string;
   totalQuantity: number;
-  unitOfCost: string;
+  unitOfPrice: string;
   totalCost: number;
   costPerUnit: number;
   expirationDate: Date;

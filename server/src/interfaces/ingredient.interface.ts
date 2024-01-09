@@ -9,7 +9,7 @@ export interface IIngredient {
   reorderPoint: number;
   expectedStockForToday: number;
   expectedStockForTomorrow: number;
-  perishable: boolean;
+  perishable: string;
   description: string;
   unitOfIdealStoringTemperature: string;
   idealStoringTemperature: number;

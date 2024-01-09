@@ -4,8 +4,9 @@ import { findAllWasteLogWithIngredient, addWasteLog, updateWasteLog, findWasteLo
 export async function getAllWasteLogWithIngredient (req: Request, res: Response) {
     try {
       const wasteLog = await findAllWasteLogWithIngredient(parseInt(req.params.restaurantId));
-      res.status(200).json(wasteLog);
+      res.status(200).json({ wasteLog: wasteLog });
     } catch (error) {
+      console.log(error);
       res.status(500).json(error);
     }
 }
@@ -14,9 +15,9 @@ export async function createWasteLog (req: Request, res: Response) {
     try {
       const restaurantId = Number(req.params.restaurantId);
       const wasteLog = req.body;
-      if (typeof wasteLog.ingredientId === 'number' && typeof wasteLog.quantity === 'number' && typeof wasteLog.wasteDate === 'string' && typeof wasteLog.restaurantId === 'number') {
+      if (typeof wasteLog.ingredientId === 'number') {
         const newWasteLog = await addWasteLog(wasteLog, restaurantId);
-        res.status(201).json(newWasteLog);
+        res.status(201).json({ wasteLog: wasteLog });
       } else res.status(400).json({ message: "Invalid waste log information." });
     } catch (error) {
       console.log(error);

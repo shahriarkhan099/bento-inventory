@@ -11,6 +11,20 @@ import {
   DeductedIngredient,
 } from "../../interfaces/deductIngredient.interface";
 
+export async function findIngredientbyId(ingredientId: number) {
+  try {
+    const ingredient = await Ingredient.findOne({
+      where: {
+        id: ingredientId,
+      },
+      include: [Category],
+    });
+    return ingredient;
+  } catch (error) {
+    throw new Error("Error finding global ingredient.");
+  }
+}
+
 export async function deductIngredientsFromOrder(order: {
   orderType: string;
   ingredientsToReduce: IngredientToReduce[];
@@ -280,9 +294,7 @@ export async function findIngredientsByCategoryName(
   }
 }
 
-export async function findAllIngredientOfRestaurantWithCategoryAndIngredientBatch(
-  restaurantId: number
-) {
+export async function findAllIngredientOfRestaurantWithCategoryAndIngredientBatch( restaurantId: number ) {
   try {
     const ingredient = await Ingredient.findAll({
       where: {

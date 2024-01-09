@@ -33,6 +33,7 @@ const Category = sequelize.define<CategoryInstance>("categories", {
   storageType: {
     type: DataTypes.ENUM("refrigerated", "nonrefrigerated"),
     allowNull: true,
+    defaultValue: "refrigerated",
   },
   restaurantId: {
     type: DataTypes.INTEGER,

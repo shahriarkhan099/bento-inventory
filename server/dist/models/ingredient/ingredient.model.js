@@ -32,6 +32,7 @@ const Ingredient = __1.default.define('ingredients', {
     unitOfPrice: {
         type: sequelize_1.DataTypes.ENUM('cents', 'usd'),
         allowNull: false,
+        defaultValue: 'cents',
     },
     costPerUnit: {
         type: sequelize_1.DataTypes.FLOAT,
@@ -43,7 +44,8 @@ const Ingredient = __1.default.define('ingredients', {
         type: sequelize_1.DataTypes.INTEGER,
     },
     perishable: {
-        type: sequelize_1.DataTypes.BOOLEAN,
+        type: sequelize_1.DataTypes.ENUM('Yes', 'No'),
+        allowNull: false,
     },
     description: {
         type: sequelize_1.DataTypes.TEXT,

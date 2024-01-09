@@ -2,6 +2,7 @@ import { Op } from "sequelize";
 import WasteLog from "./wasteLog.model";
 import IngredientBatch from "../ingredientBatch/ingredientBatch.model";
 import { IWasteLog } from "../../interfaces/wasteLog.interface";
+import Ingredient from "../ingredient/ingredient.model";
 
 
 
@@ -11,11 +12,12 @@ export async function findAllWasteLogWithIngredient (restaurantId: number) {
         where: {
           restaurantId: restaurantId
         },
-        include: [IngredientBatch]
+        include: [Ingredient]
       });
 
       return wasteLog;
     } catch (error) {
+      console.log(error);
       throw new Error('Error finding waste logs.');
     }
 }
@@ -27,49 +29,56 @@ export async function addWasteLog (wasteLog: IWasteLog, restaurantId: number) {
       const createdWasteLog = await WasteLog.create(wasteLog);
       return createdWasteLog;
     } catch (error) {
+      console.log(error);
       throw new Error('Error creating waste log.');
     }
 }
 
-// export async function addToWasteLogByCheckingExpirationDateOfAllIngredientBatchesOfAllRestaurant () {
-//   try {
-//     const ingredientBatches = await IngredientBatch.findAll({
-//       where: {
-//         currentStockQuantity: {
-//           [Op.gt]: 0
-//         },
-//       },
-//       order: [
-//         ['createdAt', 'ASC']
-//       ]
-//     });
+export async function addToWasteLogByCheckingExpirationDateOfAllIngredientBatchesOfAllRestaurant () {
+  try {
+    const ingredientBatches = await IngredientBatch.findAll({
+      where: {
+        currentStockQuantity: {
+          [Op.gt]: 0
+        },
+      },
+      order: [
+        ['createdAt', 'ASC']
+      ]
+    });
 
-//     for (let i = 0; i < ingredientBatches.length; i++) {
-//       const ingredientBatch = ingredientBatches[i];
-//       const wasteLog = await WasteLog.findOne({
-//         where: {
-//           id: ingredientBatch.id
-//         }
-//       });
-//       if (wasteLog) {
-//         continue;
-//       }
-//       const today = new Date();
-//       const expirationDate = new Date(ingredientBatch.expirationDate);
-//       if (today > expirationDate) {
-//         const wasteLog = {
-//           ingredientBatchId: ingredientBatch.id,
-//           ingredientName: ingredientBatch.ingredientName,
-//           quantity: ingredientBatch.currentStockQuantity,
-//           wasteDate: today
-//         }
-//         await addWasteLog(wasteLog, ingredientBatch.restaurantId);
-//       }
-//     }
-//   } catch (error) {
-//     throw new Error('Error creating waste log.');
-//   }
-// } 
+    for (let i = 0; i < ingredientBatches.length; i++) {
+      const ingredientBatch = ingredientBatches[i];
+      const wasteLog = await WasteLog.findOne({
+        where: {
+          id: ingredientBatch.id
+        }
+      });
+      if (wasteLog) {
+        continue;
+      }
+      const today = new Date();
+      const expirationDate = new Date(ingredientBatch.expirationDate);
+      if (today > expirationDate) {
+        const wasteLog = {
+          id: ingredientBatch.id,
+          ingredientName: ingredientBatch.ingredientName,
+          unitOfStock: ingredientBatch.unitOfStock,
+          totalQuantity: ingredientBatch.currentStockQuantity,
+          unitOfPrice: ingredientBatch.unitOfPrice,
+          totalCost: ingredientBatch.currentStockQuantity * ingredientBatch.costPerUnit,
+          costPerUnit: ingredientBatch.costPerUnit,
+          expirationDate: ingredientBatch.expirationDate,
+          ingredientId: ingredientBatch.ingredientId,
+          restaurantId: ingredientBatch.restaurantId,
+        }
+        await addWasteLog(wasteLog, ingredientBatch.restaurantId);
+      }
+    }
+  } catch (error) {
+    throw new Error('Error creating waste log.');
+  }
+} 
 
 export async function updateWasteLog (wasteLogId: number, wasteLog: IWasteLog) {
     try {

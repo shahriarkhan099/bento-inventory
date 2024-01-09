@@ -16,13 +16,22 @@ export async function findAllSuppliers (restaurantId: number) {
     }
 }
 
-export async function addSupplier (supplier: ISupplier, restaurantId: number) {
+export async function addSupplier2 (supplier: ISupplier, restaurantId: number) {
     try {
       const createdSupplier = await Supplier.create({...supplier, restaurantId: restaurantId});
       return createdSupplier;
     } catch (error) {
       throw new Error('Error creating supplier.');
     }
+}
+
+export async function addSupplier (restaurantId: number, data: { name: string, address: string, contactNumber: string, email: string, label: string }) {
+  try {
+    const createdSupplier = await Supplier.create({ ...data, restaurantId });
+    return createdSupplier;
+  } catch (error) {
+    throw new Error('Error creating supplier.');
+  }
 }
 
 export async function updateSupplier (supplierId: number, supplier: ISupplier) {

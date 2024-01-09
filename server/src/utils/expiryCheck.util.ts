@@ -1,9 +1,10 @@
+import { addToWasteLogByCheckingExpirationDateOfAllIngredientBatchesOfAllRestaurant } from "../models/wasteLog/wasteLog.query";
 
-// Function to check and move expired ingredients
-const checkExpiryAndMove = () => {
-    // Todo Logic to check expiry date and move to wasteLog
-
+// Function to check and move expired ingredients to WasteLog
+const checkExpiryDateAndRemove = () => {
     console.log('Expiry check completed');
+    addToWasteLogByCheckingExpirationDateOfAllIngredientBatchesOfAllRestaurant();
+    console.log('Expiry check completed 2');
 };
 
-export default checkExpiryAndMove;
+export default checkExpiryDateAndRemove;

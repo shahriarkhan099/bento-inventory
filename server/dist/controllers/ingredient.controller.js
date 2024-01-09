@@ -9,8 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.getIngredientsByCategoryName = exports.getIngredientWithCategory = exports.deleteIngredient = exports.updateIngredient = exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = exports.deductIngredientsController = void 0;
+exports.getAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.getIngredientsByCategoryName = exports.getIngredientWithCategory = exports.deleteIngredient = exports.updateIngredient = exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = exports.deductIngredientsController = exports.getIngredientbyId = void 0;
 const ingredient_query_1 = require("../models/ingredient/ingredient.query");
+function getIngredientbyId(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const ingredientId = Number(req.params.ingredientId);
+            if (ingredientId) {
+                const ingredient = yield (0, ingredient_query_1.findIngredientbyId)(ingredientId);
+                res.json({ ingredient: ingredient });
+            }
+            else
+                res.status(400).json({ message: "Invalid ingredient ID." });
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.getIngredientbyId = getIngredientbyId;
 function deductIngredientsController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -102,8 +120,7 @@ function updateIngredient(req, res) {
             const ingredientId = Number(req.params.ingredientId);
             if (ingredientId) {
                 let ingredient = req.body;
-                if (typeof ingredient.ingredientName === "string" &&
-                    typeof ingredient.purchasePrice === "number") {
+                if (typeof ingredientId === "number") {
                     const updatedIngredient = yield (0, ingredient_query_1.updateIngredientOfRestaurant)(ingredientId, ingredient);
                     res.status(200).json("Updated");
                 }

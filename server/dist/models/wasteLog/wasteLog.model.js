@@ -26,7 +26,7 @@ const WasteLog = __1.default.define('wasteLogs', {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
     },
-    unitOfCost: {
+    unitOfPrice: {
         type: sequelize_1.DataTypes.ENUM('cents', 'usd'),
         allowNull: false,
     },

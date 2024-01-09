@@ -21,7 +21,7 @@ function findAllConsumptionLogsOfRestaurant(restaurantId) {
             const consumptionLogs = yield consumptionLog_model_1.default.findAll({
                 where: {
                     restaurantId: restaurantId,
-                },
+                }
             });
             return consumptionLogs;
         }

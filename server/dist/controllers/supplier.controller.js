@@ -30,8 +30,8 @@ function createSupplier(req, res) {
             const supplier = req.body;
             supplier.restaurantId = restaurantId;
             if (typeof restaurantId === 'number') {
-                const newSupplier = yield (0, supplier_query_1.addSupplier)(supplier, restaurantId);
-                res.status(201).json(newSupplier);
+                const newSupplier = yield (0, supplier_query_1.addSupplier)(restaurantId, supplier);
+                res.status(201).json({ supplier: newSupplier });
             }
             else
                 res.status(400).json({ message: "Invalid supplier information." });
