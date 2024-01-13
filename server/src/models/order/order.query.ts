@@ -9,93 +9,156 @@ import { addIngredientToRestaurant } from "../ingredientBatch/ingredientBatch.qu
 import DeliveryBoxBatch from "../deliveryBoxBatch/deliveryBoxBatch.model";
 import { IDeliveryBoxBatch } from "../../interfaces/deliveryBoxBatch.interface";
 import { addDeliveryBoxToRestaurant } from "../deliveryBoxBatch/deliveryBoxBatch.query";
-import axios from 'axios';
+import axios from "axios";
 
-export async function findAllOrderOfRestaurantWithBatch (restaurantId: number) {
-    try {
-      const order = await Order.findAll({
-        where: {
-          restaurantId: restaurantId
-        },
-        include: [
-          {
+export async function findAllOrderOfRestaurantWithBatch(restaurantId: number) {
+  try {
+    const order = await Order.findAll({
+      where: {
+        restaurantId: restaurantId,
+      },
+      include: [
+        {
           model: IngredientBatch,
-          },        
+        },
         {
           model: DeliveryBoxBatch,
         },
       ],
-      });
-      return order;
-    } catch (error) {
-      console.log(error);
-      throw new Error('Error finding order.');
-    }
+    });
+    return order;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error finding order.");
+  }
 }
 
-export async function findAllOrderOfRestaurantWithPendingBatch (restaurantId: number) {
+export async function findAllOrderOfRestaurantWithPendingBatch(
+  restaurantId: number
+) {
   try {
     const order = await Order.findAll({
       where: {
         restaurantId: restaurantId,
         status: {
-          [Op.or]: ['pending', 'preparing', 'out_for_delivery', 'cancelled']
-        }
+          [Op.or]: ["pending", "preparing", "out_for_delivery", "cancelled"],
+        },
       },
       include: [
         {
-        model: IngredientBatch,
-        },        
-      {
-        model: DeliveryBoxBatch,
-      },
-    ],
+          model: IngredientBatch,
+        },
+        {
+          model: DeliveryBoxBatch,
+        },
+      ],
     });
     return order;
   } catch (error) {
     console.log(error);
-    throw new Error('Error finding order.');
+    throw new Error("Error finding order.");
   }
 }
 
-export async function addOrderToRestaurant (order: IOrder) {
-    try {
-      const newOrder = await Order.create(order);
-      return newOrder;
-    } catch (error) {
-      console.log(error)
-      throw new Error('Error creating order.');
-    }
+export async function addOrderToRestaurant(order: IOrder) {
+  try {
+    const newOrder = await Order.create(order);
+    return newOrder;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error creating order.");
+  }
 }
 
-export async function updateOrderOfRestaurant (orderId: number, order: IOrder) {
+export async function updateOrderOfRestaurant(orderId: number, order: IOrder) {
   try {
     const updatedOrder = await Order.update(order, {
       where: {
-        id: orderId
-      }
+        id: orderId,
+      },
     });
     return updatedOrder;
   } catch (error) {
-    throw new Error('Error updating order.');
+    throw new Error("Error updating order.");
   }
 }
 
-export async function deleteOrderOfRestaurant (orderId: number) {
+export async function deleteOrderOfRestaurant(orderId: number) {
   try {
     const deletedOrder = await Order.destroy({
       where: {
-        id: orderId
-      }
+        id: orderId,
+      },
     });
     return deletedOrder;
   } catch (error) {
-    throw new Error('Error deleting order.');
+    throw new Error("Error deleting order.");
   }
 }
 
-export async function addOrderToRestaurantWithIngredientBatches (order: IOrder, ingredientBatches: IIngredientBatch[], deliveryBoxBatches: IDeliveryBoxBatch[]) {
-  setTimeout(async () => {
+export async function addOrderToRestaurantWithIngredientBatches(
+  order: IOrder,
+  ingredientBatches: IIngredientBatch[],
+  deliveryBoxBatches: IDeliveryBoxBatch[]
+) {
+  try {
+    order.totalPrice = 0;
+
+    if (ingredientBatches) {
+      ingredientBatches.forEach(async (ingredientBatch) => {
+        order.totalPrice += ingredientBatch.purchasePrice;
+      });
+    }
+
+    if (deliveryBoxBatches) {
+      deliveryBoxBatches.forEach(async (deliveryBoxBatch) => {
+        order.totalPrice += deliveryBoxBatch.purchasePrice;
+      });
+    }
+
+    const newOrder = await addOrderToRestaurant(order);
+
+    if (ingredientBatches) {
+      ingredientBatches.forEach(async (ingredientBatch) => {
+        ingredientBatch.orderId = newOrder.id;
+        ingredientBatch.restaurantId = newOrder.restaurantId;
+        ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
+        ingredientBatch.costPerUnit =
+          ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
+        const newIngredientBatch = await addIngredientToRestaurant(
+          ingredientBatch
+        );
+        await updateIngredientInfoOfRestaurantWithNewIngredientBatch(
+          newIngredientBatch
+        );
+      });
+    }
+
+    if (deliveryBoxBatches) {
+      deliveryBoxBatches.forEach(async (deliveryBoxBatch) => {
+        deliveryBoxBatch.orderId = newOrder.id;
+        deliveryBoxBatch.restaurantId = newOrder.restaurantId;
+        deliveryBoxBatch.currentStockQuantity =
+          deliveryBoxBatch.purchaseQuantity;
+        deliveryBoxBatch.costPerUnit =
+          deliveryBoxBatch.purchasePrice / deliveryBoxBatch.purchaseQuantity;
+        const newDeliveryBoxBatch = await addDeliveryBoxToRestaurant(
+          deliveryBoxBatch
+        );
+        await updateDeliveryBoxInfoOfRestaurantWithNewDeliveryBoxBatch(
+          newDeliveryBoxBatch
+        );
+      });
+    }
+
+    return newOrder;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error creating order with Batches.");
+  }
+}
+
+export async function addOrderToRestaurantWithIngredientBatchesAfterSixHours(order: IOrder, ingredientBatches: IIngredientBatch[], deliveryBoxBatches: IDeliveryBoxBatch[]) {
     try {
       order.totalPrice = 0;
 
@@ -103,7 +166,7 @@ export async function addOrderToRestaurantWithIngredientBatches (order: IOrder, 
         ingredientBatches.forEach(async (ingredientBatch) => {
           order.totalPrice += ingredientBatch.purchasePrice;
         });
-      }  
+      }
 
       if (deliveryBoxBatches) {
         deliveryBoxBatches.forEach(async (deliveryBoxBatch) => {
@@ -113,37 +176,73 @@ export async function addOrderToRestaurantWithIngredientBatches (order: IOrder, 
 
       const newOrder = await addOrderToRestaurant(order);
 
-      if (ingredientBatches) {
-        ingredientBatches.forEach(async (ingredientBatch) => {
-          ingredientBatch.orderId = newOrder.id;
-          ingredientBatch.restaurantId = newOrder.restaurantId;
-          ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
-          ingredientBatch.costPerUnit = ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
-          const newIngredientBatch = await addIngredientToRestaurant(ingredientBatch);
-          await updateIngredientInfoOfRestaurantWithNewIngredientBatch(newIngredientBatch);
-        });
-      }
+      if (newOrder.status !== "Delivered") {
+        // "Preparing" after 15 minutes
+        setTimeout(async () => {
+          newOrder.status = "Preparing";
+          await updateOrderOfRestaurant(newOrder.id, newOrder);
+        }, 15 * 60 * 1000);
 
-      if (deliveryBoxBatches) {
-        deliveryBoxBatches.forEach(async (deliveryBoxBatch) => {
-          deliveryBoxBatch.orderId = newOrder.id;
-          deliveryBoxBatch.restaurantId = newOrder.restaurantId;
-          deliveryBoxBatch.currentStockQuantity = deliveryBoxBatch.purchaseQuantity;
-          deliveryBoxBatch.costPerUnit = deliveryBoxBatch.purchasePrice / deliveryBoxBatch.purchaseQuantity;
-          const newDeliveryBoxBatch = await addDeliveryBoxToRestaurant(deliveryBoxBatch);
-          await updateDeliveryBoxInfoOfRestaurantWithNewDeliveryBoxBatch(newDeliveryBoxBatch);
-        });
+        // "Out for Delivery" after 2 hours
+        setTimeout(async () => {
+          newOrder.status = "out_for_delivery";
+          await updateOrderOfRestaurant(newOrder.id, newOrder);
+        }, 2 * 60 * 60 * 1000);
+
+        // "Delivered" after 6 hours
+        setTimeout(async () => {
+          newOrder.status = "Delivered";
+          await updateOrderOfRestaurant(newOrder.id, newOrder);
+        }, 6 * 60 * 60 * 1000);
+
+        if (ingredientBatches) {
+          ingredientBatches.forEach(async (ingredientBatch) => {
+            ingredientBatch.orderId = newOrder.id;
+            ingredientBatch.restaurantId = newOrder.restaurantId;
+            ingredientBatch.currentStockQuantity =
+              ingredientBatch.purchaseQuantity;
+            ingredientBatch.costPerUnit =
+              ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
+            const newIngredientBatch = await addIngredientToRestaurant(
+              ingredientBatch
+            );
+            await updateIngredientInfoOfRestaurantWithNewIngredientBatch(
+              newIngredientBatch
+            );
+          });
+        }
+
+        if (deliveryBoxBatches) {
+          deliveryBoxBatches.forEach(async (deliveryBoxBatch) => {
+            deliveryBoxBatch.orderId = newOrder.id;
+            deliveryBoxBatch.restaurantId = newOrder.restaurantId;
+            deliveryBoxBatch.currentStockQuantity =
+              deliveryBoxBatch.purchaseQuantity;
+            deliveryBoxBatch.costPerUnit =
+              deliveryBoxBatch.purchasePrice /
+              deliveryBoxBatch.purchaseQuantity;
+            const newDeliveryBoxBatch = await addDeliveryBoxToRestaurant(
+              deliveryBoxBatch
+            );
+            await updateDeliveryBoxInfoOfRestaurantWithNewDeliveryBoxBatch(
+              newDeliveryBoxBatch
+            );
+          });
+        }
       }
 
       return newOrder;
     } catch (error) {
-      console.log(error)
-      throw new Error('Error creating order with Batches.');
+      console.log(error);
+      throw new Error("Error creating order with Batches.");
     }
-  }, 20000); // 20 seconds delay
 }
 
-export async function addOrderToRestaurantWithIngredientBatchesAfterSixHours (order: IOrder, ingredientBatches: IIngredientBatch[], deliveryBoxBatches: IDeliveryBoxBatch[]) {
+export async function addOrderToRestaurantWithIngredientBatchesAfterFiveHours(
+  order: IOrder,
+  ingredientBatches: IIngredientBatch[],
+  deliveryBoxBatches: IDeliveryBoxBatch[]
+) {
   setTimeout(async () => {
     try {
       order.totalPrice = 0;
@@ -152,56 +251,7 @@ export async function addOrderToRestaurantWithIngredientBatchesAfterSixHours (or
         ingredientBatches.forEach(async (ingredientBatch) => {
           order.totalPrice += ingredientBatch.purchasePrice;
         });
-      }  
-
-      if (deliveryBoxBatches) {
-        deliveryBoxBatches.forEach(async (deliveryBoxBatch) => {
-          order.totalPrice += deliveryBoxBatch.purchasePrice;
-        });
       }
-
-      const newOrder = await addOrderToRestaurant(order);
-
-      if (ingredientBatches) {
-        ingredientBatches.forEach(async (ingredientBatch) => {
-          ingredientBatch.orderId = newOrder.id;
-          ingredientBatch.restaurantId = newOrder.restaurantId;
-          ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
-          ingredientBatch.costPerUnit = ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
-          const newIngredientBatch = await addIngredientToRestaurant(ingredientBatch);
-          await updateIngredientInfoOfRestaurantWithNewIngredientBatch(newIngredientBatch);
-        });
-      }
-
-      if (deliveryBoxBatches) {
-        deliveryBoxBatches.forEach(async (deliveryBoxBatch) => {
-          deliveryBoxBatch.orderId = newOrder.id;
-          deliveryBoxBatch.restaurantId = newOrder.restaurantId;
-          deliveryBoxBatch.currentStockQuantity = deliveryBoxBatch.purchaseQuantity;
-          deliveryBoxBatch.costPerUnit = deliveryBoxBatch.purchasePrice / deliveryBoxBatch.purchaseQuantity;
-          const newDeliveryBoxBatch = await addDeliveryBoxToRestaurant(deliveryBoxBatch);
-          await updateDeliveryBoxInfoOfRestaurantWithNewDeliveryBoxBatch(newDeliveryBoxBatch);
-        });
-      }
-
-      return newOrder;
-    } catch (error) {
-      console.log(error)
-      throw new Error('Error creating order with Batches.');
-    }
-  }, 6 * 60 * 60 * 1000); 
-}
-
-export async function addOrderToRestaurantWithIngredientBatchesAfterFiveHours (order: IOrder, ingredientBatches: IIngredientBatch[], deliveryBoxBatches: IDeliveryBoxBatch[]) {
-  setTimeout(async () => {
-    try {
-      order.totalPrice = 0;
-
-      if (ingredientBatches) {
-        ingredientBatches.forEach(async (ingredientBatch) => {
-          order.totalPrice += ingredientBatch.purchasePrice;
-        });
-      }  
 
       if (deliveryBoxBatches) {
         deliveryBoxBatches.forEach(async (deliveryBoxBatch) => {
@@ -210,8 +260,8 @@ export async function addOrderToRestaurantWithIngredientBatchesAfterFiveHours (o
       }
 
       // Send request to another API
-      const response = await axios.post('https://example.com/api', order);
-      
+      const response = await axios.post("https://example.com/api", order);
+
       if (response.status === 200) {
         const newOrder = await addOrderToRestaurant(order);
 
@@ -219,10 +269,16 @@ export async function addOrderToRestaurantWithIngredientBatchesAfterFiveHours (o
           ingredientBatches.forEach(async (ingredientBatch) => {
             ingredientBatch.orderId = newOrder.id;
             ingredientBatch.restaurantId = newOrder.restaurantId;
-            ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
-            ingredientBatch.costPerUnit = ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
-            const newIngredientBatch = await addIngredientToRestaurant(ingredientBatch);
-            await updateIngredientInfoOfRestaurantWithNewIngredientBatch(newIngredientBatch);
+            ingredientBatch.currentStockQuantity =
+              ingredientBatch.purchaseQuantity;
+            ingredientBatch.costPerUnit =
+              ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
+            const newIngredientBatch = await addIngredientToRestaurant(
+              ingredientBatch
+            );
+            await updateIngredientInfoOfRestaurantWithNewIngredientBatch(
+              newIngredientBatch
+            );
           });
         }
 
@@ -230,20 +286,27 @@ export async function addOrderToRestaurantWithIngredientBatchesAfterFiveHours (o
           deliveryBoxBatches.forEach(async (deliveryBoxBatch) => {
             deliveryBoxBatch.orderId = newOrder.id;
             deliveryBoxBatch.restaurantId = newOrder.restaurantId;
-            deliveryBoxBatch.currentStockQuantity = deliveryBoxBatch.purchaseQuantity;
-            deliveryBoxBatch.costPerUnit = deliveryBoxBatch.purchasePrice / deliveryBoxBatch.purchaseQuantity;
-            const newDeliveryBoxBatch = await addDeliveryBoxToRestaurant(deliveryBoxBatch);
-            await updateDeliveryBoxInfoOfRestaurantWithNewDeliveryBoxBatch(newDeliveryBoxBatch);
+            deliveryBoxBatch.currentStockQuantity =
+              deliveryBoxBatch.purchaseQuantity;
+            deliveryBoxBatch.costPerUnit =
+              deliveryBoxBatch.purchasePrice /
+              deliveryBoxBatch.purchaseQuantity;
+            const newDeliveryBoxBatch = await addDeliveryBoxToRestaurant(
+              deliveryBoxBatch
+            );
+            await updateDeliveryBoxInfoOfRestaurantWithNewDeliveryBoxBatch(
+              newDeliveryBoxBatch
+            );
           });
         }
 
         return newOrder;
       } else {
-        throw new Error('Error creating order with Batches.');
+        throw new Error("Error creating order with Batches.");
       }
     } catch (error) {
       console.log(error);
-      throw new Error('Error creating order with Batches.');
+      throw new Error("Error creating order with Batches.");
     }
-  }, 5 * 60 * 60 * 1000); 
+  }, 5 * 60 * 60 * 1000);
 }

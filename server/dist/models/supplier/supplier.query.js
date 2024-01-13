@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findSupplierByLabel = exports.deleteSupplier = exports.findSupplierBySearchTerm = exports.updateSupplier = exports.addSupplier = exports.addSupplier2 = exports.findAllSuppliers = void 0;
+exports.findSupplierByLabel = exports.deleteSupplier = exports.findSupplierBySearchTerm = exports.updateSupplier = exports.addSupplier = exports.findAllSuppliers = void 0;
 const sequelize_1 = require("sequelize");
 const supplier_model_1 = __importDefault(require("./supplier.model"));
 function findAllSuppliers(restaurantId) {
@@ -31,22 +31,10 @@ function findAllSuppliers(restaurantId) {
     });
 }
 exports.findAllSuppliers = findAllSuppliers;
-function addSupplier2(supplier, restaurantId) {
+function addSupplier(supplier) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const createdSupplier = yield supplier_model_1.default.create(Object.assign(Object.assign({}, supplier), { restaurantId: restaurantId }));
-            return createdSupplier;
-        }
-        catch (error) {
-            throw new Error('Error creating supplier.');
-        }
-    });
-}
-exports.addSupplier2 = addSupplier2;
-function addSupplier(restaurantId, data) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const createdSupplier = yield supplier_model_1.default.create(Object.assign(Object.assign({}, data), { restaurantId }));
+            const createdSupplier = yield supplier_model_1.default.create(supplier);
             return createdSupplier;
         }
         catch (error) {
@@ -55,6 +43,14 @@ function addSupplier(restaurantId, data) {
     });
 }
 exports.addSupplier = addSupplier;
+// export async function addSupplier2 (restaurantId: number, data: { name: string, address: string, contactNumber: string, email: string, label: string }) {
+//   try {
+//     const createdSupplier = await Supplier.create({ ...data, restaurantId });
+//     return createdSupplier;
+//   } catch (error) {
+//     throw new Error('Error creating supplier.');
+//   }
+// }
 function updateSupplier(supplierId, supplier) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

@@ -27,11 +27,12 @@ function createSupplier(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const restaurantId = Number(req.params.restaurantId);
-            const supplier = req.body;
-            supplier.restaurantId = restaurantId;
-            if (typeof restaurantId === 'number') {
-                const newSupplier = yield (0, supplier_query_1.addSupplier)(restaurantId, supplier);
-                res.status(201).json({ supplier: newSupplier });
+            const newSupplier = req.body;
+            console.log(newSupplier);
+            newSupplier.restaurantId = restaurantId;
+            if (restaurantId) {
+                const supplier = yield (0, supplier_query_1.addSupplier)(newSupplier);
+                res.status(201).json({ supplier: supplier });
             }
             else
                 res.status(400).json({ message: "Invalid supplier information." });
@@ -48,10 +49,10 @@ function editSupplier(req, res) {
         try {
             const supplierId = Number(req.params.supplierId);
             if (supplierId) {
-                let supplier = req.body;
-                if (typeof supplier.label === 'string' && typeof supplier.address === 'string' && typeof supplier.contact === 'string' && typeof supplier.restaurantId === 'number') {
-                    const updatedSupplier = yield (0, supplier_query_1.updateSupplier)(supplierId, supplier);
-                    res.status(200).json(updatedSupplier);
+                let newSupplier = req.body;
+                if (typeof newSupplier.restaurantId === 'number') {
+                    const supplier = yield (0, supplier_query_1.updateSupplier)(supplierId, newSupplier);
+                    res.status(200).json(supplier);
                 }
                 else
                     res.status(400).json({ message: "Invalid supplier information." });
