@@ -45,7 +45,7 @@ const IngredientBatch = sequelize.define<IngredientBatchInstance>('ingredientBat
       },
       receivedAt: {
         type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+        defaultValue: new Date(),
       },
       expirationDate: {
         type: DataTypes.DATE,

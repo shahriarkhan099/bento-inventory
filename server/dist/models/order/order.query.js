@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addOrderToRestaurantWithIngredientBatchesAfterFiveHours = exports.addOrderToRestaurantWithIngredientBatchesAfterSixHours = exports.addOrderToRestaurantWithIngredientBatches = exports.deleteOrderOfRestaurant = exports.updateOrderOfRestaurant = exports.addOrderToRestaurant = exports.findAllOrderOfRestaurantWithPendingBatch = exports.findAllOrderOfRestaurantWithBatch = void 0;
+exports.addOrderToRestaurantWithIngredientBatchesAfterFiveHours = exports.addOrderToRestaurantWithIngredientBatches2 = exports.addOrderToRestaurantWithIngredientBatches = exports.deleteOrderOfRestaurant = exports.updateOrderOfRestaurant = exports.addOrderToRestaurant = exports.findAllOrderOfRestaurantWithPendingBatch = exports.findAllOrderOfRestaurantWithBatch = void 0;
 const sequelize_1 = require("sequelize");
 const order_model_1 = __importDefault(require("./order.model"));
 const ingredientBatch_model_1 = __importDefault(require("../ingredientBatch/ingredientBatch.model"));
@@ -27,7 +27,7 @@ function findAllOrderOfRestaurantWithBatch(restaurantId) {
         try {
             const order = yield order_model_1.default.findAll({
                 where: {
-                    restaurantId: restaurantId
+                    restaurantId: restaurantId,
                 },
                 include: [
                     {
@@ -42,7 +42,7 @@ function findAllOrderOfRestaurantWithBatch(restaurantId) {
         }
         catch (error) {
             console.log(error);
-            throw new Error('Error finding order.');
+            throw new Error("Error finding order.");
         }
     });
 }
@@ -54,8 +54,8 @@ function findAllOrderOfRestaurantWithPendingBatch(restaurantId) {
                 where: {
                     restaurantId: restaurantId,
                     status: {
-                        [sequelize_1.Op.or]: ['pending', 'preparing', 'out_for_delivery', 'cancelled']
-                    }
+                        [sequelize_1.Op.or]: ["pending", "preparing", "out_for_delivery", "cancelled"],
+                    },
                 },
                 include: [
                     {
@@ -70,7 +70,7 @@ function findAllOrderOfRestaurantWithPendingBatch(restaurantId) {
         }
         catch (error) {
             console.log(error);
-            throw new Error('Error finding order.');
+            throw new Error("Error finding order.");
         }
     });
 }
@@ -83,7 +83,7 @@ function addOrderToRestaurant(order) {
         }
         catch (error) {
             console.log(error);
-            throw new Error('Error creating order.');
+            throw new Error("Error creating order.");
         }
     });
 }
@@ -93,13 +93,13 @@ function updateOrderOfRestaurant(orderId, order) {
         try {
             const updatedOrder = yield order_model_1.default.update(order, {
                 where: {
-                    id: orderId
-                }
+                    id: orderId,
+                },
             });
             return updatedOrder;
         }
         catch (error) {
-            throw new Error('Error updating order.');
+            throw new Error("Error updating order.");
         }
     });
 }
@@ -109,68 +109,71 @@ function deleteOrderOfRestaurant(orderId) {
         try {
             const deletedOrder = yield order_model_1.default.destroy({
                 where: {
-                    id: orderId
-                }
+                    id: orderId,
+                },
             });
             return deletedOrder;
         }
         catch (error) {
-            throw new Error('Error deleting order.');
+            throw new Error("Error deleting order.");
         }
     });
 }
 exports.deleteOrderOfRestaurant = deleteOrderOfRestaurant;
 function addOrderToRestaurantWithIngredientBatches(order, ingredientBatches, deliveryBoxBatches) {
     return __awaiter(this, void 0, void 0, function* () {
-        setTimeout(() => __awaiter(this, void 0, void 0, function* () {
-            try {
-                order.totalPrice = 0;
-                if (ingredientBatches) {
-                    ingredientBatches.forEach((ingredientBatch) => __awaiter(this, void 0, void 0, function* () {
-                        order.totalPrice += ingredientBatch.purchasePrice;
-                    }));
-                }
-                if (deliveryBoxBatches) {
-                    deliveryBoxBatches.forEach((deliveryBoxBatch) => __awaiter(this, void 0, void 0, function* () {
-                        order.totalPrice += deliveryBoxBatch.purchasePrice;
-                    }));
-                }
-                const newOrder = yield addOrderToRestaurant(order);
-                if (ingredientBatches) {
-                    ingredientBatches.forEach((ingredientBatch) => __awaiter(this, void 0, void 0, function* () {
-                        ingredientBatch.orderId = newOrder.id;
-                        ingredientBatch.restaurantId = newOrder.restaurantId;
-                        ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
-                        ingredientBatch.costPerUnit = ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
-                        const newIngredientBatch = yield (0, ingredientBatch_query_1.addIngredientToRestaurant)(ingredientBatch);
-                        yield (0, ingredient_query_1.updateIngredientInfoOfRestaurantWithNewIngredientBatch)(newIngredientBatch);
-                    }));
-                }
-                if (deliveryBoxBatches) {
-                    deliveryBoxBatches.forEach((deliveryBoxBatch) => __awaiter(this, void 0, void 0, function* () {
-                        deliveryBoxBatch.orderId = newOrder.id;
-                        deliveryBoxBatch.restaurantId = newOrder.restaurantId;
-                        deliveryBoxBatch.currentStockQuantity = deliveryBoxBatch.purchaseQuantity;
-                        deliveryBoxBatch.costPerUnit = deliveryBoxBatch.purchasePrice / deliveryBoxBatch.purchaseQuantity;
-                        const newDeliveryBoxBatch = yield (0, deliveryBoxBatch_query_1.addDeliveryBoxToRestaurant)(deliveryBoxBatch);
-                        yield (0, deliveryBox_query_1.updateDeliveryBoxInfoOfRestaurantWithNewDeliveryBoxBatch)(newDeliveryBoxBatch);
-                    }));
-                }
-                return newOrder;
+        try {
+            order.totalPrice = 0;
+            order.status = "delivered";
+            if (ingredientBatches) {
+                ingredientBatches.forEach((ingredientBatch) => __awaiter(this, void 0, void 0, function* () {
+                    order.totalPrice += ingredientBatch.purchasePrice;
+                }));
             }
-            catch (error) {
-                console.log(error);
-                throw new Error('Error creating order with Batches.');
+            if (deliveryBoxBatches) {
+                deliveryBoxBatches.forEach((deliveryBoxBatch) => __awaiter(this, void 0, void 0, function* () {
+                    order.totalPrice += deliveryBoxBatch.purchasePrice;
+                }));
             }
-        }), 20000); // 20 seconds delay
+            const newOrder = yield addOrderToRestaurant(order);
+            if (ingredientBatches) {
+                ingredientBatches.forEach((ingredientBatch) => __awaiter(this, void 0, void 0, function* () {
+                    ingredientBatch.orderId = newOrder.id;
+                    ingredientBatch.restaurantId = newOrder.restaurantId;
+                    ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
+                    ingredientBatch.costPerUnit =
+                        ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
+                    const newIngredientBatch = yield (0, ingredientBatch_query_1.addIngredientToRestaurant)(ingredientBatch);
+                    yield (0, ingredient_query_1.updateIngredientInfoOfRestaurantWithNewIngredientBatch)(newIngredientBatch);
+                }));
+            }
+            if (deliveryBoxBatches) {
+                deliveryBoxBatches.forEach((deliveryBoxBatch) => __awaiter(this, void 0, void 0, function* () {
+                    deliveryBoxBatch.orderId = newOrder.id;
+                    deliveryBoxBatch.restaurantId = newOrder.restaurantId;
+                    deliveryBoxBatch.currentStockQuantity =
+                        deliveryBoxBatch.purchaseQuantity;
+                    deliveryBoxBatch.costPerUnit =
+                        deliveryBoxBatch.purchasePrice / deliveryBoxBatch.purchaseQuantity;
+                    const newDeliveryBoxBatch = yield (0, deliveryBoxBatch_query_1.addDeliveryBoxToRestaurant)(deliveryBoxBatch);
+                    yield (0, deliveryBox_query_1.updateDeliveryBoxInfoOfRestaurantWithNewDeliveryBoxBatch)(newDeliveryBoxBatch);
+                }));
+            }
+            return newOrder;
+        }
+        catch (error) {
+            console.log(error);
+            throw new Error("Error creating order with Batches.");
+        }
     });
 }
 exports.addOrderToRestaurantWithIngredientBatches = addOrderToRestaurantWithIngredientBatches;
-function addOrderToRestaurantWithIngredientBatchesAfterSixHours(order, ingredientBatches, deliveryBoxBatches) {
+function addOrderToRestaurantWithIngredientBatches2(order, ingredientBatches, deliveryBoxBatches) {
     return __awaiter(this, void 0, void 0, function* () {
         setTimeout(() => __awaiter(this, void 0, void 0, function* () {
             try {
                 order.totalPrice = 0;
+                order.status = "delivered";
                 if (ingredientBatches) {
                     ingredientBatches.forEach((ingredientBatch) => __awaiter(this, void 0, void 0, function* () {
                         order.totalPrice += ingredientBatch.purchasePrice;
@@ -187,7 +190,8 @@ function addOrderToRestaurantWithIngredientBatchesAfterSixHours(order, ingredien
                         ingredientBatch.orderId = newOrder.id;
                         ingredientBatch.restaurantId = newOrder.restaurantId;
                         ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
-                        ingredientBatch.costPerUnit = ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
+                        ingredientBatch.costPerUnit =
+                            ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
                         const newIngredientBatch = yield (0, ingredientBatch_query_1.addIngredientToRestaurant)(ingredientBatch);
                         yield (0, ingredient_query_1.updateIngredientInfoOfRestaurantWithNewIngredientBatch)(newIngredientBatch);
                     }));
@@ -196,8 +200,10 @@ function addOrderToRestaurantWithIngredientBatchesAfterSixHours(order, ingredien
                     deliveryBoxBatches.forEach((deliveryBoxBatch) => __awaiter(this, void 0, void 0, function* () {
                         deliveryBoxBatch.orderId = newOrder.id;
                         deliveryBoxBatch.restaurantId = newOrder.restaurantId;
-                        deliveryBoxBatch.currentStockQuantity = deliveryBoxBatch.purchaseQuantity;
-                        deliveryBoxBatch.costPerUnit = deliveryBoxBatch.purchasePrice / deliveryBoxBatch.purchaseQuantity;
+                        deliveryBoxBatch.currentStockQuantity =
+                            deliveryBoxBatch.purchaseQuantity;
+                        deliveryBoxBatch.costPerUnit =
+                            deliveryBoxBatch.purchasePrice / deliveryBoxBatch.purchaseQuantity;
                         const newDeliveryBoxBatch = yield (0, deliveryBoxBatch_query_1.addDeliveryBoxToRestaurant)(deliveryBoxBatch);
                         yield (0, deliveryBox_query_1.updateDeliveryBoxInfoOfRestaurantWithNewDeliveryBoxBatch)(newDeliveryBoxBatch);
                     }));
@@ -206,12 +212,12 @@ function addOrderToRestaurantWithIngredientBatchesAfterSixHours(order, ingredien
             }
             catch (error) {
                 console.log(error);
-                throw new Error('Error creating order with Batches.');
+                throw new Error("Error creating order with Batches.");
             }
-        }), 6 * 60 * 60 * 1000);
+        }), 5 * 1000);
     });
 }
-exports.addOrderToRestaurantWithIngredientBatchesAfterSixHours = addOrderToRestaurantWithIngredientBatchesAfterSixHours;
+exports.addOrderToRestaurantWithIngredientBatches2 = addOrderToRestaurantWithIngredientBatches2;
 function addOrderToRestaurantWithIngredientBatchesAfterFiveHours(order, ingredientBatches, deliveryBoxBatches) {
     return __awaiter(this, void 0, void 0, function* () {
         setTimeout(() => __awaiter(this, void 0, void 0, function* () {
@@ -228,15 +234,17 @@ function addOrderToRestaurantWithIngredientBatchesAfterFiveHours(order, ingredie
                     }));
                 }
                 // Send request to another API
-                const response = yield axios_1.default.post('https://example.com/api', order);
+                const response = yield axios_1.default.post("https://example.com/api", order);
                 if (response.status === 200) {
                     const newOrder = yield addOrderToRestaurant(order);
                     if (ingredientBatches) {
                         ingredientBatches.forEach((ingredientBatch) => __awaiter(this, void 0, void 0, function* () {
                             ingredientBatch.orderId = newOrder.id;
                             ingredientBatch.restaurantId = newOrder.restaurantId;
-                            ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
-                            ingredientBatch.costPerUnit = ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
+                            ingredientBatch.currentStockQuantity =
+                                ingredientBatch.purchaseQuantity;
+                            ingredientBatch.costPerUnit =
+                                ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
                             const newIngredientBatch = yield (0, ingredientBatch_query_1.addIngredientToRestaurant)(ingredientBatch);
                             yield (0, ingredient_query_1.updateIngredientInfoOfRestaurantWithNewIngredientBatch)(newIngredientBatch);
                         }));
@@ -245,8 +253,11 @@ function addOrderToRestaurantWithIngredientBatchesAfterFiveHours(order, ingredie
                         deliveryBoxBatches.forEach((deliveryBoxBatch) => __awaiter(this, void 0, void 0, function* () {
                             deliveryBoxBatch.orderId = newOrder.id;
                             deliveryBoxBatch.restaurantId = newOrder.restaurantId;
-                            deliveryBoxBatch.currentStockQuantity = deliveryBoxBatch.purchaseQuantity;
-                            deliveryBoxBatch.costPerUnit = deliveryBoxBatch.purchasePrice / deliveryBoxBatch.purchaseQuantity;
+                            deliveryBoxBatch.currentStockQuantity =
+                                deliveryBoxBatch.purchaseQuantity;
+                            deliveryBoxBatch.costPerUnit =
+                                deliveryBoxBatch.purchasePrice /
+                                    deliveryBoxBatch.purchaseQuantity;
                             const newDeliveryBoxBatch = yield (0, deliveryBoxBatch_query_1.addDeliveryBoxToRestaurant)(deliveryBoxBatch);
                             yield (0, deliveryBox_query_1.updateDeliveryBoxInfoOfRestaurantWithNewDeliveryBoxBatch)(newDeliveryBoxBatch);
                         }));
@@ -254,12 +265,12 @@ function addOrderToRestaurantWithIngredientBatchesAfterFiveHours(order, ingredie
                     return newOrder;
                 }
                 else {
-                    throw new Error('Error creating order with Batches.');
+                    throw new Error("Error creating order with Batches.");
                 }
             }
             catch (error) {
                 console.log(error);
-                throw new Error('Error creating order with Batches.');
+                throw new Error("Error creating order with Batches.");
             }
         }), 5 * 60 * 60 * 1000);
     });

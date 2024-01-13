@@ -42,7 +42,7 @@ const IngredientBatch = __1.default.define('ingredientBatches', {
     },
     receivedAt: {
         type: sequelize_1.DataTypes.DATE,
-        defaultValue: sequelize_1.DataTypes.NOW,
+        defaultValue: new Date(),
     },
     expirationDate: {
         type: sequelize_1.DataTypes.DATE,

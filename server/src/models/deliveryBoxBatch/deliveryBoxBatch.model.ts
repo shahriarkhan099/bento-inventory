@@ -46,7 +46,7 @@ const DeliveryBoxBatch = sequelize.define<DeliveryBoxBatchInstance>(
     },
     receivedAt: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+      defaultValue: new Date(),
     },
     supplierId: {
       type: DataTypes.INTEGER,

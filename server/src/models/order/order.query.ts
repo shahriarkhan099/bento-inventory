@@ -103,6 +103,7 @@ export async function addOrderToRestaurantWithIngredientBatches(
 ) {
   try {
     order.totalPrice = 0;
+    order.status = "delivered";
 
     if (ingredientBatches) {
       ingredientBatches.forEach(async (ingredientBatch) => {
@@ -158,84 +159,69 @@ export async function addOrderToRestaurantWithIngredientBatches(
   }
 }
 
-export async function addOrderToRestaurantWithIngredientBatchesAfterSixHours(order: IOrder, ingredientBatches: IIngredientBatch[], deliveryBoxBatches: IDeliveryBoxBatch[]) {
-    try {
-      order.totalPrice = 0;
+export async function addOrderToRestaurantWithIngredientBatches2(
+  order: IOrder,
+  ingredientBatches: IIngredientBatch[],
+  deliveryBoxBatches: IDeliveryBoxBatch[]
+) {
+  setTimeout(async () => {
+  try {
+    order.totalPrice = 0;
+    order.status = "delivered";
 
-      if (ingredientBatches) {
-        ingredientBatches.forEach(async (ingredientBatch) => {
-          order.totalPrice += ingredientBatch.purchasePrice;
-        });
-      }
-
-      if (deliveryBoxBatches) {
-        deliveryBoxBatches.forEach(async (deliveryBoxBatch) => {
-          order.totalPrice += deliveryBoxBatch.purchasePrice;
-        });
-      }
-
-      const newOrder = await addOrderToRestaurant(order);
-
-      if (newOrder.status !== "Delivered") {
-        // "Preparing" after 15 minutes
-        setTimeout(async () => {
-          newOrder.status = "Preparing";
-          await updateOrderOfRestaurant(newOrder.id, newOrder);
-        }, 15 * 60 * 1000);
-
-        // "Out for Delivery" after 2 hours
-        setTimeout(async () => {
-          newOrder.status = "out_for_delivery";
-          await updateOrderOfRestaurant(newOrder.id, newOrder);
-        }, 2 * 60 * 60 * 1000);
-
-        // "Delivered" after 6 hours
-        setTimeout(async () => {
-          newOrder.status = "Delivered";
-          await updateOrderOfRestaurant(newOrder.id, newOrder);
-        }, 6 * 60 * 60 * 1000);
-
-        if (ingredientBatches) {
-          ingredientBatches.forEach(async (ingredientBatch) => {
-            ingredientBatch.orderId = newOrder.id;
-            ingredientBatch.restaurantId = newOrder.restaurantId;
-            ingredientBatch.currentStockQuantity =
-              ingredientBatch.purchaseQuantity;
-            ingredientBatch.costPerUnit =
-              ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
-            const newIngredientBatch = await addIngredientToRestaurant(
-              ingredientBatch
-            );
-            await updateIngredientInfoOfRestaurantWithNewIngredientBatch(
-              newIngredientBatch
-            );
-          });
-        }
-
-        if (deliveryBoxBatches) {
-          deliveryBoxBatches.forEach(async (deliveryBoxBatch) => {
-            deliveryBoxBatch.orderId = newOrder.id;
-            deliveryBoxBatch.restaurantId = newOrder.restaurantId;
-            deliveryBoxBatch.currentStockQuantity =
-              deliveryBoxBatch.purchaseQuantity;
-            deliveryBoxBatch.costPerUnit =
-              deliveryBoxBatch.purchasePrice /
-              deliveryBoxBatch.purchaseQuantity;
-            const newDeliveryBoxBatch = await addDeliveryBoxToRestaurant(
-              deliveryBoxBatch
-            );
-            await updateDeliveryBoxInfoOfRestaurantWithNewDeliveryBoxBatch(
-              newDeliveryBoxBatch
-            );
-          });
-        }
-      }
-
-      return newOrder;
-    } catch (error) {
-      console.log(error);
-      throw new Error("Error creating order with Batches.");
+    if (ingredientBatches) {
+      ingredientBatches.forEach(async (ingredientBatch) => {
+        order.totalPrice += ingredientBatch.purchasePrice;
+      });
     }
+
+    if (deliveryBoxBatches) {
+      deliveryBoxBatches.forEach(async (deliveryBoxBatch) => {
+        order.totalPrice += deliveryBoxBatch.purchasePrice;
+      });
+    }
+
+    const newOrder = await addOrderToRestaurant(order);
+
+    if (ingredientBatches) {
+      ingredientBatches.forEach(async (ingredientBatch) => {
+        ingredientBatch.orderId = newOrder.id;
+        ingredientBatch.restaurantId = newOrder.restaurantId;
+        ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
+        ingredientBatch.costPerUnit =
+          ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
+        const newIngredientBatch = await addIngredientToRestaurant(
+          ingredientBatch
+        );
+        await updateIngredientInfoOfRestaurantWithNewIngredientBatch(
+          newIngredientBatch
+        );
+      });
+    }
+
+    if (deliveryBoxBatches) {
+      deliveryBoxBatches.forEach(async (deliveryBoxBatch) => {
+        deliveryBoxBatch.orderId = newOrder.id;
+        deliveryBoxBatch.restaurantId = newOrder.restaurantId;
+        deliveryBoxBatch.currentStockQuantity =
+          deliveryBoxBatch.purchaseQuantity;
+        deliveryBoxBatch.costPerUnit =
+          deliveryBoxBatch.purchasePrice / deliveryBoxBatch.purchaseQuantity;
+        const newDeliveryBoxBatch = await addDeliveryBoxToRestaurant(
+          deliveryBoxBatch
+        );
+        await updateDeliveryBoxInfoOfRestaurantWithNewDeliveryBoxBatch(
+          newDeliveryBoxBatch
+        );
+      });
+    }
+
+    return newOrder;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error creating order with Batches.");
+  }
+ }, 5 * 1000);
 }
 
 export async function addOrderToRestaurantWithIngredientBatchesAfterFiveHours(

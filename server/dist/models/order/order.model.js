@@ -27,7 +27,8 @@ const Order = __1.default.define('orders', {
     },
     orderDate: {
         type: sequelize_1.DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
+        defaultValue: new Date(),
     },
     deliveryDate: {
         type: sequelize_1.DataTypes.DATE,
