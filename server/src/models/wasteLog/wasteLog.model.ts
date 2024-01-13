@@ -26,7 +26,7 @@ const WasteLog = sequelize.define<WasteLogInstance>('wasteLogs', {
             allowNull: false,
         },
         totalQuantity: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.FLOAT,
             allowNull: false,
         },
         unitOfPrice: {

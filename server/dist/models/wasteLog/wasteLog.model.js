@@ -23,7 +23,7 @@ const WasteLog = __1.default.define('wasteLogs', {
         allowNull: false,
     },
     totalQuantity: {
-        type: sequelize_1.DataTypes.INTEGER,
+        type: sequelize_1.DataTypes.FLOAT,
         allowNull: false,
     },
     unitOfPrice: {
@@ -47,6 +47,6 @@ const WasteLog = __1.default.define('wasteLogs', {
     restaurantId: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
-    },
+    }
 });
 exports.default = WasteLog;

@@ -26,6 +26,7 @@ const supplier_router_1 = __importDefault(require("./routers/supplier.router"));
 const wasteLog_router_1 = __importDefault(require("./routers/wasteLog.router"));
 const consumptionLog_router_1 = __importDefault(require("./routers/consumptionLog.router"));
 const deliveryBox_router_1 = __importDefault(require("./routers/deliveryBox.router"));
+const deliveryBoxBatch_router_1 = __importDefault(require("./routers/deliveryBoxBatch.router"));
 const node_cron_1 = __importDefault(require("node-cron"));
 const expiryCheck_util_1 = __importDefault(require("./utils/expiryCheck.util"));
 const app = (0, express_1.default)();
@@ -35,15 +36,16 @@ app.use((0, cors_1.default)({
 app.use((0, compression_1.default)());
 app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.json());
-app.use('/v1/ingredient', ingredient_router_1.default);
-app.use('/v1/ingredientBatch', ingredientBatch_router_1.default);
-app.use('/v1/category', category_router_1.default);
-app.use('/v1/order', order_router_1.default);
-app.use('/v1/supplier', supplier_router_1.default);
-app.use('/v1/wasteLog', wasteLog_router_1.default);
-app.use('/v1/consumptionLog', consumptionLog_router_1.default);
-app.use('/v1/deliveryBox', deliveryBox_router_1.default);
-node_cron_1.default.schedule('59 23 * * *', expiryCheck_util_1.default);
+app.use("/v1/ingredient", ingredient_router_1.default);
+app.use("/v1/ingredientBatch", ingredientBatch_router_1.default);
+app.use("/v1/category", category_router_1.default);
+app.use("/v1/order", order_router_1.default);
+app.use("/v1/supplier", supplier_router_1.default);
+app.use("/v1/wasteLog", wasteLog_router_1.default);
+app.use("/v1/consumptionLog", consumptionLog_router_1.default);
+app.use("/v1/deliveryBox", deliveryBox_router_1.default);
+app.use("/v1/deliveryBoxBatch", deliveryBoxBatch_router_1.default);
+node_cron_1.default.schedule("0 0 * * *", expiryCheck_util_1.default);
 function bootstrap() {
     return __awaiter(this, void 0, void 0, function* () {
         try {

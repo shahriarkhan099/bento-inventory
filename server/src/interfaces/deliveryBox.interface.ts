@@ -1,12 +1,16 @@
 export interface IDeliveryBox {
   id: number;
   boxName: string;
-  height: number;
-  width: number;
-  length: number;
+  currentStockQuantity: number;
+  unitOfPrice: string;
+  costPerUnit: number;
+  reorderPoint: number;
+  unitOfDimentions: string;
+  dimensions: string;
   weightLimit: number;
   temperatureLimit: number;
-  waterproof: boolean;
-  specialInstructions: Text;
+  waterproof: string;
+  expectedStockForToday: number;
+  expectedStockForTomorrow: number;
   restaurantId: number;
 }

@@ -13,20 +13,25 @@ const ConsumptionLog = __1.default.define("consumptionLogs", {
         type: sequelize_1.DataTypes.INTEGER,
         unique: true,
     },
-    ingredientName: {
+    itemName: {
         type: sequelize_1.DataTypes.TEXT,
         allowNull: false,
     },
+    itemType: {
+        type: sequelize_1.DataTypes.ENUM('ingredient', 'box'),
+        allowNull: false,
+        defaultValue: 'ingredient',
+    },
     unitOfStock: {
-        type: sequelize_1.DataTypes.ENUM("gm", "ml", "piece"),
+        type: sequelize_1.DataTypes.ENUM('gm', 'ml', 'piece', 'kg', 'litre'),
         allowNull: false,
     },
     quantity: {
-        type: sequelize_1.DataTypes.INTEGER,
+        type: sequelize_1.DataTypes.FLOAT,
         allowNull: false,
     },
     orderType: {
-        type: sequelize_1.DataTypes.ENUM("inhouse", "marketplace"),
+        type: sequelize_1.DataTypes.ENUM('inhouse', 'marketplace'),
         allowNull: false,
     },
     costPerUnit: {
@@ -36,7 +41,7 @@ const ConsumptionLog = __1.default.define("consumptionLogs", {
         type: sequelize_1.DataTypes.DATE,
         defaultValue: sequelize_1.DataTypes.NOW,
     },
-    ingredientId: {
+    itemId: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
     },

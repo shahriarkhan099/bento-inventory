@@ -9,8 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteConsumptionLogOfRestaurant = exports.putConsumptionLog = exports.postConsumptionLogToRestaurant = exports.searchConsumptionLogs = exports.getAllConsumptionLogsOfRestaurant = void 0;
+exports.postConsumptionLogToRestaurantWithOrder = exports.deleteConsumptionLogOfRestaurant = exports.putConsumptionLog = exports.postConsumptionLogToRestaurant = exports.searchConsumptionLogs = exports.getAllConsumptionLogsOfRestaurant = void 0;
 const consumptionLog_query_1 = require("../models/consumptionLog/consumptionLog.query");
+const ingredient_query_1 = require("../models/ingredient/ingredient.query");
+const deliveryBox_query_1 = require("../models/deliveryBox/deliveryBox.query");
 function getAllConsumptionLogsOfRestaurant(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -119,3 +121,20 @@ function deleteConsumptionLogOfRestaurant(req, res) {
     });
 }
 exports.deleteConsumptionLogOfRestaurant = deleteConsumptionLogOfRestaurant;
+function postConsumptionLogToRestaurantWithOrder(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { orderType, restaurantId, ingredientsToReduce, deliveryBoxesToReduce } = req.body;
+            const orderWithIngredients = { orderType: orderType, restaurantId: restaurantId, ingredientsToReduce: ingredientsToReduce };
+            const orderWithDeliveryBoxes = { orderType: orderType, restaurantId: restaurantId, deliveryBoxesToReduce: deliveryBoxesToReduce };
+            yield (0, ingredient_query_1.deductIngredientsFromOrder)(orderWithIngredients);
+            yield (0, deliveryBox_query_1.deductDeliveryBoxesFromOrder)(orderWithDeliveryBoxes);
+            res.status(200).json({ message: "Deducted" });
+        }
+        catch (error) {
+            console.error(error);
+            res.status(500).json({ error: "Internal Server Error" });
+        }
+    });
+}
+exports.postConsumptionLogToRestaurantWithOrder = postConsumptionLogToRestaurantWithOrder;

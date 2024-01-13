@@ -29,6 +29,7 @@ const Category = __1.default.define("categories", {
     storageType: {
         type: sequelize_1.DataTypes.ENUM("refrigerated", "nonrefrigerated"),
         allowNull: true,
+        defaultValue: "refrigerated",
     },
     restaurantId: {
         type: sequelize_1.DataTypes.INTEGER,

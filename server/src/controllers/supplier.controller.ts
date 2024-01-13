@@ -15,11 +15,13 @@ export async function getAllSuppliers (req: Request, res: Response) {
 export async function createSupplier (req: Request, res: Response) {
   try {
     const restaurantId = Number(req.params.restaurantId);
-    const supplier = req.body;
-    supplier.restaurantId = restaurantId;
-    if (typeof restaurantId === 'number') {
-      const newSupplier = await addSupplier(restaurantId, supplier);
-      res.status(201).json({ supplier: newSupplier });
+    const newSupplier = req.body;
+    console.log(newSupplier);
+    
+    newSupplier.restaurantId = restaurantId;
+    if (restaurantId) {
+      const supplier = await addSupplier(newSupplier);
+      res.status(201).json({ supplier: supplier });
     } else res.status(400).json({ message: "Invalid supplier information." });
   } catch (error) {
     console.log(error);
@@ -31,10 +33,10 @@ export async function editSupplier (req: Request, res: Response) {
   try {
     const supplierId = Number(req.params.supplierId);
     if (supplierId) {
-      let supplier = req.body;
-      if (typeof supplier.label === 'string' && typeof supplier.address === 'string' && typeof supplier.contact === 'string' && typeof supplier.restaurantId === 'number') {
-        const updatedSupplier = await updateSupplier(supplierId, supplier);
-        res.status(200).json(updatedSupplier);
+      let newSupplier = req.body;
+      if (typeof newSupplier.restaurantId === 'number') {
+        const supplier = await updateSupplier(supplierId, newSupplier);
+        res.status(200).json(supplier);
       } else res.status(400).json({ message: "Invalid supplier information." });
     } else res.status(400).json({ message: "Invalid supplier ID." });
   } catch (error) {

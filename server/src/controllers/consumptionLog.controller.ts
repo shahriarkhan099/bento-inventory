@@ -5,8 +5,12 @@ import {
   createConsumptionLogOfRestaurant,
   updateConsumptionLog,
   deleteConsumptionLog,
+  deductIngredientsAndDeliveryBoxesFromOrder
 } from "../models/consumptionLog/consumptionLog.query";
-
+import { IngredientToReduce } from "../interfaces/deductIngredient.interface";
+import { deductIngredientsFromOrder } from "../models/ingredient/ingredient.query";
+import { DeliveryBoxToReduce } from "../interfaces/deductDeliveryBox.interface";
+import { deductDeliveryBoxesFromOrder } from "../models/deliveryBox/deliveryBox.query";
 
 
 export async function getAllConsumptionLogsOfRestaurant(req: Request, res: Response) {
@@ -105,5 +109,22 @@ export async function deleteConsumptionLogOfRestaurant(req: Request, res: Respon
   } catch (error) {
     console.log(error);
     res.status(500).json(error);
+  }
+}
+
+export async function postConsumptionLogToRestaurantWithOrder (req: Request, res: Response) {
+  try {
+    const { orderType, restaurantId, ingredientsToReduce, deliveryBoxesToReduce } = req.body;
+
+    const orderWithIngredients = { orderType: orderType, restaurantId: restaurantId, ingredientsToReduce: ingredientsToReduce as IngredientToReduce[]};
+    const orderWithDeliveryBoxes = { orderType: orderType, restaurantId: restaurantId, deliveryBoxesToReduce: deliveryBoxesToReduce as DeliveryBoxToReduce[]};
+
+    await deductIngredientsFromOrder(orderWithIngredients);
+    await deductDeliveryBoxesFromOrder(orderWithDeliveryBoxes);
+
+    res.status(200).json({message: "Deducted"});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 }

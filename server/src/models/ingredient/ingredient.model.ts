@@ -29,7 +29,7 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
         allowNull: false,
       },
       currentStockQuantity: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         allowNull: false,
         defaultValue: 0,
       },
@@ -40,12 +40,14 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
       },
       costPerUnit: {
         type: DataTypes.FLOAT,
+        defaultValue: 0,
       },
       caloriesPerUnit: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
       },
       reorderPoint: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
+        defaultValue: 0,
       },
       perishable: {
         type: DataTypes.ENUM('Yes', 'No'),
@@ -62,10 +64,12 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
         type: DataTypes.INTEGER,
       },
       expectedStockForToday: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
+        defaultValue: 0,
       },
       expectedStockForTomorrow: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
+        defaultValue: 0,
       },
       restaurantId: {
         type: DataTypes.INTEGER,

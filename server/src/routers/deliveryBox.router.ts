@@ -4,9 +4,9 @@ import { getAllDeliveryBoxesOfRestaurant, searchDeliveryBoxes, postDeliveryBoxTo
 const router = Router();
 
 router.get('/restaurant/:restaurantId', getAllDeliveryBoxesOfRestaurant);
-router.get('/restaurant/:restaurantId/search', searchDeliveryBoxes);
 router.post('/restaurant/:restaurantId', postDeliveryBoxToRestaurant);
 router.put('/restaurant/:deliveryBoxId', putDeliveryBox);
 router.delete('/restaurant/:deliveryBoxId', deleteDeliveryBoxOfRestaurant);
+router.get('/restaurant/:restaurantId/search', searchDeliveryBoxes);
 
 export default router;

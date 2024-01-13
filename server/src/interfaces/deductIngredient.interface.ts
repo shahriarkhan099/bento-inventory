@@ -7,5 +7,5 @@ export interface IngredientToReduce {
 
 export interface DeductedIngredient {
   ingredientId: number;
-  deductedBatches: IIngredientBatch[];
+  deductedIngredientBatches: IIngredientBatch[];
 }

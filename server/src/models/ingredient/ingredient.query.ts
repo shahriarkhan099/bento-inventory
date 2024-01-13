@@ -11,6 +11,7 @@ import {
   DeductedIngredient,
 } from "../../interfaces/deductIngredient.interface";
 
+
 export async function findIngredientbyId(ingredientId: number) {
   try {
     const ingredient = await Ingredient.findOne({
@@ -25,68 +26,11 @@ export async function findIngredientbyId(ingredientId: number) {
   }
 }
 
-export async function deductIngredientsFromOrder(order: {
-  orderType: string;
-  ingredientsToReduce: IngredientToReduce[];
-  restaurantId: number;
-}) {
-  const { orderType, ingredientsToReduce, restaurantId } = order;
-
-  try {
-    const deductedIngredients: DeductedIngredient[] = [];
-
-    for (const ingredientToReduce of ingredientsToReduce) {
-      const { id, quantity } = ingredientToReduce;
-      
-      const ingredient = await Ingredient.findOne({
-        where: {
-          id: id,
-          restaurantId: restaurantId,
-        },
-      });
-
-      if (ingredient) {
-        const deductedBatches = await deductIngredientBatchesInFIFO(
-          ingredient.id,
-          quantity,
-          orderType
-        );
-
-        updateCurrentStockQuantityOfIngredient(ingredient.id);
-        deductedIngredients.push({
-          ingredientId: ingredient.id,
-          deductedBatches: deductedBatches,
-        });
-      } else {
-        throw new Error(`Ingredient with ID ${id} not found.`);
-      }
-    }
-
-    return deductedIngredients;
-  } catch (error) {
-    throw new Error(`Error deducting ingredients: ${error}`);
-  }
-}
-
 export async function findAllIngredientOfRestaurant(restaurantId: number) {
   try {
     const ingredient = await Ingredient.findAll({
       where: {
         restaurantId: restaurantId,
-      },
-    });
-
-    return ingredient;
-  } catch (error) {
-    throw new Error("Error finding global ingredient.");
-  }
-}
-
-export async function findOneIngredientOfRestaurant(ingredientId: number) {
-  try {
-    const ingredient = await Ingredient.findOne({
-      where: {
-        id: ingredientId,
       },
     });
 
@@ -132,96 +76,6 @@ export async function updateIngredientOfRestaurant (ingredientId: number, ingred
     });
     return updatedIngredient;
   } catch (error) {
-    throw new Error("Error updating global ingredient.");
-  }
-}
-
-export async function updateCurrentStockQuantityOfIngredient(ingredientId: number) {
-  try {
-    const ingredient = await findOneIngredientOfRestaurant(ingredientId);
-    let updatedIngredient;
-    if (ingredient) {
-      let totalStockQuantity = await IngredientBatch.sum(
-        "currentStockQuantity",
-        {
-          where: {
-            currentStockQuantity: {
-              [Op.ne]: 0,
-            },
-            ingredientId: ingredient.id,
-          },
-        }
-      );
-
-      if (!totalStockQuantity) {
-        totalStockQuantity = 0;
-      }
-      
-      updatedIngredient = await Ingredient.update(
-        {
-          currentStockQuantity: totalStockQuantity,
-        },
-        {
-          where: {
-            id: ingredient.id,
-          },
-        }
-      ); 
-    }
-    else {
-      throw new Error('Ingredient not found.');
-    }
-
-    return updatedIngredient;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Error updating global ingredient.");
-  }
-}
-
-
-export async function updateIngredientInfoOfRestaurantWithNewIngredientBatch(ingredientBatch: IIngredientBatch) {
-  try {
-    const ingredient = await findOneIngredientOfRestaurant(
-      ingredientBatch.ingredientId
-    );
-    let updatedIngredient;
-
-    if (ingredient) {
-
-      updateCurrentStockQuantityOfIngredient(ingredient.id);
-
-      const averageCostPerUnit = await IngredientBatch.findOne({
-        attributes: [
-          [sequelize.fn("AVG", sequelize.col("costPerUnit")), "costPerUnit"],
-        ],
-        where: {
-          ingredientId: ingredient.id,
-          receivedAt: {
-            [Op.gte]: sequelize.literal("NOW() - INTERVAL '1 YEAR'"),
-          },
-        },
-      });
-
-      updatedIngredient = await Ingredient.update(
-        {
-          costPerUnit: averageCostPerUnit
-            ? averageCostPerUnit.dataValues.costPerUnit
-            : 0,
-        },
-        {
-          where: {
-            id: ingredientBatch.ingredientId,
-          },
-        }
-      );
-    } else {
-      throw new Error("Ingredient not found.");
-    }
-
-    return updatedIngredient;
-  } catch (error) {
-    console.log(error);
     throw new Error("Error updating global ingredient.");
   }
 }
@@ -312,5 +166,145 @@ export async function findAllIngredientOfRestaurantWithCategoryAndIngredientBatc
     return ingredient;
   } catch (error) {
     throw new Error("Error finding global ingredient.");
+  }
+}
+
+export async function findOneIngredientOfRestaurant(ingredientId: number) {
+  try {
+    const ingredient = await Ingredient.findOne({
+      where: {
+        id: ingredientId,
+      },
+    });
+
+    return ingredient;
+  } catch (error) {
+    throw new Error("Error finding global ingredient.");
+  }
+}
+
+export async function updateCurrentStockQuantityOfIngredient(ingredientId: number) {
+  try {
+    const ingredient = await findOneIngredientOfRestaurant(ingredientId);
+    let updatedIngredient;
+    if (ingredient) {
+      let totalStockQuantity = await IngredientBatch.sum(
+        "currentStockQuantity",
+        {
+          where: {
+            currentStockQuantity: {
+              [Op.ne]: 0,
+            },
+            ingredientId: ingredient.id,
+          },
+        }
+      );
+
+      if (!totalStockQuantity) {
+        totalStockQuantity = 0;
+      }
+      
+      updatedIngredient = await Ingredient.update(
+        {
+          currentStockQuantity: totalStockQuantity,
+        },
+        {
+          where: {
+            id: ingredient.id,
+          },
+        }
+      ); 
+    }
+    else {
+      throw new Error('Ingredient not found.');
+    }
+
+    return updatedIngredient;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating global ingredient.");
+  }
+}
+
+export async function updateIngredientInfoOfRestaurantWithNewIngredientBatch(ingredientBatch: IIngredientBatch) {
+  try {
+    const ingredient = await findOneIngredientOfRestaurant(
+      ingredientBatch.ingredientId
+    );
+    let updatedIngredient;
+
+    if (ingredient) {
+
+      await updateCurrentStockQuantityOfIngredient(ingredient.id);
+
+      const averageCostPerUnit = await IngredientBatch.findOne({
+        attributes: [
+          [sequelize.fn("AVG", sequelize.col("costPerUnit")), "costPerUnit"],
+        ],
+        where: {
+          ingredientId: ingredient.id,
+          receivedAt: {
+            [Op.gte]: sequelize.literal("NOW() - INTERVAL '1 YEAR'"),
+          },
+        },
+      });
+
+      updatedIngredient = await Ingredient.update(
+        {
+          costPerUnit: averageCostPerUnit
+            ? averageCostPerUnit.dataValues.costPerUnit
+            : 0,
+        },
+        {
+          where: {
+            id: ingredientBatch.ingredientId,
+          },
+        }
+      );
+    } else {
+      throw new Error("Ingredient not found.");
+    }
+
+    return updatedIngredient;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating global ingredient.");
+  }
+}
+
+export async function deductIngredientsFromOrder(order: {orderType: string; ingredientsToReduce: IngredientToReduce[]; restaurantId: number;}) {
+  const { orderType, ingredientsToReduce, restaurantId } = order;
+
+  const transaction = await sequelize.transaction();
+
+  try {
+    const deductedIngredients: DeductedIngredient[] = [];
+
+    for (const ingredientToReduce of ingredientsToReduce) {
+      const { id, quantity } = ingredientToReduce;
+      
+      const ingredient = await findIngredientbyId(id);
+
+      if (ingredient) {
+        const deductedBatches = await deductIngredientBatchesInFIFO(
+          ingredient.id,
+          quantity,
+          orderType
+        );
+
+        updateCurrentStockQuantityOfIngredient(ingredient.id);
+        deductedIngredients.push({
+          ingredientId: ingredient.id,
+          deductedIngredientBatches: deductedBatches,
+        });
+      } else {
+        throw new Error(`Ingredient with ID ${id} not found.`);
+      }
+    }
+    
+    await transaction.commit();
+    return deductedIngredients;
+  } catch (error) {
+    throw new Error(`Error deducting ingredients: ${error}`);
   }
 }

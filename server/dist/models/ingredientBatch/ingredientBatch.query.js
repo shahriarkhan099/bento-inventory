@@ -81,25 +81,29 @@ function deductIngredientBatchesInFIFO(ingredientId, quantity, orderType) {
                 if (remainingQuantity === 0) {
                     break;
                 }
-                if (ingredientBatches[i].currentStockQuantity > remainingQuantity) {
-                    ingredientBatches[i].currentStockQuantity -= remainingQuantity;
+                const ingredientBatch = ingredientBatches[i];
+                if (ingredientBatch.currentStockQuantity >= remainingQuantity) {
+                    ingredientBatch.currentStockQuantity -= remainingQuantity;
                     remainingQuantity = 0;
                 }
                 else {
-                    remainingQuantity -= ingredientBatches[i].currentStockQuantity;
-                    ingredientBatches[i].currentStockQuantity = 0;
+                    remainingQuantity -= ingredientBatch.currentStockQuantity;
+                    ingredientBatch.currentStockQuantity = 0;
                 }
-                yield ingredientBatches[i].save();
-                yield (0, consumptionLog_query_1.createConsumptionLogOfRestaurantFromDeduction)({
-                    restaurantId: ingredientBatches[i].restaurantId,
-                    ingredientId: ingredientId,
-                    quantity: quantity,
-                    orderType: orderType,
-                    ingredientName: ingredientBatches[i].ingredientName,
-                    unitOfStock: ingredientBatches[i].unitOfStock,
-                    costPerUnit: ingredientBatches[i].costPerUnit
-                });
-                console.log('consumption log created');
+                yield ingredientBatch.save();
+                if (remainingQuantity === 0) {
+                    yield (0, consumptionLog_query_1.createConsumptionLogOfRestaurantFromDeduction)({
+                        restaurantId: ingredientBatch.restaurantId,
+                        itemId: ingredientId,
+                        itemType: 'ingredient',
+                        quantity: quantity,
+                        orderType: orderType,
+                        itemName: ingredientBatch.ingredientName,
+                        unitOfStock: ingredientBatch.unitOfStock,
+                        costPerUnit: ingredientBatch.costPerUnit
+                    });
+                    console.log('consumption log For Ingredient has created');
+                }
             }
             return ingredientBatches;
         }

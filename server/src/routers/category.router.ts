@@ -4,8 +4,8 @@ const router = Router();
 
 router.get('/restaurant/:restaurantId', getAllCategoryOfRestaurant);
 router.post('/restaurant/:restaurantId', postCategoryToRestaurant);
-router.get('/restaurant/:restaurantId/categories/search', searchCategory);
 router.put('/restaurant/:categoryId', updateCategory);
 router.delete('/restaurant/:categoryId', deleteCategory);
+router.get('/restaurant/:restaurantId/search', searchCategory);
 
 export default router;

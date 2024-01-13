@@ -1,11 +1,12 @@
 export interface IConsumptionLog {
   id: number;
-  ingredientName: string;
+  itemName: string;
+  itemType: string;
   unitOfStock: string;
   quantity: number;
   orderType: string;
   costPerUnit: number;
   consumedAt: Date;
-  ingredientId: number;
+  itemId: number;
   restaurantId: number;
 }

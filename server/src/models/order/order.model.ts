@@ -2,6 +2,7 @@ import { Model, DataTypes, Optional } from 'sequelize';
 import { IOrder } from '../../interfaces/order.interface';
 import sequelize from '..';
 import IngredientBatch from '../ingredientBatch/ingredientBatch.model';
+import DeliveryBoxBatch from '../deliveryBoxBatch/deliveryBoxBatch.model';
 
 interface OrderCreationAttributes extends Optional<IOrder, 'id'> {};
 
@@ -23,8 +24,9 @@ const Order = sequelize.define<OrderInstance>('orders', {
         defaultValue: 0,
       },
       status: {
-        type: DataTypes.ENUM('pending', 'accepted', 'received', 'cancelled'),
+        type: DataTypes.ENUM('pending', 'preparing', 'out_for_delivery', 'delivered', 'cancelled', 'suggestions'),
         allowNull: false,
+        defaultValue: 'pending',
       },
       orderDate: {
         type: DataTypes.DATE,
@@ -33,6 +35,11 @@ const Order = sequelize.define<OrderInstance>('orders', {
       deliveryDate: {
         type: DataTypes.DATE,
         allowNull: false,
+      },
+      scheduleTime: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: null,
       },
       supplierId: {
         type: DataTypes.INTEGER,
@@ -51,6 +58,15 @@ Order.hasMany(IngredientBatch, {
 
 IngredientBatch.belongsTo(Order, {
     foreignKey: 'orderId'
+});
+
+Order.hasMany(DeliveryBoxBatch, {
+  sourceKey: 'id',
+  foreignKey: 'orderId'
+});
+
+DeliveryBoxBatch.belongsTo(Order, {
+  foreignKey: 'orderId'
 });
 
 export default Order;

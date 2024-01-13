@@ -5,7 +5,9 @@ import {
   createDeliveryBoxOfRestaurant,
   updateDeliveryBox,
   deleteDeliveryBox,
+  deductDeliveryBoxesFromOrder
 } from "../models/deliveryBox/deliveryBox.query";
+import { DeliveryBoxToReduce } from "../interfaces/deductDeliveryBox.interface";
 
 
 
@@ -93,6 +95,30 @@ export async function deleteDeliveryBoxOfRestaurant(req: Request, res: Response)
       const deletedDeliveryBox = await deleteDeliveryBox(deliveryBoxId);
       res.status(200).json("Deleted");
     } else res.status(400).json({ message: "Invalid delivery box ID." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
+export async function deductDeliveryBoxesFromOrderOfRestaurant(req: Request, res: Response) {
+  try {
+    const { orderType, restaurantId, deliveryBoxesToReduce } = req.body;
+
+    if (!restaurantId || !deliveryBoxesToReduce) {
+      res.status(400).json({ error: "Missing required parameters" });
+      return;
+    }
+
+    const order = {
+      orderType: orderType,
+      restaurantId: restaurantId,
+      deliveryBoxesToReduce: deliveryBoxesToReduce as DeliveryBoxToReduce[],
+    };
+
+    const updatedDeliveryBoxes = await deductDeliveryBoxesFromOrder(order);
+
+    res.status(200).json(updatedDeliveryBoxes);
   } catch (error) {
     console.log(error);
     res.status(500).json(error);

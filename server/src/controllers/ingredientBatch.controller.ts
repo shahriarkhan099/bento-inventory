@@ -3,7 +3,6 @@ import { findAllIngredientOfRestaurant, addIngredientToRestaurant,
   updateIngredientOfRestaurant, deleteIngredientOfRestaurant, findIngredientWithCategory, findIngredientsByCategoryName } from "../models/ingredientBatch/ingredientBatch.query";
 
 
-  
 export async function getAllIngredientOfRestaurant (req: Request, res: Response) {
   try {
     const restaurantId = Number(req.params.restaurantId);
@@ -94,18 +93,3 @@ export async function getIngredientsByCategoryName (req: Request, res: Response)
     res.status(500).json(error);
   }
 }
-
-// export async function insertIngredientToCategory (req: Request, res: Response) {
-//   try {
-//     const restaurantId = Number(req.params.restaurantId);
-//     const categoryId = Number(req.params.categoryId);
-//     if (restaurantId) {
-//       const ingredient = await addIngredientToCategory(restaurantId, categoryId);
-//       res.json({ ingredients: ingredient });
-//     } else res.status(400).json({ message: "Invalid restaurant ID." });
-
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json(error);
-//   }
-// }

@@ -1,7 +1,10 @@
 import { Op } from "sequelize";
 import ConsumptionLog from "./consumptionLog.model";
 import { IConsumptionLog } from "../../interfaces/consumptionLog.interface";
-import Ingredient from "../ingredient/ingredient.model";
+import { deductDeliveryBoxesFromOrder } from "../deliveryBox/deliveryBox.query";
+import { deductIngredientsFromOrder } from "../ingredient/ingredient.query";
+import { IngredientToReduce } from "../../interfaces/deductIngredient.interface";
+import { DeliveryBoxToReduce } from "../../interfaces/deductDeliveryBox.interface";
 
 export async function findAllConsumptionLogsOfRestaurant(restaurantId: number) {
   try {
@@ -22,7 +25,7 @@ export async function findConsumptionLogsByIngredientName(restaurantId: number, 
     const consumptionLogs = await ConsumptionLog.findAll({
       where: {
         restaurantId: restaurantId,
-        ingredientName: {
+        itemName: {
           [Op.like]: `%${ingredientName}%`,
         },
       },
@@ -46,8 +49,8 @@ export async function createConsumptionLogOfRestaurant(consumptionLog: IConsumpt
 }
 
 export async function createConsumptionLogOfRestaurantFromDeduction ( 
-  data: { ingredientName: string, unitOfStock: string, quantity: number,  orderType: string, 
-    costPerUnit: number, ingredientId: number, restaurantId: number }) {
+  data: { itemName: string, itemType: string, unitOfStock: string, quantity: number,  orderType: string, 
+    costPerUnit: number, itemId: number, restaurantId: number }) {
   try {
     const newConsumptionLog = await ConsumptionLog.create({ ...data, consumedAt: new Date() });
     return newConsumptionLog;
@@ -80,5 +83,21 @@ export async function deleteConsumptionLog(consumptionLogId: number) {
     return deletedConsumptionLog;
   } catch (error) {
     throw new Error("Error deleting consumption log.");
+  }
+}
+
+export async function deductIngredientsAndDeliveryBoxesFromOrder (order: {
+  orderType: string;
+  ingredientsToReduce: IngredientToReduce[];
+  deliveryBoxesToReduce: DeliveryBoxToReduce[];
+  restaurantId: number;
+}) {
+  try {
+    const { orderType, ingredientsToReduce, deliveryBoxesToReduce, restaurantId } = order;
+    const deductedIngredients = await deductIngredientsFromOrder({ingredientsToReduce, orderType, restaurantId});
+    const deductedDeliveryBoxes = await deductDeliveryBoxesFromOrder({deliveryBoxesToReduce, orderType, restaurantId});
+    return { deductedIngredients, deductedDeliveryBoxes };
+  } catch (error) {
+    throw new Error('Error deducting ingredients and delivery boxes from order.');
   }
 }

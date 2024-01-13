@@ -133,16 +133,3 @@ function getIngredientsByCategoryName(req, res) {
     });
 }
 exports.getIngredientsByCategoryName = getIngredientsByCategoryName;
-// export async function insertIngredientToCategory (req: Request, res: Response) {
-//   try {
-//     const restaurantId = Number(req.params.restaurantId);
-//     const categoryId = Number(req.params.categoryId);
-//     if (restaurantId) {
-//       const ingredient = await addIngredientToCategory(restaurantId, categoryId);
-//       res.json({ ingredients: ingredient });
-//     } else res.status(400).json({ message: "Invalid restaurant ID." });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json(error);
-//   }
-// }

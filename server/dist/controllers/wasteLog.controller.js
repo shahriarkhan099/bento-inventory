@@ -15,9 +15,10 @@ function getAllWasteLogWithIngredient(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const wasteLog = yield (0, wasteLog_query_1.findAllWasteLogWithIngredient)(parseInt(req.params.restaurantId));
-            res.status(200).json(wasteLog);
+            res.status(200).json({ wasteLogs: wasteLog });
         }
         catch (error) {
+            console.log(error);
             res.status(500).json(error);
         }
     });
@@ -28,9 +29,9 @@ function createWasteLog(req, res) {
         try {
             const restaurantId = Number(req.params.restaurantId);
             const wasteLog = req.body;
-            if (typeof wasteLog.ingredientId === 'number' && typeof wasteLog.quantity === 'number' && typeof wasteLog.wasteDate === 'string' && typeof wasteLog.restaurantId === 'number') {
+            if (typeof wasteLog.ingredientId === 'number') {
                 const newWasteLog = yield (0, wasteLog_query_1.addWasteLog)(wasteLog, restaurantId);
-                res.status(201).json(newWasteLog);
+                res.status(201).json({ wasteLog: wasteLog });
             }
             else
                 res.status(400).json({ message: "Invalid waste log information." });
@@ -48,7 +49,7 @@ function editWasteLog(req, res) {
             const wasteLogId = Number(req.params.wasteLogId);
             if (wasteLogId) {
                 let wasteLog = req.body;
-                if (typeof wasteLog.ingredientId === 'number' && typeof wasteLog.quantity === 'number' && typeof wasteLog.wasteDate === 'string' && typeof wasteLog.restaurantId === 'number') {
+                if (typeof wasteLog.restaurantId === 'number') {
                     const updatedWasteLog = yield (0, wasteLog_query_1.updateWasteLog)(wasteLogId, wasteLog);
                     res.status(200).json(updatedWasteLog);
                 }

@@ -18,20 +18,25 @@ const ConsumptionLog = sequelize.define<ConsumptionLogInstance>("consumptionLogs
       type: DataTypes.INTEGER,
       unique: true,
     },
-    ingredientName: {
+    itemName: {
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    itemType: {
+      type: DataTypes.ENUM('ingredient', 'box'),
+      allowNull: false,
+      defaultValue: 'ingredient',
+    },
     unitOfStock: {
-      type: DataTypes.ENUM("gm", "ml", "piece"),
+      type: DataTypes.ENUM('gm', 'ml', 'piece', 'kg', 'litre'),
       allowNull: false,
     },
     quantity: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.FLOAT,
       allowNull: false,
     },
     orderType: {
-      type: DataTypes.ENUM("inhouse", "marketplace"),
+      type: DataTypes.ENUM('inhouse', 'marketplace'),
       allowNull: false,
     },
     costPerUnit: {
@@ -41,7 +46,7 @@ const ConsumptionLog = sequelize.define<ConsumptionLogInstance>("consumptionLogs
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
-    ingredientId: {
+    itemId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },

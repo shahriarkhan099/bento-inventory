@@ -36,7 +36,7 @@ const Supplier = sequelize.define<SupplierInstance>('suppliers', {
         allowNull: false,
       },
       label: {
-        type: DataTypes.ENUM('Good', 'Best', 'Bad', 'Worst', 'New'),
+        type: DataTypes.ENUM('Premium', 'Preferred', 'Standard', 'Budget', 'New'),
         allowNull: false,
         defaultValue: 'New',
       },

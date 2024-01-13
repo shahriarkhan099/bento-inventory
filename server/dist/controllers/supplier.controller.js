@@ -15,7 +15,7 @@ function getAllSuppliers(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const supplier = yield (0, supplier_query_1.findAllSuppliers)(parseInt(req.params.restaurantId));
-            res.status(200).json(supplier);
+            res.status(200).json({ suppliers: supplier });
         }
         catch (error) {
             res.status(500).json(error);

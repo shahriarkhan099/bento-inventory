@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteDeliveryBoxOfRestaurant = exports.putDeliveryBox = exports.postDeliveryBoxToRestaurant = exports.searchDeliveryBoxes = exports.getAllDeliveryBoxesOfRestaurant = void 0;
+exports.deductDeliveryBoxesFromOrderOfRestaurant = exports.deleteDeliveryBoxOfRestaurant = exports.putDeliveryBox = exports.postDeliveryBoxToRestaurant = exports.searchDeliveryBoxes = exports.getAllDeliveryBoxesOfRestaurant = void 0;
 const deliveryBox_query_1 = require("../models/deliveryBox/deliveryBox.query");
 function getAllDeliveryBoxesOfRestaurant(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -115,3 +115,26 @@ function deleteDeliveryBoxOfRestaurant(req, res) {
     });
 }
 exports.deleteDeliveryBoxOfRestaurant = deleteDeliveryBoxOfRestaurant;
+function deductDeliveryBoxesFromOrderOfRestaurant(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { orderType, restaurantId, deliveryBoxesToReduce } = req.body;
+            if (!restaurantId || !deliveryBoxesToReduce) {
+                res.status(400).json({ error: "Missing required parameters" });
+                return;
+            }
+            const order = {
+                orderType: orderType,
+                restaurantId: restaurantId,
+                deliveryBoxesToReduce: deliveryBoxesToReduce,
+            };
+            const updatedDeliveryBoxes = yield (0, deliveryBox_query_1.deductDeliveryBoxesFromOrder)(order);
+            res.status(200).json(updatedDeliveryBoxes);
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.deductDeliveryBoxesFromOrderOfRestaurant = deductDeliveryBoxesFromOrderOfRestaurant;

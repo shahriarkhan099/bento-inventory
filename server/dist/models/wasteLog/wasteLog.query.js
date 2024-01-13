@@ -16,6 +16,7 @@ exports.findWasteLogBySearchTerm = exports.updateWasteLog = exports.addToWasteLo
 const sequelize_1 = require("sequelize");
 const wasteLog_model_1 = __importDefault(require("./wasteLog.model"));
 const ingredientBatch_model_1 = __importDefault(require("../ingredientBatch/ingredientBatch.model"));
+const ingredient_model_1 = __importDefault(require("../ingredient/ingredient.model"));
 function findAllWasteLogWithIngredient(restaurantId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -23,11 +24,12 @@ function findAllWasteLogWithIngredient(restaurantId) {
                 where: {
                     restaurantId: restaurantId
                 },
-                include: [ingredientBatch_model_1.default]
+                include: [ingredient_model_1.default],
             });
             return wasteLog;
         }
         catch (error) {
+            console.log(error);
             throw new Error('Error finding waste logs.');
         }
     });
@@ -41,11 +43,30 @@ function addWasteLog(wasteLog, restaurantId) {
             return createdWasteLog;
         }
         catch (error) {
+            console.log(error);
             throw new Error('Error creating waste log.');
         }
     });
 }
 exports.addWasteLog = addWasteLog;
+// export async function addWasteLogAndRemoveFromIngredient(ingredientBatchId: number, wasteLog: IWasteLog, restaurantId: number) {
+//   try {
+//     const ingredientBatch = await IngredientBatch.findOne({
+//       where: {
+//         id: ingredientBatchId
+//       }
+//     });
+//     if (!ingredientBatch) {
+//       throw new Error('Ingredient batch not found.');
+//     }
+//     const createdWasteLog = await addWasteLog(wasteLog, restaurantId);
+//     await ingredientBatch.destroy();
+//     return createdWasteLog;
+//   } catch (error) {
+//     console.log(error);
+//     throw new Error('Error creating waste log.');
+//   }
+// }
 function addToWasteLogByCheckingExpirationDateOfAllIngredientBatchesOfAllRestaurant() {
     return __awaiter(this, void 0, void 0, function* () {
         try {

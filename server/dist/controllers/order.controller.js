@@ -17,7 +17,7 @@ function getAllOrderOfRestaurantWithBatch(req, res) {
             const restaurantId = Number(req.params.restaurantId);
             if (restaurantId) {
                 const order = yield (0, order_query_1.findAllOrderOfRestaurantWithBatch)(restaurantId);
-                res.status(200).json(order);
+                res.status(200).json({ orders: order });
             }
             else
                 res.status(400).json({ message: "Invalid restaurant ID." });
@@ -75,10 +75,11 @@ function createOrderToRestaurantWithIngredientBatches(req, res) {
         try {
             const order = req.body;
             const ingredientBatches = req.body.ingredientBatches;
+            const deliveryBoxBatches = req.body.deliveryBoxBatches;
             const restaurantId = Number(req.params.restaurantId);
             order.restaurantId = restaurantId;
             if (typeof order.restaurantId === 'number') {
-                const newOrder = yield (0, order_query_1.addOrderToRestaurantWithIngredientBatches)(order, ingredientBatches);
+                const newOrder = yield (0, order_query_1.addOrderToRestaurantWithIngredientBatches)(order, ingredientBatches, deliveryBoxBatches);
                 res.status(201).json(newOrder);
             }
             else

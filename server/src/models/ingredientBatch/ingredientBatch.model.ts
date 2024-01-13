@@ -26,11 +26,11 @@ const IngredientBatch = sequelize.define<IngredientBatchInstance>('ingredientBat
         allowNull: false,
       },
       purchaseQuantity: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         allowNull: false,
       },
       currentStockQuantity: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
       },
       unitOfPrice: {
         type: DataTypes.ENUM('cents', 'usd'),

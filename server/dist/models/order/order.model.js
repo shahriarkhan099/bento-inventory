@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const __1 = __importDefault(require(".."));
 const ingredientBatch_model_1 = __importDefault(require("../ingredientBatch/ingredientBatch.model"));
+const deliveryBoxBatch_model_1 = __importDefault(require("../deliveryBoxBatch/deliveryBoxBatch.model"));
 ;
 const Order = __1.default.define('orders', {
     id: {
@@ -20,8 +21,9 @@ const Order = __1.default.define('orders', {
         defaultValue: 0,
     },
     status: {
-        type: sequelize_1.DataTypes.ENUM('pending', 'accepted', 'received', 'cancelled'),
+        type: sequelize_1.DataTypes.ENUM('pending', 'preparing', 'out_for_delivery', 'delivered', 'cancelled', 'suggestions'),
         allowNull: false,
+        defaultValue: 'pending',
     },
     orderDate: {
         type: sequelize_1.DataTypes.DATE,
@@ -30,6 +32,11 @@ const Order = __1.default.define('orders', {
     deliveryDate: {
         type: sequelize_1.DataTypes.DATE,
         allowNull: false,
+    },
+    scheduleTime: {
+        type: sequelize_1.DataTypes.DATE,
+        allowNull: true,
+        defaultValue: null,
     },
     supplierId: {
         type: sequelize_1.DataTypes.INTEGER,
@@ -45,6 +52,13 @@ Order.hasMany(ingredientBatch_model_1.default, {
     foreignKey: 'orderId'
 });
 ingredientBatch_model_1.default.belongsTo(Order, {
+    foreignKey: 'orderId'
+});
+Order.hasMany(deliveryBoxBatch_model_1.default, {
+    sourceKey: 'id',
+    foreignKey: 'orderId'
+});
+deliveryBoxBatch_model_1.default.belongsTo(Order, {
     foreignKey: 'orderId'
 });
 exports.default = Order;

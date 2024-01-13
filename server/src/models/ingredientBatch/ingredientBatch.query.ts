@@ -61,26 +61,32 @@ export async function deductIngredientBatchesInFIFO (ingredientId: number, quant
       if (remainingQuantity === 0) {
         break;
       }
-      if (ingredientBatches[i].currentStockQuantity > remainingQuantity) {
-        ingredientBatches[i].currentStockQuantity -= remainingQuantity;
+
+      const ingredientBatch = ingredientBatches[i];
+
+      if (ingredientBatch.currentStockQuantity >= remainingQuantity) {
+        ingredientBatch.currentStockQuantity -= remainingQuantity;
         remainingQuantity = 0;
       } else {
-        remainingQuantity -= ingredientBatches[i].currentStockQuantity;
-        ingredientBatches[i].currentStockQuantity = 0;
+        remainingQuantity -= ingredientBatch.currentStockQuantity;
+        ingredientBatch.currentStockQuantity = 0;
       }
-      await ingredientBatches[i].save();
+      await ingredientBatch.save();
 
+      if (remainingQuantity === 0) {
       await createConsumptionLogOfRestaurantFromDeduction({
-        restaurantId: ingredientBatches[i].restaurantId,
-        ingredientId: ingredientId,
+        restaurantId: ingredientBatch.restaurantId,
+        itemId: ingredientId,
+        itemType: 'ingredient',
         quantity: quantity,
         orderType: orderType,
-        ingredientName: ingredientBatches[i].ingredientName, 
-        unitOfStock: ingredientBatches[i].unitOfStock, 
-        costPerUnit: ingredientBatches[i].costPerUnit 
+        itemName: ingredientBatch.ingredientName, 
+        unitOfStock: ingredientBatch.unitOfStock, 
+        costPerUnit: ingredientBatch.costPerUnit 
       });
 
-      console.log('consumption log created');
+      console.log('consumption log For Ingredient has created');
+    }
     }
     return ingredientBatches;
 
@@ -89,6 +95,7 @@ export async function deductIngredientBatchesInFIFO (ingredientId: number, quant
     throw new Error('Error deducting ingredient batches.');
   }
 }
+
 
 export async function deleteIngredientOfRestaurant (ingredientId: number) {
   try {

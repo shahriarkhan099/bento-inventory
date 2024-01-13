@@ -7,6 +7,7 @@ const sequelize_1 = require("sequelize");
 const __1 = __importDefault(require(".."));
 const ingredientBatch_model_1 = __importDefault(require("../ingredientBatch/ingredientBatch.model"));
 const consumptionLog_model_1 = __importDefault(require("../consumptionLog/consumptionLog.model"));
+const wasteLog_model_1 = __importDefault(require("../wasteLog/wasteLog.model"));
 ;
 const Ingredient = __1.default.define('ingredients', {
     id: {
@@ -25,7 +26,7 @@ const Ingredient = __1.default.define('ingredients', {
         allowNull: false,
     },
     currentStockQuantity: {
-        type: sequelize_1.DataTypes.INTEGER,
+        type: sequelize_1.DataTypes.FLOAT,
         allowNull: false,
         defaultValue: 0,
     },
@@ -36,12 +37,14 @@ const Ingredient = __1.default.define('ingredients', {
     },
     costPerUnit: {
         type: sequelize_1.DataTypes.FLOAT,
+        defaultValue: 0,
     },
     caloriesPerUnit: {
-        type: sequelize_1.DataTypes.INTEGER,
+        type: sequelize_1.DataTypes.FLOAT,
     },
     reorderPoint: {
-        type: sequelize_1.DataTypes.INTEGER,
+        type: sequelize_1.DataTypes.FLOAT,
+        defaultValue: 0,
     },
     perishable: {
         type: sequelize_1.DataTypes.ENUM('Yes', 'No'),
@@ -58,10 +61,12 @@ const Ingredient = __1.default.define('ingredients', {
         type: sequelize_1.DataTypes.INTEGER,
     },
     expectedStockForToday: {
-        type: sequelize_1.DataTypes.INTEGER,
+        type: sequelize_1.DataTypes.FLOAT,
+        defaultValue: 0,
     },
     expectedStockForTomorrow: {
-        type: sequelize_1.DataTypes.INTEGER,
+        type: sequelize_1.DataTypes.FLOAT,
+        defaultValue: 0,
     },
     restaurantId: {
         type: sequelize_1.DataTypes.INTEGER,
@@ -84,6 +89,13 @@ Ingredient.hasMany(consumptionLog_model_1.default, {
     foreignKey: 'ingredientId',
 });
 consumptionLog_model_1.default.belongsTo(Ingredient, {
+    foreignKey: 'ingredientId',
+});
+Ingredient.hasMany(wasteLog_model_1.default, {
+    sourceKey: 'id',
+    foreignKey: 'ingredientId',
+});
+wasteLog_model_1.default.belongsTo(Ingredient, {
     foreignKey: 'ingredientId',
 });
 exports.default = Ingredient;

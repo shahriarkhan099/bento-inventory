@@ -12,9 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteConsumptionLog = exports.updateConsumptionLog = exports.createConsumptionLogOfRestaurantFromDeduction = exports.createConsumptionLogOfRestaurant = exports.findConsumptionLogsByIngredientName = exports.findAllConsumptionLogsOfRestaurant = void 0;
+exports.deductIngredientsAndDeliveryBoxesFromOrder = exports.deleteConsumptionLog = exports.updateConsumptionLog = exports.createConsumptionLogOfRestaurantFromDeduction = exports.createConsumptionLogOfRestaurant = exports.findConsumptionLogsByIngredientName = exports.findAllConsumptionLogsOfRestaurant = void 0;
 const sequelize_1 = require("sequelize");
 const consumptionLog_model_1 = __importDefault(require("./consumptionLog.model"));
+const deliveryBox_query_1 = require("../deliveryBox/deliveryBox.query");
+const ingredient_query_1 = require("../ingredient/ingredient.query");
 function findAllConsumptionLogsOfRestaurant(restaurantId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -37,7 +39,7 @@ function findConsumptionLogsByIngredientName(restaurantId, ingredientName) {
             const consumptionLogs = yield consumptionLog_model_1.default.findAll({
                 where: {
                     restaurantId: restaurantId,
-                    ingredientName: {
+                    itemName: {
                         [sequelize_1.Op.like]: `%${ingredientName}%`,
                     },
                 },
@@ -109,3 +111,17 @@ function deleteConsumptionLog(consumptionLogId) {
     });
 }
 exports.deleteConsumptionLog = deleteConsumptionLog;
+function deductIngredientsAndDeliveryBoxesFromOrder(order) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { orderType, ingredientsToReduce, deliveryBoxesToReduce, restaurantId } = order;
+            const deductedIngredients = yield (0, ingredient_query_1.deductIngredientsFromOrder)({ ingredientsToReduce, orderType, restaurantId });
+            const deductedDeliveryBoxes = yield (0, deliveryBox_query_1.deductDeliveryBoxesFromOrder)({ deliveryBoxesToReduce, orderType, restaurantId });
+            return { deductedIngredients, deductedDeliveryBoxes };
+        }
+        catch (error) {
+            throw new Error('Error deducting ingredients and delivery boxes from order.');
+        }
+    });
+}
+exports.deductIngredientsAndDeliveryBoxesFromOrder = deductIngredientsAndDeliveryBoxesFromOrder;
