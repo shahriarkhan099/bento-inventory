@@ -49,6 +49,10 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
         type: DataTypes.FLOAT,
         defaultValue: 0,
       },
+      liquid: {
+        type: DataTypes.ENUM('Yes', 'No'),
+        allowNull: false,
+      },
       perishable: {
         type: DataTypes.ENUM('Yes', 'No'),
         allowNull: false,
@@ -59,6 +63,7 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
       unitOfIdealStoringTemperature: {
         type: DataTypes.ENUM('Celsius', 'Fahrenheit'),
         allowNull: false,
+        defaultValue: 'Celsius',
       },
       idealStoringTemperature: {
         type: DataTypes.INTEGER,

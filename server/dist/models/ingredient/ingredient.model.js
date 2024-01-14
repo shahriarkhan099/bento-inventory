@@ -46,6 +46,10 @@ const Ingredient = __1.default.define('ingredients', {
         type: sequelize_1.DataTypes.FLOAT,
         defaultValue: 0,
     },
+    liquid: {
+        type: sequelize_1.DataTypes.ENUM('Yes', 'No'),
+        allowNull: false,
+    },
     perishable: {
         type: sequelize_1.DataTypes.ENUM('Yes', 'No'),
         allowNull: false,
