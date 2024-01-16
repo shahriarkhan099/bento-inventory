@@ -51,10 +51,8 @@ export async function createOrderToRestaurantWithIngredientBatches (req: Request
     const order = req.body;
     const ingredientBatches = req.body.ingredientBatches;
     const deliveryBoxBatches = req.body.deliveryBoxBatches;
-    if (order.restaurantId) {
-      const restaurantId = Number(req.params.restaurantId);
-      order.restaurantId = restaurantId;
-    }
+    const restaurantId = Number(req.params.restaurantId);
+    order.restaurantId = restaurantId;
     if (typeof order.restaurantId === 'number') {
       const newOrder = await addOrderToRestaurantWithIngredientBatches(order, ingredientBatches, deliveryBoxBatches);
       res.status(201).json(newOrder);

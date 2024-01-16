@@ -123,12 +123,10 @@ export async function addOrderToRestaurantWithIngredientBatches(
       ingredientBatches.forEach(async (ingredientBatch) => {
         ingredientBatch.orderId = newOrder.id;
         ingredientBatch.restaurantId = newOrder.restaurantId;
+        ingredientBatch.supplierId = newOrder.supplierId;
         ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
-        ingredientBatch.costPerUnit =
-          ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
-        const newIngredientBatch = await addIngredientToRestaurant(
-          ingredientBatch
-        );
+        ingredientBatch.costPerUnit = ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
+        const newIngredientBatch = await addIngredientToRestaurant(ingredientBatch);
         await updateIngredientInfoOfRestaurantWithNewIngredientBatch(
           newIngredientBatch
         );
@@ -139,10 +137,9 @@ export async function addOrderToRestaurantWithIngredientBatches(
       deliveryBoxBatches.forEach(async (deliveryBoxBatch) => {
         deliveryBoxBatch.orderId = newOrder.id;
         deliveryBoxBatch.restaurantId = newOrder.restaurantId;
-        deliveryBoxBatch.currentStockQuantity =
-          deliveryBoxBatch.purchaseQuantity;
-        deliveryBoxBatch.costPerUnit =
-          deliveryBoxBatch.purchasePrice / deliveryBoxBatch.purchaseQuantity;
+        deliveryBoxBatch.supplierId = newOrder.supplierId;
+        deliveryBoxBatch.currentStockQuantity = deliveryBoxBatch.purchaseQuantity;
+        deliveryBoxBatch.costPerUnit = deliveryBoxBatch.purchasePrice / deliveryBoxBatch.purchaseQuantity;
         const newDeliveryBoxBatch = await addDeliveryBoxToRestaurant(
           deliveryBoxBatch
         );
@@ -157,71 +154,6 @@ export async function addOrderToRestaurantWithIngredientBatches(
     console.log(error);
     throw new Error("Error creating order with Batches.");
   }
-}
-
-export async function addOrderToRestaurantWithIngredientBatches2(
-  order: IOrder,
-  ingredientBatches: IIngredientBatch[],
-  deliveryBoxBatches: IDeliveryBoxBatch[]
-) {
-  setTimeout(async () => {
-  try {
-    order.totalPrice = 0;
-    order.status = "delivered";
-
-    if (ingredientBatches) {
-      ingredientBatches.forEach(async (ingredientBatch) => {
-        order.totalPrice += ingredientBatch.purchasePrice;
-      });
-    }
-
-    if (deliveryBoxBatches) {
-      deliveryBoxBatches.forEach(async (deliveryBoxBatch) => {
-        order.totalPrice += deliveryBoxBatch.purchasePrice;
-      });
-    }
-
-    const newOrder = await addOrderToRestaurant(order);
-
-    if (ingredientBatches) {
-      ingredientBatches.forEach(async (ingredientBatch) => {
-        ingredientBatch.orderId = newOrder.id;
-        ingredientBatch.restaurantId = newOrder.restaurantId;
-        ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
-        ingredientBatch.costPerUnit =
-          ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
-        const newIngredientBatch = await addIngredientToRestaurant(
-          ingredientBatch
-        );
-        await updateIngredientInfoOfRestaurantWithNewIngredientBatch(
-          newIngredientBatch
-        );
-      });
-    }
-
-    if (deliveryBoxBatches) {
-      deliveryBoxBatches.forEach(async (deliveryBoxBatch) => {
-        deliveryBoxBatch.orderId = newOrder.id;
-        deliveryBoxBatch.restaurantId = newOrder.restaurantId;
-        deliveryBoxBatch.currentStockQuantity =
-          deliveryBoxBatch.purchaseQuantity;
-        deliveryBoxBatch.costPerUnit =
-          deliveryBoxBatch.purchasePrice / deliveryBoxBatch.purchaseQuantity;
-        const newDeliveryBoxBatch = await addDeliveryBoxToRestaurant(
-          deliveryBoxBatch
-        );
-        await updateDeliveryBoxInfoOfRestaurantWithNewDeliveryBoxBatch(
-          newDeliveryBoxBatch
-        );
-      });
-    }
-
-    return newOrder;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Error creating order with Batches.");
-  }
- }, 5 * 1000);
 }
 
 export async function addOrderToRestaurantWithIngredientBatchesAfterFiveHours(

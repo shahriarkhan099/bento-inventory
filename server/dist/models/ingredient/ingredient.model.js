@@ -60,6 +60,7 @@ const Ingredient = __1.default.define('ingredients', {
     unitOfIdealStoringTemperature: {
         type: sequelize_1.DataTypes.ENUM('Celsius', 'Fahrenheit'),
         allowNull: false,
+        defaultValue: 'Celsius',
     },
     idealStoringTemperature: {
         type: sequelize_1.DataTypes.INTEGER,

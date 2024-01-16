@@ -19,7 +19,7 @@ const IngredientBatch = __1.default.define('ingredientBatches', {
         allowNull: false,
     },
     unitOfStock: {
-        type: sequelize_1.DataTypes.ENUM('gm', 'ml', 'piece', 'kg', 'litre'),
+        type: sequelize_1.DataTypes.ENUM('gm', 'ml', 'kg', 'litre', 'piece', 'bottle', 'packet', 'can'),
         allowNull: false,
     },
     purchaseQuantity: {

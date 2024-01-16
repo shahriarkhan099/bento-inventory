@@ -4,7 +4,6 @@ export interface IOrder {
   status: string;
   orderDate: Date;
   deliveryDate: Date;
-  scheduleTime: Date;
   supplierId: number;
   restaurantId: number;
 }
