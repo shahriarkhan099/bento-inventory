@@ -20,6 +20,10 @@ const Ingredient = sequelize.define<IngredientInstance>('ingredients', {
         type: DataTypes.INTEGER,
         unique: true,
       },
+      uniqueIngredientId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       ingredientName: {
         type: DataTypes.TEXT,
         allowNull: false,

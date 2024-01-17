@@ -17,6 +17,10 @@ const IngredientBatch = sequelize.define<IngredientBatchInstance>('ingredientBat
         type: DataTypes.INTEGER,
         unique: true,
       },
+      uniqueIngredientId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       ingredientName: {
         type: DataTypes.TEXT,
         allowNull: false,
@@ -35,7 +39,7 @@ const IngredientBatch = sequelize.define<IngredientBatchInstance>('ingredientBat
       unitOfPrice: {
         type: DataTypes.ENUM('cents', 'usd'),
         allowNull: false,
-        defaultValue: 'usd',
+        defaultValue: 'cents',
       },
       purchasePrice: {
         type: DataTypes.FLOAT, 

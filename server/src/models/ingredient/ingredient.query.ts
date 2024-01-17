@@ -228,9 +228,7 @@ export async function updateCurrentStockQuantityOfIngredient(ingredientId: numbe
 
 export async function updateIngredientInfoOfRestaurantWithNewIngredientBatch(ingredientBatch: IIngredientBatch) {
   try {
-    const ingredient = await findOneIngredientOfRestaurant(
-      ingredientBatch.ingredientId
-    );
+    const ingredient = await findOneIngredientOfRestaurant(ingredientBatch.ingredientId);
     let updatedIngredient;
 
     if (ingredient) {
@@ -306,5 +304,19 @@ export async function deductIngredientsFromOrder(order: {orderType: string; ingr
     return deductedIngredients;
   } catch (error) {
     throw new Error(`Error deducting ingredients: ${error}`);
+  }
+}
+
+export async function findOneIngredientOfRestaurantWithUniqueIngredientId(uniqueIngredientId: number, restaurantId: number) {
+  try {
+    const ingredient = await Ingredient.findOne({
+      where: {
+        uniqueIngredientId: uniqueIngredientId,
+        restaurantId: restaurantId
+      }
+    });
+    return ingredient;
+  } catch (error) {
+    throw new Error("Error finding global ingredient.");
   }
 }

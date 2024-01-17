@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { findAllOrderOfRestaurantWithBatch, updateOrderOfRestaurant, 
-         addOrderToRestaurantWithIngredientBatches, deleteOrderOfRestaurant } from "../models/order/order.query";
+         addOrderToRestaurantWithAllBatches, deleteOrderOfRestaurant,
+         addOrderToRestaurantWithIngredientBatches, addOrderToRestaurantWithDeliveryBoxBatches } from "../models/order/order.query";
 
 
          
@@ -50,11 +51,43 @@ export async function createOrderToRestaurantWithIngredientBatches (req: Request
   try {
     const order = req.body;
     const ingredientBatches = req.body.ingredientBatches;
+    const restaurantId = Number(req.params.restaurantId);
+    order.restaurantId = restaurantId;
+    if (typeof order.restaurantId === 'number') {
+      const newOrder = await addOrderToRestaurantWithIngredientBatches(order, ingredientBatches);
+      res.status(201).json(newOrder);
+    } else res.status(400).json({ message: "Invalid order information." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
+export async function createOrderToRestaurantWithDeliveryBoxBatches (req: Request, res: Response) {
+  try {
+    const order = req.body;
     const deliveryBoxBatches = req.body.deliveryBoxBatches;
     const restaurantId = Number(req.params.restaurantId);
     order.restaurantId = restaurantId;
     if (typeof order.restaurantId === 'number') {
-      const newOrder = await addOrderToRestaurantWithIngredientBatches(order, ingredientBatches, deliveryBoxBatches);
+      const newOrder = await addOrderToRestaurantWithDeliveryBoxBatches(order, deliveryBoxBatches);
+      res.status(201).json(newOrder);
+    } else res.status(400).json({ message: "Invalid order information." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
+export async function createOrderToRestaurantWithAllBatches (req: Request, res: Response) {
+  try {
+    const order = req.body;
+    const ingredientBatches = req.body.ingredientBatches;
+    const deliveryBoxBatches = req.body.deliveryBoxBatches;
+    const restaurantId = Number(req.params.restaurantId);
+    order.restaurantId = restaurantId;
+    if (typeof order.restaurantId === 'number') {
+      const newOrder = await addOrderToRestaurantWithAllBatches(order, ingredientBatches, deliveryBoxBatches);
       res.status(201).json(newOrder);
     } else res.status(400).json({ message: "Invalid order information." });
   } catch (error) {

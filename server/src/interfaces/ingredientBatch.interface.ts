@@ -1,5 +1,6 @@
 export interface IIngredientBatch {
   id: number;
+  uniqueIngredientId: number;
   ingredientName: string;
   unitOfStock: string;
   currentStockQuantity: number;
