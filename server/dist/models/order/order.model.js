@@ -21,7 +21,7 @@ const Order = __1.default.define('orders', {
         defaultValue: 0,
     },
     status: {
-        type: sequelize_1.DataTypes.ENUM('pending', 'preparing', 'out_for_delivery', 'delivered', 'cancelled', 'suggestions'),
+        type: sequelize_1.DataTypes.ENUM('pending', 'accepted', 'preparing', 'out_for_delivery', 'delivered', 'cancelled'),
         allowNull: false,
         defaultValue: 'pending',
     },
@@ -33,11 +33,6 @@ const Order = __1.default.define('orders', {
     deliveryDate: {
         type: sequelize_1.DataTypes.DATE,
         allowNull: false,
-    },
-    scheduleTime: {
-        type: sequelize_1.DataTypes.DATE,
-        allowNull: true,
-        defaultValue: null,
     },
     supplierId: {
         type: sequelize_1.DataTypes.INTEGER,

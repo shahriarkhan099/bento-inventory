@@ -36,6 +36,7 @@ const DeliveryBoxBatch = sequelize.define<DeliveryBoxBatchInstance>(
     unitOfPrice: {
       type: DataTypes.ENUM("cents", "usd"),
       allowNull: false,
+      defaultValue: "usd",
     },
     purchasePrice: {
       type: DataTypes.FLOAT,

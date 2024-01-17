@@ -76,10 +76,8 @@ function createOrderToRestaurantWithIngredientBatches(req, res) {
             const order = req.body;
             const ingredientBatches = req.body.ingredientBatches;
             const deliveryBoxBatches = req.body.deliveryBoxBatches;
-            if (order.restaurantId) {
-                const restaurantId = Number(req.params.restaurantId);
-                order.restaurantId = restaurantId;
-            }
+            const restaurantId = Number(req.params.restaurantId);
+            order.restaurantId = restaurantId;
             if (typeof order.restaurantId === 'number') {
                 const newOrder = yield (0, order_query_1.addOrderToRestaurantWithIngredientBatches)(order, ingredientBatches, deliveryBoxBatches);
                 res.status(201).json(newOrder);

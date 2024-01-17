@@ -22,7 +22,7 @@ const Ingredient = __1.default.define('ingredients', {
         allowNull: false,
     },
     unitOfStock: {
-        type: sequelize_1.DataTypes.ENUM('gm', 'ml', 'piece', 'kg', 'litre'),
+        type: sequelize_1.DataTypes.ENUM('gm', 'ml', 'kg', 'litre', 'piece', 'bottle', 'packet', 'can'),
         allowNull: false,
     },
     currentStockQuantity: {

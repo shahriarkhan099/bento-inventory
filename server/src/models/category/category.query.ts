@@ -30,7 +30,7 @@ export async function addCategoryToRestaurant (category: ICategory) {
   
 export async function findCategoryBySearchTerm (restaurantId: number, searchTerm: string) {
     try {
-      const category = await Category.findAll({
+      const category = await Category.findOne({
         where: {
           categoryName: {[Op.iLike]: `%${searchTerm}%`},
           restaurantId: restaurantId

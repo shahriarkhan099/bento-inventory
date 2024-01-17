@@ -23,18 +23,9 @@ const Category = sequelize.define<CategoryInstance>("categories", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  imageUrl: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-  },
-  storageShelf: {
+  uniqueCategoryId: {
     type: DataTypes.STRING,
-    allowNull: true,
-  },
-  storageType: {
-    type: DataTypes.ENUM("refrigerated", "nonrefrigerated"),
-    allowNull: true,
-    defaultValue: "refrigerated",
+    allowNull: false,
   },
   restaurantId: {
     type: DataTypes.INTEGER,

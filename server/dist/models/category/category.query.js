@@ -47,7 +47,7 @@ exports.addCategoryToRestaurant = addCategoryToRestaurant;
 function findCategoryBySearchTerm(restaurantId, searchTerm) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const category = yield category_model_1.default.findAll({
+            const category = yield category_model_1.default.findOne({
                 where: {
                     categoryName: { [sequelize_1.Op.iLike]: `%${searchTerm}%` },
                     restaurantId: restaurantId

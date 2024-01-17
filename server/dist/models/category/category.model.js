@@ -18,18 +18,9 @@ const Category = __1.default.define("categories", {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
     },
-    imageUrl: {
-        type: sequelize_1.DataTypes.TEXT,
-        allowNull: true,
-    },
-    storageShelf: {
+    uniqueCategoryId: {
         type: sequelize_1.DataTypes.STRING,
-        allowNull: true,
-    },
-    storageType: {
-        type: sequelize_1.DataTypes.ENUM("refrigerated", "nonrefrigerated"),
-        allowNull: true,
-        defaultValue: "refrigerated",
+        allowNull: false,
     },
     restaurantId: {
         type: sequelize_1.DataTypes.INTEGER,
