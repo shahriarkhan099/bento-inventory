@@ -42,6 +42,11 @@ export async function findAllIngredientOfRestaurant(restaurantId: number) {
 
 export async function addIngredientToRestaurant(ingredient: IIngredient) {
   try {
+    if (ingredient.unitOfStock === "kg") {
+      ingredient.unitOfStock = "gm";
+    } else if (ingredient.unitOfStock === "litre") {
+      ingredient.unitOfStock = "ml";
+    }
     const newIngredient = await Ingredient.create(ingredient);
     return newIngredient;
   } catch (error) {
@@ -247,11 +252,18 @@ export async function updateIngredientInfoOfRestaurantWithNewIngredientBatch(ing
         },
       });
 
+      const unit = ingredient.unitOfStock;
+      let scaleUnit = 1;
+      if (unit === "gm" || unit === "ml") {
+        scaleUnit = 1000;
+      }
+
       updatedIngredient = await Ingredient.update(
         {
           costPerUnit: averageCostPerUnit
             ? averageCostPerUnit.dataValues.costPerUnit
             : 0,
+          reorderPoint: ((ingredientBatch.purchaseQuantity / 100) * 20)/scaleUnit,
         },
         {
           where: {
@@ -284,17 +296,14 @@ export async function deductIngredientsFromOrder(order: {orderType: string; ingr
       const ingredient = await findIngredientbyId(id);
 
       if (ingredient) {
-        const deductedBatches = await deductIngredientBatchesInFIFO(
-          ingredient.id,
-          quantity,
-          orderType
-        );
+        const deductedBatches = await deductIngredientBatchesInFIFO(ingredient.id, quantity, orderType);
 
         updateCurrentStockQuantityOfIngredient(ingredient.id);
-        deductedIngredients.push({
-          ingredientId: ingredient.id,
-          deductedIngredientBatches: deductedBatches,
-        });
+        deductedIngredients.push({ingredientId: ingredient.id, deductedIngredientBatches: deductedBatches,});
+        // check reorder point by ingredient id
+        if (ingredient.currentStockQuantity <= ingredient.reorderPoint) {
+          console.log("Reorder point reached.");
+        }
       } else {
         throw new Error(`Ingredient with ID ${id} not found.`);
       }

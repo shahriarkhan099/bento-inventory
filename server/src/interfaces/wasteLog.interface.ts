@@ -6,6 +6,7 @@ export interface IWasteLog {
   unitOfPrice: string;
   totalCost: number;
   costPerUnit: number;
+  boughtAt?: Date;
   expirationDate: Date;
   ingredientId: number;
   restaurantId: number;

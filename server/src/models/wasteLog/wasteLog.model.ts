@@ -40,8 +40,13 @@ const WasteLog = sequelize.define<WasteLogInstance>('wasteLogs', {
         costPerUnit: {
             type: DataTypes.FLOAT,
         },
+        boughtAt: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
         expirationDate: {
             type: DataTypes.DATE,
+            allowNull: false,
         },
         ingredientId: {
             type: DataTypes.INTEGER,

@@ -13,6 +13,7 @@ import wasteLogRouter from "./routers/wasteLog.router";
 import consumptionRouter from "./routers/consumptionLog.router";
 import deliveryBox from "./routers/deliveryBox.router";
 import deliveryBoxBatch from "./routers/deliveryBoxBatch.router";
+import vendorSideRouter from "./routers/vendorSide.router";
 import cron from "node-cron";
 import checkExpiryDateAndRemove from "./utils/expiryCheck.util";
 
@@ -38,6 +39,8 @@ app.use("/v1/wasteLog", wasteLogRouter);
 app.use("/v1/consumptionLog", consumptionRouter);
 app.use("/v1/deliveryBox", deliveryBox);
 app.use("/v1/deliveryBoxBatch", deliveryBoxBatch);
+
+app.use("/v1/vendorSide", vendorSideRouter);
 
 cron.schedule("0 0 * * *", checkExpiryDateAndRemove);
 

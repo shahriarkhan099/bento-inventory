@@ -10,6 +10,7 @@ import DeliveryBoxBatch from "../deliveryBoxBatch/deliveryBoxBatch.model";
 import { IDeliveryBoxBatch } from "../../interfaces/deliveryBoxBatch.interface";
 import { addDeliveryBoxToRestaurant } from "../deliveryBoxBatch/deliveryBoxBatch.query";
 import axios from "axios";
+import Supplier from "../supplier/supplier.model";
 
 export async function findAllOrderOfRestaurantWithBatch(restaurantId: number) {
   try {
@@ -24,6 +25,9 @@ export async function findAllOrderOfRestaurantWithBatch(restaurantId: number) {
         {
           model: DeliveryBoxBatch,
         },
+        {
+          model: Supplier,
+        }
       ],
     });
     return order;
@@ -165,7 +169,7 @@ async function processIngredientBatches(ingredientBatches: IIngredientBatch[], n
         ingredientBatch.restaurantId = newOrder.restaurantId;
         ingredientBatch.supplierId = newOrder.supplierId;
         ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
-        ingredientBatch.costPerUnit = ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity;
+        ingredientBatch.costPerUnit = Number(ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity);
     
         const newIngredientBatch = await addIngredientToRestaurant(ingredientBatch);
         await updateIngredientInfoOfRestaurantWithNewIngredientBatch(newIngredientBatch);

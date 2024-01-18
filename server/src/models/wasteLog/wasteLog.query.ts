@@ -34,25 +34,6 @@ export async function addWasteLog (wasteLog: IWasteLog, restaurantId: number) {
     }
 }
 
-// export async function addWasteLogAndRemoveFromIngredient(ingredientBatchId: number, wasteLog: IWasteLog, restaurantId: number) {
-//   try {
-//     const ingredientBatch = await IngredientBatch.findOne({
-//       where: {
-//         id: ingredientBatchId
-//       }
-//     });
-//     if (!ingredientBatch) {
-//       throw new Error('Ingredient batch not found.');
-//     }
-//     const createdWasteLog = await addWasteLog(wasteLog, restaurantId);
-//     await ingredientBatch.destroy();
-//     return createdWasteLog;
-//   } catch (error) {
-//     console.log(error);
-//     throw new Error('Error creating waste log.');
-//   }
-// }
-
 export async function addToWasteLogByCheckingExpirationDateOfAllIngredientBatchesOfAllRestaurant () {
   try {
     const ingredientBatches = await IngredientBatch.findAll({
@@ -87,6 +68,7 @@ export async function addToWasteLogByCheckingExpirationDateOfAllIngredientBatche
           unitOfPrice: ingredientBatch.unitOfPrice,
           totalCost: ingredientBatch.currentStockQuantity * ingredientBatch.costPerUnit,
           costPerUnit: ingredientBatch.costPerUnit,
+          boughtAt: ingredientBatch.createdAt,
           expirationDate: ingredientBatch.expirationDate,
           ingredientId: ingredientBatch.ingredientId,
           restaurantId: ingredientBatch.restaurantId,

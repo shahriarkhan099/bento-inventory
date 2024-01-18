@@ -19,17 +19,21 @@ const Supplier = sequelize.define<SupplierInstance>('suppliers', {
         type: DataTypes.INTEGER,
         unique: true,
       },
+      vendorId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       name: {
         type: DataTypes.STRING,
         allowNull: false,
       },
       address: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        allowNull: true,
       },
       contactNumber: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       email: {
         type: DataTypes.STRING,
