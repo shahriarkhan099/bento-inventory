@@ -18,6 +18,10 @@ import cron from "node-cron";
 import checkExpiryDateAndRemove from "./utils/expiryCheck.util";
 
 
+import dotenv from "dotenv";
+dotenv.config();
+
+
 const app: Express = express();
 
 app.use(
