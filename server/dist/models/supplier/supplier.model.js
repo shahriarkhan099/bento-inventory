@@ -16,17 +16,21 @@ const Supplier = __1.default.define('suppliers', {
         type: sequelize_1.DataTypes.INTEGER,
         unique: true,
     },
+    vendorId: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
+    },
     name: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
     },
     address: {
         type: sequelize_1.DataTypes.TEXT,
-        allowNull: false,
+        allowNull: true,
     },
     contactNumber: {
         type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     email: {
         type: sequelize_1.DataTypes.STRING,

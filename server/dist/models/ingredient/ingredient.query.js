@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deductIngredientsFromOrder = exports.updateIngredientInfoOfRestaurantWithNewIngredientBatch = exports.updateCurrentStockQuantityOfIngredient = exports.findOneIngredientOfRestaurant = exports.findAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.findIngredientsByCategoryName = exports.findIngredientsByIngredientName = exports.findIngredientWithCategory = exports.deleteIngredientOfRestaurant = exports.updateIngredientOfRestaurant = exports.findIngredientBySearchTerm = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = exports.findIngredientbyId = void 0;
+exports.findOneIngredientOfRestaurantWithUniqueIngredientId = exports.deductIngredientsFromOrder = exports.updateIngredientInfoOfRestaurantWithNewIngredientBatch = exports.updateCurrentStockQuantityOfIngredient = exports.findOneIngredientOfRestaurant = exports.findAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.findIngredientsByCategoryName = exports.findIngredientsByIngredientName = exports.findIngredientWithCategory = exports.deleteIngredientOfRestaurant = exports.updateIngredientOfRestaurant = exports.findIngredientBySearchTerm = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = exports.findIngredientbyId = void 0;
 const sequelize_1 = require("sequelize");
 const index_1 = __importDefault(require("../index"));
 const ingredient_model_1 = __importDefault(require("./ingredient.model"));
@@ -55,6 +55,12 @@ exports.findAllIngredientOfRestaurant = findAllIngredientOfRestaurant;
 function addIngredientToRestaurant(ingredient) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            if (ingredient.unitOfStock === "kg") {
+                ingredient.unitOfStock = "gm";
+            }
+            else if (ingredient.unitOfStock === "litre") {
+                ingredient.unitOfStock = "ml";
+            }
             const newIngredient = yield ingredient_model_1.default.create(ingredient);
             return newIngredient;
         }
@@ -267,10 +273,16 @@ function updateIngredientInfoOfRestaurantWithNewIngredientBatch(ingredientBatch)
                         },
                     },
                 });
+                const unit = ingredient.unitOfStock;
+                let scaleUnit = 1;
+                if (unit === "gm" || unit === "ml") {
+                    scaleUnit = 1000;
+                }
                 updatedIngredient = yield ingredient_model_1.default.update({
                     costPerUnit: averageCostPerUnit
                         ? averageCostPerUnit.dataValues.costPerUnit
                         : 0,
+                    reorderPoint: ((ingredientBatch.purchaseQuantity / 100) * 20) / scaleUnit,
                 }, {
                     where: {
                         id: ingredientBatch.ingredientId,
@@ -301,10 +313,11 @@ function deductIngredientsFromOrder(order) {
                 if (ingredient) {
                     const deductedBatches = yield (0, ingredientBatch_query_1.deductIngredientBatchesInFIFO)(ingredient.id, quantity, orderType);
                     updateCurrentStockQuantityOfIngredient(ingredient.id);
-                    deductedIngredients.push({
-                        ingredientId: ingredient.id,
-                        deductedIngredientBatches: deductedBatches,
-                    });
+                    deductedIngredients.push({ ingredientId: ingredient.id, deductedIngredientBatches: deductedBatches, });
+                    // check reorder point by ingredient id
+                    if (ingredient.currentStockQuantity <= ingredient.reorderPoint) {
+                        console.log("Reorder point reached.");
+                    }
                 }
                 else {
                     throw new Error(`Ingredient with ID ${id} not found.`);
@@ -319,3 +332,20 @@ function deductIngredientsFromOrder(order) {
     });
 }
 exports.deductIngredientsFromOrder = deductIngredientsFromOrder;
+function findOneIngredientOfRestaurantWithUniqueIngredientId(uniqueIngredientId, restaurantId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const ingredient = yield ingredient_model_1.default.findOne({
+                where: {
+                    uniqueIngredientId: uniqueIngredientId,
+                    restaurantId: restaurantId
+                }
+            });
+            return ingredient;
+        }
+        catch (error) {
+            throw new Error("Error finding global ingredient.");
+        }
+    });
+}
+exports.findOneIngredientOfRestaurantWithUniqueIngredientId = findOneIngredientOfRestaurantWithUniqueIngredientId;

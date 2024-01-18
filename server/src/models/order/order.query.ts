@@ -9,7 +9,6 @@ import { addIngredientToRestaurant } from "../ingredientBatch/ingredientBatch.qu
 import DeliveryBoxBatch from "../deliveryBoxBatch/deliveryBoxBatch.model";
 import { IDeliveryBoxBatch } from "../../interfaces/deliveryBoxBatch.interface";
 import { addDeliveryBoxToRestaurant } from "../deliveryBoxBatch/deliveryBoxBatch.query";
-import axios from "axios";
 import Supplier from "../supplier/supplier.model";
 
 export async function findAllOrderOfRestaurantWithBatch(restaurantId: number) {

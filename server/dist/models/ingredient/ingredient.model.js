@@ -20,7 +20,6 @@ const Ingredient = __1.default.define('ingredients', {
     uniqueIngredientId: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
-        unique: true,
     },
     ingredientName: {
         type: sequelize_1.DataTypes.TEXT,

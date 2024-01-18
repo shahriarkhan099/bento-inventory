@@ -37,8 +37,13 @@ const WasteLog = __1.default.define('wasteLogs', {
     costPerUnit: {
         type: sequelize_1.DataTypes.FLOAT,
     },
+    boughtAt: {
+        type: sequelize_1.DataTypes.DATE,
+        allowNull: true,
+    },
     expirationDate: {
         type: sequelize_1.DataTypes.DATE,
+        allowNull: false,
     },
     ingredientId: {
         type: sequelize_1.DataTypes.INTEGER,

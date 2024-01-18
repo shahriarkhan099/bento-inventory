@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createOrderToRestaurantWithIngredientBatches = exports.removeOrderOfRestaurant = exports.editOrderOfRestaurant = exports.getAllOrderOfRestaurantWithBatch = void 0;
+exports.createOrderToRestaurantWithAllBatches = exports.createOrderToRestaurantWithDeliveryBoxBatches = exports.createOrderToRestaurantWithIngredientBatches = exports.removeOrderOfRestaurant = exports.editOrderOfRestaurant = exports.getAllOrderOfRestaurantWithBatch = void 0;
 const order_query_1 = require("../models/order/order.query");
 function getAllOrderOfRestaurantWithBatch(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -75,11 +75,10 @@ function createOrderToRestaurantWithIngredientBatches(req, res) {
         try {
             const order = req.body;
             const ingredientBatches = req.body.ingredientBatches;
-            const deliveryBoxBatches = req.body.deliveryBoxBatches;
             const restaurantId = Number(req.params.restaurantId);
             order.restaurantId = restaurantId;
             if (typeof order.restaurantId === 'number') {
-                const newOrder = yield (0, order_query_1.addOrderToRestaurantWithIngredientBatches)(order, ingredientBatches, deliveryBoxBatches);
+                const newOrder = yield (0, order_query_1.addOrderToRestaurantWithIngredientBatches)(order, ingredientBatches);
                 res.status(201).json(newOrder);
             }
             else
@@ -92,3 +91,46 @@ function createOrderToRestaurantWithIngredientBatches(req, res) {
     });
 }
 exports.createOrderToRestaurantWithIngredientBatches = createOrderToRestaurantWithIngredientBatches;
+function createOrderToRestaurantWithDeliveryBoxBatches(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const order = req.body;
+            const deliveryBoxBatches = req.body.deliveryBoxBatches;
+            const restaurantId = Number(req.params.restaurantId);
+            order.restaurantId = restaurantId;
+            if (typeof order.restaurantId === 'number') {
+                const newOrder = yield (0, order_query_1.addOrderToRestaurantWithDeliveryBoxBatches)(order, deliveryBoxBatches);
+                res.status(201).json(newOrder);
+            }
+            else
+                res.status(400).json({ message: "Invalid order information." });
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.createOrderToRestaurantWithDeliveryBoxBatches = createOrderToRestaurantWithDeliveryBoxBatches;
+function createOrderToRestaurantWithAllBatches(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const order = req.body;
+            const ingredientBatches = req.body.ingredientBatches;
+            const deliveryBoxBatches = req.body.deliveryBoxBatches;
+            const restaurantId = Number(req.params.restaurantId);
+            order.restaurantId = restaurantId;
+            if (typeof order.restaurantId === 'number') {
+                const newOrder = yield (0, order_query_1.addOrderToRestaurantWithAllBatches)(order, ingredientBatches, deliveryBoxBatches);
+                res.status(201).json(newOrder);
+            }
+            else
+                res.status(400).json({ message: "Invalid order information." });
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.createOrderToRestaurantWithAllBatches = createOrderToRestaurantWithAllBatches;
