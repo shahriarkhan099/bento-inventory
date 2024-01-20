@@ -10,6 +10,8 @@ import DeliveryBoxBatch from "../deliveryBoxBatch/deliveryBoxBatch.model";
 import { IDeliveryBoxBatch } from "../../interfaces/deliveryBoxBatch.interface";
 import { addDeliveryBoxToRestaurant } from "../deliveryBoxBatch/deliveryBoxBatch.query";
 import Supplier from "../supplier/supplier.model";
+import axios from 'axios';
+import { addSupplier } from "../supplier/supplier.query";
 
 export async function findAllOrderOfRestaurantWithBatch(restaurantId: number) {
   try {
@@ -99,6 +101,7 @@ export async function deleteOrderOfRestaurant(orderId: number) {
   }
 }
 
+// create vendor if not exists
 export async function addOrderToRestaurantWithIngredientBatches(order: IOrder, ingredientBatches: IIngredientBatch[]) {
   try {
     order.totalPrice = 0;
@@ -108,6 +111,20 @@ export async function addOrderToRestaurantWithIngredientBatches(order: IOrder, i
       ingredientBatches.forEach(async (ingredientBatch) => {
         order.totalPrice += ingredientBatch.purchasePrice;
       });
+    }
+
+    // create vendor if not exists
+    if (order.supplierId) {
+      const supplier = await Supplier.findOne({
+        where: {
+          vendorId: order.supplierId,
+        },
+      });
+
+      if (!supplier) {
+        const newSupplier = await addSupplierIfNoExists(order);
+        order.supplierId = newSupplier!.id as number; 
+      }
     }
 
     const newOrder = await addOrderToRestaurant(order);
@@ -123,6 +140,7 @@ export async function addOrderToRestaurantWithIngredientBatches(order: IOrder, i
   }
 }
 
+// create vendor if not exists
 export async function addOrderToRestaurantWithDeliveryBoxBatches(order: IOrder, deliveryBoxBatches: IDeliveryBoxBatch[]) {
   try {
     order.totalPrice = 0;
@@ -227,5 +245,31 @@ export async function addOrderToRestaurantWithAllBatches(order: IOrder, ingredie
   } catch (error) {
     console.log(error);
     throw new Error("Error creating order with Batches.");
+  }
+}
+
+export async function addSupplierIfNoExists(order: IOrder) {
+  try {
+    const vendor = await axios.get(`http://localhost:5000/v1/vendor/${order.supplierId}`);
+        
+    if (vendor.data) {
+      console.log({...vendor.data.data});
+      const newSupplier = {
+        vendorId: vendor.data.data.id,
+        name: vendor.data.data.name,
+        address: vendor.data.data.address,
+        contactNumber: vendor.data.data.contactNumber,
+        email: vendor.data.data.email,
+        label: 'New',
+        restaurantId: order.restaurantId,
+      }
+      console.log("newSupplier", newSupplier);
+      const supplier = await addSupplier(newSupplier);
+      return supplier;
+    }
+
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error adding supplier.");
   }
 }
