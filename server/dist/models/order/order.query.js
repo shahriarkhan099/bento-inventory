@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addOrderToRestaurantWithAllBatches = exports.addOrderToRestaurantWithDeliveryBoxBatches = exports.addOrderToRestaurantWithIngredientBatches = exports.deleteOrderOfRestaurant = exports.updateOrderOfRestaurant = exports.addOrderToRestaurant = exports.findAllOrderOfRestaurantWithPendingBatch = exports.findAllOrderOfRestaurantWithBatch = void 0;
+exports.addSupplierIfNoExists = exports.addOrderToRestaurantWithAllBatches = exports.addOrderToRestaurantWithDeliveryBoxBatches = exports.addOrderToRestaurantWithIngredientBatches = exports.deleteOrderOfRestaurant = exports.updateOrderOfRestaurant = exports.addOrderToRestaurant = exports.findAllOrderOfRestaurantWithPendingBatch = exports.findAllOrderOfRestaurantWithBatch = void 0;
 const sequelize_1 = require("sequelize");
 const order_model_1 = __importDefault(require("./order.model"));
 const ingredientBatch_model_1 = __importDefault(require("../ingredientBatch/ingredientBatch.model"));
@@ -22,6 +22,8 @@ const ingredientBatch_query_1 = require("../ingredientBatch/ingredientBatch.quer
 const deliveryBoxBatch_model_1 = __importDefault(require("../deliveryBoxBatch/deliveryBoxBatch.model"));
 const deliveryBoxBatch_query_1 = require("../deliveryBoxBatch/deliveryBoxBatch.query");
 const supplier_model_1 = __importDefault(require("../supplier/supplier.model"));
+const axios_1 = __importDefault(require("axios"));
+const supplier_query_1 = require("../supplier/supplier.query");
 function findAllOrderOfRestaurantWithBatch(restaurantId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -123,6 +125,7 @@ function deleteOrderOfRestaurant(orderId) {
     });
 }
 exports.deleteOrderOfRestaurant = deleteOrderOfRestaurant;
+// create vendor if not exists
 function addOrderToRestaurantWithIngredientBatches(order, ingredientBatches) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -132,6 +135,18 @@ function addOrderToRestaurantWithIngredientBatches(order, ingredientBatches) {
                 ingredientBatches.forEach((ingredientBatch) => __awaiter(this, void 0, void 0, function* () {
                     order.totalPrice += ingredientBatch.purchasePrice;
                 }));
+            }
+            // create vendor if not exists
+            if (order.supplierId) {
+                const supplier = yield supplier_model_1.default.findOne({
+                    where: {
+                        vendorId: order.supplierId,
+                    },
+                });
+                if (!supplier) {
+                    const newSupplier = yield addSupplierIfNoExists(order);
+                    order.supplierId = newSupplier.id;
+                }
             }
             const newOrder = yield addOrderToRestaurant(order);
             if (ingredientBatches) {
@@ -146,6 +161,7 @@ function addOrderToRestaurantWithIngredientBatches(order, ingredientBatches) {
     });
 }
 exports.addOrderToRestaurantWithIngredientBatches = addOrderToRestaurantWithIngredientBatches;
+// create vendor if not exists
 function addOrderToRestaurantWithDeliveryBoxBatches(order, deliveryBoxBatches) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -249,3 +265,30 @@ function addOrderToRestaurantWithAllBatches(order, ingredientBatches, deliveryBo
     });
 }
 exports.addOrderToRestaurantWithAllBatches = addOrderToRestaurantWithAllBatches;
+function addSupplierIfNoExists(order) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const vendor = yield axios_1.default.get(`http://localhost:5000/v1/vendor/${order.supplierId}`);
+            if (vendor.data) {
+                console.log(Object.assign({}, vendor.data.data));
+                const newSupplier = {
+                    vendorId: vendor.data.data.id,
+                    name: vendor.data.data.name,
+                    address: vendor.data.data.address,
+                    contactNumber: vendor.data.data.contactNumber,
+                    email: vendor.data.data.email,
+                    label: 'New',
+                    restaurantId: order.restaurantId,
+                };
+                console.log("newSupplier", newSupplier);
+                const supplier = yield (0, supplier_query_1.addSupplier)(newSupplier);
+                return supplier;
+            }
+        }
+        catch (error) {
+            console.log(error);
+            throw new Error("Error adding supplier.");
+        }
+    });
+}
+exports.addSupplierIfNoExists = addSupplierIfNoExists;

@@ -31,7 +31,7 @@ const Order = sequelize.define<OrderInstance>('orders', {
       orderDate: {
         type: DataTypes.DATE,
         allowNull: true,
-        defaultValue: new Date(),
+        defaultValue: DataTypes.NOW,
       },
       deliveryDate: {
         type: DataTypes.DATE,

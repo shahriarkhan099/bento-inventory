@@ -34,23 +34,17 @@ exports.findAllSuppliers = findAllSuppliers;
 function addSupplier(supplier) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            console.log(supplier);
             const createdSupplier = yield supplier_model_1.default.create(supplier);
             return createdSupplier;
         }
         catch (error) {
+            console.log(error);
             throw new Error('Error creating supplier.');
         }
     });
 }
 exports.addSupplier = addSupplier;
-// export async function addSupplier2 (restaurantId: number, data: { name: string, address: string, contactNumber: string, email: string, label: string }) {
-//   try {
-//     const createdSupplier = await Supplier.create({ ...data, restaurantId });
-//     return createdSupplier;
-//   } catch (error) {
-//     throw new Error('Error creating supplier.');
-//   }
-// }
 function updateSupplier(supplierId, supplier) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
