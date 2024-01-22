@@ -36,7 +36,7 @@ const ConsumptionLog = sequelize.define<ConsumptionLogInstance>("consumptionLogs
       allowNull: false,
     },
     orderType: {
-      type: DataTypes.ENUM('inhouse', 'marketplace'),
+      type: DataTypes.ENUM('in-house', 'marketplace'),
       allowNull: false,
     },
     costPerUnit: {
