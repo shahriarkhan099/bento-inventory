@@ -58,10 +58,6 @@ const WasteLog = sequelize.define<WasteLogInstance>("wasteLogs", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  orderId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
 });
 
 export default WasteLog;

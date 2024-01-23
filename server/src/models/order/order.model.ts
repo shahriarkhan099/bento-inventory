@@ -66,13 +66,4 @@ DeliveryBoxBatch.belongsTo(Order, {
   foreignKey: 'orderId'
 });
 
-Order.hasMany(WasteLog, {
-  sourceKey: "id",
-  foreignKey: "orderId",
-});
-
-WasteLog.belongsTo(Order, {
-  foreignKey: "orderId",
-});
-
 export default Order;
