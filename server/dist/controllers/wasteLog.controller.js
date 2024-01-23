@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchWasteLog = exports.editWasteLog = exports.createWasteLog = exports.getAllWasteLogWithIngredient = void 0;
+exports.removeWasteLog = exports.searchWasteLog = exports.editWasteLog = exports.createWasteLog = exports.getAllWasteLogWithIngredient = void 0;
 const wasteLog_query_1 = require("../models/wasteLog/wasteLog.query");
 function getAllWasteLogWithIngredient(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -86,3 +86,21 @@ function searchWasteLog(req, res) {
     });
 }
 exports.searchWasteLog = searchWasteLog;
+function removeWasteLog(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const wasteLogId = Number(req.params.wasteLogId);
+            if (wasteLogId) {
+                yield (0, wasteLog_query_1.deleteWasteLog)(wasteLogId);
+                res.status(200).json({ message: "Waste log deleted." });
+            }
+            else
+                res.status(400).json({ message: "Invalid waste log ID." });
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.removeWasteLog = removeWasteLog;

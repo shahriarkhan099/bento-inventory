@@ -5,8 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const __1 = __importDefault(require(".."));
-;
-const WasteLog = __1.default.define('wasteLogs', {
+const WasteLog = __1.default.define("wasteLogs", {
     id: {
         allowNull: false,
         autoIncrement: true,
@@ -19,7 +18,7 @@ const WasteLog = __1.default.define('wasteLogs', {
         allowNull: false,
     },
     unitOfStock: {
-        type: sequelize_1.DataTypes.ENUM('gm', 'ml', 'piece'),
+        type: sequelize_1.DataTypes.ENUM("gm", "ml", "piece"),
         allowNull: false,
     },
     totalQuantity: {
@@ -27,7 +26,7 @@ const WasteLog = __1.default.define('wasteLogs', {
         allowNull: false,
     },
     unitOfPrice: {
-        type: sequelize_1.DataTypes.ENUM('cents', 'usd'),
+        type: sequelize_1.DataTypes.ENUM("cents", "usd"),
         allowNull: false,
     },
     totalCost: {
@@ -52,6 +51,6 @@ const WasteLog = __1.default.define('wasteLogs', {
     restaurantId: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
-    }
+    },
 });
 exports.default = WasteLog;

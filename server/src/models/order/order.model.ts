@@ -3,7 +3,6 @@ import { IOrder } from '../../interfaces/order.interface';
 import sequelize from '..';
 import IngredientBatch from '../ingredientBatch/ingredientBatch.model';
 import DeliveryBoxBatch from '../deliveryBoxBatch/deliveryBoxBatch.model';
-import WasteLog from '../wasteLog/wasteLog.model';
 
 interface OrderCreationAttributes extends Optional<IOrder, 'id'> {};
 

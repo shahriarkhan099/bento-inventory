@@ -3,7 +3,6 @@ import WasteLog from "./wasteLog.model";
 import IngredientBatch from "../ingredientBatch/ingredientBatch.model";
 import { IWasteLog } from "../../interfaces/wasteLog.interface";
 import Ingredient from "../ingredient/ingredient.model";
-import Order from "../order/order.model";
 
 
 
@@ -16,9 +15,6 @@ export async function findAllWasteLogWithIngredient (restaurantId: number) {
         include: [
         {
           model: Ingredient,
-        },
-        {
-          model: Order,
         }
       ],
       });
@@ -80,7 +76,6 @@ export async function addToWasteLogByCheckingExpirationDateOfAllIngredientBatche
           expirationDate: ingredientBatch.expirationDate,
           ingredientId: ingredientBatch.ingredientId,
           restaurantId: ingredientBatch.restaurantId,
-          orderId: ingredientBatch.orderId,
         }
         await addWasteLog(wasteLog, ingredientBatch.restaurantId);
       }

@@ -7,4 +7,5 @@ router.get('/restaurant/:restaurantId', wasteLog_controller_1.getAllWasteLogWith
 router.post('/restaurant/:restaurantId', wasteLog_controller_1.createWasteLog);
 router.put('/restaurant/:wasteLogId', wasteLog_controller_1.editWasteLog);
 router.get('/restaurant/:restaurantId/search', wasteLog_controller_1.searchWasteLog);
+router.delete("/restaurant/wasteLog/:wasteLogId", wasteLog_controller_1.removeWasteLog);
 exports.default = router;

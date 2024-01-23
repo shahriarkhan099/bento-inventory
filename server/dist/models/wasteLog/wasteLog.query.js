@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findWasteLogBySearchTerm = exports.updateWasteLog = exports.addToWasteLogByCheckingExpirationDateOfAllIngredientBatchesOfAllRestaurant = exports.addWasteLog = exports.findAllWasteLogWithIngredient = void 0;
+exports.deleteWasteLog = exports.findWasteLogBySearchTerm = exports.updateWasteLog = exports.addToWasteLogByCheckingExpirationDateOfAllIngredientBatchesOfAllRestaurant = exports.addWasteLog = exports.findAllWasteLogWithIngredient = void 0;
 const sequelize_1 = require("sequelize");
 const wasteLog_model_1 = __importDefault(require("./wasteLog.model"));
 const ingredientBatch_model_1 = __importDefault(require("../ingredientBatch/ingredientBatch.model"));
 const ingredient_model_1 = __importDefault(require("../ingredient/ingredient.model"));
+const order_model_1 = __importDefault(require("../order/order.model"));
 function findAllWasteLogWithIngredient(restaurantId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -24,7 +25,14 @@ function findAllWasteLogWithIngredient(restaurantId) {
                 where: {
                     restaurantId: restaurantId
                 },
-                include: [ingredient_model_1.default],
+                include: [
+                    {
+                        model: ingredient_model_1.default,
+                    },
+                    {
+                        model: order_model_1.default,
+                    }
+                ],
             });
             return wasteLog;
         }
@@ -87,6 +95,7 @@ function addToWasteLogByCheckingExpirationDateOfAllIngredientBatchesOfAllRestaur
                         expirationDate: ingredientBatch.expirationDate,
                         ingredientId: ingredientBatch.ingredientId,
                         restaurantId: ingredientBatch.restaurantId,
+                        orderId: ingredientBatch.orderId,
                     };
                     yield addWasteLog(wasteLog, ingredientBatch.restaurantId);
                 }
@@ -131,3 +140,19 @@ function findWasteLogBySearchTerm(restaurantId, searchTerm) {
     });
 }
 exports.findWasteLogBySearchTerm = findWasteLogBySearchTerm;
+function deleteWasteLog(wasteLogId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const deletedWasteLog = yield wasteLog_model_1.default.destroy({
+                where: {
+                    id: wasteLogId,
+                },
+            });
+            return deletedWasteLog;
+        }
+        catch (error) {
+            throw new Error("Error deleting waste log.");
+        }
+    });
+}
+exports.deleteWasteLog = deleteWasteLog;
