@@ -5,7 +5,6 @@ import { IWasteLog } from "../../interfaces/wasteLog.interface";
 import Ingredient from "../ingredient/ingredient.model";
 
 
-
 export async function findAllWasteLogWithIngredient (restaurantId: number) {
     try {
       const wasteLog = await WasteLog.findAll({
@@ -76,6 +75,8 @@ export async function addToWasteLogByCheckingExpirationDateOfAllIngredientBatche
           expirationDate: ingredientBatch.expirationDate,
           ingredientId: ingredientBatch.ingredientId,
           restaurantId: ingredientBatch.restaurantId,
+          consumptionQuantity: ingredientBatch.purchaseQuantity - ingredientBatch.currentStockQuantity,
+          wastagePercentage: (ingredientBatch.purchaseQuantity - ingredientBatch.currentStockQuantity) / ingredientBatch.purchaseQuantity * 100
         }
         await addWasteLog(wasteLog, ingredientBatch.restaurantId);
       }

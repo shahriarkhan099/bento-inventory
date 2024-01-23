@@ -1,12 +1,13 @@
 import { Op } from "sequelize";
-import Ingredient from "./ingredientBatch.model";
+import IngredientBatch from "./ingredientBatch.model";
 import Category from "../category/category.model";
 import { IIngredientBatch } from "../../interfaces/ingredientBatch.interface";
 import { createConsumptionLogOfRestaurantFromDeduction } from "../consumptionLog/consumptionLog.query";
+import sequelize from "..";
 
 export async function findAllIngredientOfRestaurant (restaurantId: number) {
     try {
-      const ingredient = await Ingredient.findAll({
+      const ingredient = await IngredientBatch.findAll({
         where: {
           restaurantId: restaurantId
         }
@@ -20,7 +21,7 @@ export async function findAllIngredientOfRestaurant (restaurantId: number) {
 
 export async function addIngredientToRestaurant (ingredient: IIngredientBatch) {
     try {
-      const newIngredient = await Ingredient.create(ingredient);
+      const newIngredient = await IngredientBatch.create(ingredient);
       return newIngredient;
     } catch (error) {
       console.log(error)
@@ -30,7 +31,7 @@ export async function addIngredientToRestaurant (ingredient: IIngredientBatch) {
 
 export async function updateIngredientOfRestaurant (ingredientId: number, ingredient: IIngredientBatch) {
   try {
-    const updatedIngredient = await Ingredient.update(ingredient, {
+    const updatedIngredient = await IngredientBatch.update(ingredient, {
       where: {
         id: ingredientId
       }
@@ -43,7 +44,7 @@ export async function updateIngredientOfRestaurant (ingredientId: number, ingred
 
 export async function deductIngredientBatchesInFIFO (ingredientId: number, quantity: number, orderType: string) {
   try {
-    const ingredientBatches = await Ingredient.findAll({
+    const ingredientBatches = await IngredientBatch.findAll({
       where: {
         ingredientId: ingredientId,
         currentStockQuantity: {
@@ -99,7 +100,7 @@ export async function deductIngredientBatchesInFIFO (ingredientId: number, quant
 
 export async function deleteIngredientOfRestaurant (ingredientId: number) {
   try {
-    const deletedIngredient = await Ingredient.destroy({
+    const deletedIngredient = await IngredientBatch.destroy({
       where: {
         id: ingredientId
       }
@@ -112,7 +113,7 @@ export async function deleteIngredientOfRestaurant (ingredientId: number) {
 
 export async function findIngredientWithCategory (restaurantId: number) {
   try {
-    const ingredient = await Ingredient.findAll({
+    const ingredient = await IngredientBatch.findAll({
       where: {
         restaurantId: restaurantId
       },
@@ -126,7 +127,7 @@ export async function findIngredientWithCategory (restaurantId: number) {
 
 export async function findIngredientsByCategoryName (restaurantId: number, categoryName: string) {
   try {
-    const ingredient = await Ingredient.findAll({
+    const ingredient = await IngredientBatch.findAll({
       where: {
         restaurantId: restaurantId
       },
@@ -141,5 +142,28 @@ export async function findIngredientsByCategoryName (restaurantId: number, categ
   } catch (error) {
     throw new Error('Error finding ingredient.');
   }
-}
+} 
 
+export async function getTotalAmountOfIngredientThatExpiresInSpecificDate(ingredientId: number, date: Date) {
+  try {
+    const ingredientBatches = await IngredientBatch.findAll({
+      attributes: [
+        [sequelize.fn("SUM", sequelize.col("currentStockQuantity")), "totalAmount"],
+      ],
+      where: {
+        ingredientId: ingredientId,
+        currentStockQuantity: {
+          [Op.gt]: 0,
+        },
+        expirationDate: {
+          [Op.lte]: date,
+        },
+      },
+    });
+    const totalAmount = ingredientBatches.length > 0 ? ingredientBatches[0].get('totalAmount') as number : 0;
+
+    return totalAmount;
+  } catch (error) {
+    throw new Error('Error finding ingredient.');
+  }
+}

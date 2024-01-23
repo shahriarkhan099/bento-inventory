@@ -7,6 +7,8 @@ export interface IWasteLog {
   totalCost: number;
   costPerUnit: number;
   boughtAt?: Date;
+  consumptionQuantity: number;
+  wastagePercentage: number;
   expirationDate: Date;
   ingredientId: number;
   restaurantId: number;

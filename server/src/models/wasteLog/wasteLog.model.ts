@@ -50,6 +50,14 @@ const WasteLog = sequelize.define<WasteLogInstance>("wasteLogs", {
     type: DataTypes.DATE,
     allowNull: false,
   },
+  consumptionQuantity: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+  },
+  wastagePercentage: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+  },
   ingredientId: {
     type: DataTypes.INTEGER,
     allowNull: false,

@@ -16,6 +16,7 @@ import deliveryBoxBatch from "./routers/deliveryBoxBatch.router";
 import vendorSideRouter from "./routers/vendorSide.router";
 import cron from "node-cron";
 import checkExpiryDateAndRemove from "./utils/expiryCheck.util";
+import activateAutoPilot from "./utils/autoPilotChecker";
 
 
 const app: Express = express();
@@ -39,10 +40,15 @@ app.use("/v1/wasteLog", wasteLogRouter);
 app.use("/v1/consumptionLog", consumptionRouter);
 app.use("/v1/deliveryBox", deliveryBox);
 app.use("/v1/deliveryBoxBatch", deliveryBoxBatch);
-
 app.use("/v1/vendorSide", vendorSideRouter);
 
 cron.schedule("0 0 * * *", checkExpiryDateAndRemove);
+
+cron.schedule("0 9 * * *", async () => {
+  console.log('Running auto-pilot check at 9 AM');
+  const ingredientList = await activateAutoPilot();
+  console.log('Auto-pilot ', ingredientList);
+});
 
 async function bootstrap() {
   try {

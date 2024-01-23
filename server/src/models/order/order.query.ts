@@ -273,3 +273,23 @@ export async function addSupplierIfNoExists(order: IOrder) {
     throw new Error("Error adding supplier.");
   }
 }
+
+export async function checkSupplierHasProduct(supplierId: number, uniqueIngredientId: number) {
+  try {
+    const vendor = await axios.get(`http://localhost:5000/v1/vendor/${supplierId}`);
+    const products = await axios.get(`http://localhost:5000/v1/product/vendor/${supplierId}`);
+    const currentDayOfWeek = new Date().getDay();
+    console.log(products.data.data);
+    for (const product of products.data.data) {
+      if (product.uniqueIngredientId === uniqueIngredientId) {
+        return true;
+      }
+    }
+    return false;
+  }
+  catch (error) {
+    console.log(error);
+    throw new Error("Error checking supplier has product.");
+  }
+}
+

@@ -5,11 +5,12 @@ import Category from "../category/category.model";
 import { IIngredient } from "../../interfaces/ingredient.interface";
 import IngredientBatch from "../ingredientBatch/ingredientBatch.model";
 import { IIngredientBatch } from "../../interfaces/ingredientBatch.interface";
-import { deductIngredientBatchesInFIFO } from "../ingredientBatch/ingredientBatch.query";
+import { deductIngredientBatchesInFIFO, getTotalAmountOfIngredientThatExpiresInSpecificDate } from "../ingredientBatch/ingredientBatch.query";
 import {
   IngredientToReduce,
   DeductedIngredient,
 } from "../../interfaces/deductIngredient.interface";
+import { findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays } from "../consumptionLog/consumptionLog.query";
 
 
 export async function findIngredientbyId(ingredientId: number) {
@@ -252,18 +253,11 @@ export async function updateIngredientInfoOfRestaurantWithNewIngredientBatch(ing
         },
       });
 
-      const unit = ingredient.unitOfStock;
-      let scaleUnit = 1;
-      if (unit === "gm" || unit === "ml") {
-        scaleUnit = 1000;
-      }
-
       updatedIngredient = await Ingredient.update(
         {
           costPerUnit: averageCostPerUnit
             ? averageCostPerUnit.dataValues.costPerUnit
             : 0,
-          reorderPoint: ((ingredientBatch.purchaseQuantity / 100) * 20)/scaleUnit,
         },
         {
           where: {
@@ -301,9 +295,9 @@ export async function deductIngredientsFromOrder(order: {orderType: string; ingr
         updateCurrentStockQuantityOfIngredient(ingredient.id);
         deductedIngredients.push({ingredientId: ingredient.id, deductedIngredientBatches: deductedBatches,});
         // check reorder point by ingredient id
-        if (ingredient.currentStockQuantity <= ingredient.reorderPoint) {
-          console.log("Reorder point reached.");
-        }
+        // if (ingredient.currentStockQuantity <= ingredient.reorderPoint) {
+        //   console.log("Reorder point reached.");
+        // }
       } else {
         throw new Error(`Ingredient with ID ${id} not found.`);
       }
@@ -328,4 +322,99 @@ export async function findOneIngredientOfRestaurantWithUniqueIngredientId(unique
   } catch (error) {
     throw new Error("Error finding global ingredient.");
   }
+}
+
+export async function checkAllIngredientOfAllRestaurantsIfNeededToOrderList () {
+  try {
+    const ingredients = await Ingredient.findAll();
+
+    let ingredientsToOrder: IIngredient[] = [];
+
+    for (const ingredient of ingredients) {
+
+      const hundredPercentIngredientAmount = await findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays(ingredient.id, 3);
+      const todayDateWithOnlyDate = new Date(new Date().setHours(0, 0, 0, 0));
+      const totalAmountOfIngredientThatExpiresToday = await getTotalAmountOfIngredientThatExpiresInSpecificDate(ingredient.id, todayDateWithOnlyDate);
+      const totalAmountOfIngredientThatExpiresTomorrow = await getTotalAmountOfIngredientThatExpiresInSpecificDate(ingredient.id, new Date(todayDateWithOnlyDate.setDate(todayDateWithOnlyDate.getDate() + 1)));
+      const totalAmountOfIngredientThatExpiresInThreeDays = await getTotalAmountOfIngredientThatExpiresInSpecificDate(ingredient.id, new Date(todayDateWithOnlyDate.setDate(todayDateWithOnlyDate.getDate() + 2)));
+
+      if ((ingredient.currentStockQuantity <= ingredient.reorderPoint && ingredient.reorderPoint !== 0) 
+      || ingredient.currentStockQuantity <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+        ingredientsToOrder.push(ingredient);
+      } else if (totalAmountOfIngredientThatExpiresToday) {
+        if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresToday) <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+          ingredientsToOrder.push(ingredient);
+        }
+      } else if (totalAmountOfIngredientThatExpiresTomorrow) {
+        if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresTomorrow) <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+          ingredientsToOrder.push(ingredient);
+        }
+      } else if (totalAmountOfIngredientThatExpiresInThreeDays) {
+        if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresInThreeDays) <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+          ingredientsToOrder.push(ingredient);
+        }
+      }
+
+    }
+
+    return ingredients;
+  } catch (error) {
+    throw new Error("Error finding global ingredient.");
+  }
+}
+
+export async function checkAllIngredientOfRestaurantIfNeededToOrderListWithFrequencyDays (frequencyDays: number) {
+  try {
+    const ingredients = await Ingredient.findAll();
+
+    let ingredientsToOrder: IIngredient[] = [];
+
+    for (const ingredient of ingredients) {
+
+      const hundredPercentIngredientAmount = await findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays(ingredient.id, frequencyDays);
+      const todayDateWithOnlyDate = new Date(new Date().setHours(0, 0, 0, 0));
+
+      if ( (ingredient.currentStockQuantity <= ingredient.reorderPoint && ingredient.reorderPoint !== 0) 
+      || ingredient.currentStockQuantity <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+        ingredientsToOrder.push(ingredient);
+      } 
+      else {
+        for (let i = 0; i < frequencyDays; i++) {
+          let currentDate = new Date(todayDateWithOnlyDate.getTime());
+          currentDate.setDate(currentDate.getDate() + i);
+          const totalWastageAmount = await getTotalAmountOfIngredientThatExpiresInSpecificDate(ingredient.id, currentDate);
+          if (totalWastageAmount) {
+            if ((ingredient.currentStockQuantity - totalWastageAmount) <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+              ingredientsToOrder.push(ingredient);
+            }
+          }
+        }
+
+      }
+    }
+
+    console.log("Before Converting", ingredientsToOrder);
+    
+    let ingredientsWithRestaurants = sortIngredientsByRestaurant(ingredientsToOrder);
+
+    console.log("After Converting", ingredientsWithRestaurants);
+
+    return ingredientsWithRestaurants;
+  } catch (error) {
+    throw new Error("Error finding global ingredient.");
+  }
+}
+
+function sortIngredientsByRestaurant(ingredients: IIngredient[]): Record<number, IIngredient[]> {
+  const ingredientsByRestaurant: Record<number, IIngredient[]> = {};
+
+  ingredients.forEach((ingredient) => {
+    const { restaurantId } = ingredient;
+    if (!ingredientsByRestaurant[restaurantId]) {
+      ingredientsByRestaurant[restaurantId] = [];
+    }
+    ingredientsByRestaurant[restaurantId].push(ingredient);
+  });
+
+  return ingredientsByRestaurant;
 }

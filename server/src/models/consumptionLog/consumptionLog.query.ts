@@ -103,22 +103,6 @@ export async function deductIngredientsAndDeliveryBoxesFromOrder (order: {
   }
 }
 
-export async function findAvgConsumptionOfIngredient(ingredientId: number) {
-  try {
-    const avgConsumption = await ConsumptionLog.findAll({
-      attributes: [
-        [sequelize.fn("AVG", sequelize.col("quantity")), "avgConsumption"],
-      ],
-      where: {
-        itemId: ingredientId,
-      },
-    });
-    return avgConsumption;
-  } catch (error) {
-    throw new Error("Error finding average consumption of ingredient.");
-  }
-}
-
 export async function findAvgConsumptionOfIngredientOfLastTwoWeekForCurrentDay(productId: number) {
   try {
     const currentDayOfWeek = new Date().getDay();
@@ -163,33 +147,12 @@ export async function findAvgConsumptionOfIngredientOfLastTwoMonthForCurrentDay(
   }
 }
 
-export async function findAvgConsumptionOfIngredientOfLastTwoWeekForSpecificDaysAhead(productId: number, daysAhead: number) {
+
+export async function findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays(productId: number, frequencyDays: number) {
   try {
     const currentDayOfWeek = new Date().getDay();
 
-    const avgConsumption: any = await ConsumptionLog.findAll({
-      attributes: [
-        [sequelize.fn("AVG", sequelize.col("quantity")), "avgConsumption"],
-      ],
-      where: {
-        itemId: productId,
-        consumedAt: {
-          [Op.gte]: new Date(new Date().getTime() - 14 * 24 * 60 * 60 * 1000),
-          [Op.and]: sequelize.where(sequelize.fn("DAYOFWEEK", sequelize.col("consumedAt")), (currentDayOfWeek + daysAhead) % 7),
-        },
-      } as WhereOptions<IConsumptionLog>,
-    });
-    return avgConsumption;
-  } catch (error) {
-    throw new Error('Error finding average consumption of ingredient.');
-  }
-}
-
-export async function findAvgConsumptionOfIngredientOfLastTwoWeekWithfutureDays(productId: number, futureDays: number) {
-  try {
-    const currentDayOfWeek = new Date().getDay();
-
-    const futureDayArray = Array.from({ length: futureDays }, (_, index) => (currentDayOfWeek + index + 1) % 7);
+    const frequencyDaysArray = Array.from({ length: frequencyDays }, (_, index) => (currentDayOfWeek + index + 1) % 7);
 
     const avgConsumption: any = await ConsumptionLog.findAll({
       attributes: [
@@ -200,7 +163,7 @@ export async function findAvgConsumptionOfIngredientOfLastTwoWeekWithfutureDays(
         consumedAt: {
           [Op.gte]: new Date(new Date().getTime() - 14 * 24 * 60 * 60 * 1000),
           [Op.and]: sequelize.where(sequelize.fn("DAYOFWEEK", sequelize.col("consumedAt")), {
-            [Op.or]: futureDayArray,
+          [Op.or]: frequencyDaysArray,
           }),
         },
       } as WhereOptions<IConsumptionLog>,
@@ -211,11 +174,11 @@ export async function findAvgConsumptionOfIngredientOfLastTwoWeekWithfutureDays(
   }
 }
 
-export async function findAvgConsumptionOfIngredientOfLastTwoMonthWithfutureDays(productId: number, futureDays: number) {
+export async function findAvgConsumptionOfIngredientOfLastTwoMonthWithfrequencyDays(productId: number, frequencyDays: number) {
   try {
     const currentDayOfWeek = new Date().getDay();
 
-    const futureDayArray = Array.from({ length: futureDays }, (_, index) => (currentDayOfWeek + index + 1) % 7);
+    const frequencyDaysArray = Array.from({ length: frequencyDays }, (_, index) => (currentDayOfWeek + index + 1) % 7);
 
     const avgConsumption: any = await ConsumptionLog.findAll({
       attributes: [
@@ -226,7 +189,7 @@ export async function findAvgConsumptionOfIngredientOfLastTwoMonthWithfutureDays
         consumedAt: {
           [Op.gte]: new Date(new Date().getTime() - 60 * 24 * 60 * 60 * 1000),
           [Op.and]: sequelize.where(sequelize.fn("DAYOFWEEK", sequelize.col("consumedAt")), {
-            [Op.or]: futureDayArray,
+            [Op.or]: frequencyDaysArray,
           }),
         },
       } as WhereOptions<IConsumptionLog>,
@@ -237,10 +200,8 @@ export async function findAvgConsumptionOfIngredientOfLastTwoMonthWithfutureDays
   }
 }
 
-export async function findAvgConsumptionOfIngredientOfToday(productId: number) {
+export async function findAvgConsumptionOfIngredientOfLastTwoWeekWihSpecificDay(productId: number, day: number) {
   try {
-    const currentDayOfWeek = new Date().getDay();
-
     const avgConsumption: any = await ConsumptionLog.findAll({
       attributes: [
         [sequelize.fn("AVG", sequelize.col("quantity")), "avgConsumption"],
@@ -248,8 +209,8 @@ export async function findAvgConsumptionOfIngredientOfToday(productId: number) {
       where: {
         itemId: productId,
         consumedAt: {
-          [Op.gte]: new Date(new Date().getTime() - 60 * 24 * 60 * 60 * 1000),
-          [Op.and]: sequelize.where(sequelize.fn("DAYOFWEEK", sequelize.col("consumedAt")), currentDayOfWeek),
+          [Op.gte]: new Date(new Date().getTime() - 14 * 24 * 60 * 60 * 1000),
+          [Op.and]: sequelize.where(sequelize.fn("DAYOFWEEK", sequelize.col("consumedAt")), day),
         },
       } as WhereOptions<IConsumptionLog>,
     });
