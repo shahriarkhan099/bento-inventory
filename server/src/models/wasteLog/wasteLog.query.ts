@@ -3,6 +3,7 @@ import WasteLog from "./wasteLog.model";
 import IngredientBatch from "../ingredientBatch/ingredientBatch.model";
 import { IWasteLog } from "../../interfaces/wasteLog.interface";
 import Ingredient from "../ingredient/ingredient.model";
+import Order from "../order/order.model";
 
 
 
@@ -12,7 +13,14 @@ export async function findAllWasteLogWithIngredient (restaurantId: number) {
         where: {
           restaurantId: restaurantId
         },
-        include: [Ingredient],
+        include: [
+        {
+          model: Ingredient,
+        },
+        {
+          model: Order,
+        }
+      ],
       });
 
       return wasteLog;
@@ -72,6 +80,7 @@ export async function addToWasteLogByCheckingExpirationDateOfAllIngredientBatche
           expirationDate: ingredientBatch.expirationDate,
           ingredientId: ingredientBatch.ingredientId,
           restaurantId: ingredientBatch.restaurantId,
+          orderId: ingredientBatch.orderId,
         }
         await addWasteLog(wasteLog, ingredientBatch.restaurantId);
       }
@@ -109,5 +118,15 @@ export async function findWasteLogBySearchTerm (restaurantId: number, searchTerm
     }
 }
 
-
-
+export async function deleteWasteLog(wasteLogId: number) {
+  try {
+    const deletedWasteLog = await WasteLog.destroy({
+      where: {
+        id: wasteLogId,
+      },
+    });
+    return deletedWasteLog;
+  } catch (error) {
+    throw new Error("Error deleting waste log.");
+  }
+}

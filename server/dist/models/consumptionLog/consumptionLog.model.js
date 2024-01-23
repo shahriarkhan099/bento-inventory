@@ -31,7 +31,7 @@ const ConsumptionLog = __1.default.define("consumptionLogs", {
         allowNull: false,
     },
     orderType: {
-        type: sequelize_1.DataTypes.ENUM('inhouse', 'marketplace'),
+        type: sequelize_1.DataTypes.ENUM('in-house', 'marketplace'),
         allowNull: false,
     },
     costPerUnit: {

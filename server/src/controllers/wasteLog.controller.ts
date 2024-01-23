@@ -1,5 +1,11 @@
 import { Request, Response } from "express";
-import { findAllWasteLogWithIngredient, addWasteLog, updateWasteLog, findWasteLogBySearchTerm } from "../models/wasteLog/wasteLog.query";
+import {
+  findAllWasteLogWithIngredient,
+  addWasteLog,
+  updateWasteLog,
+  findWasteLogBySearchTerm,
+  deleteWasteLog,
+} from "../models/wasteLog/wasteLog.query";
 
 export async function getAllWasteLogWithIngredient (req: Request, res: Response) {
     try {
@@ -52,6 +58,19 @@ export async function searchWasteLog (req: Request, res: Response) {
       const wasteLog = await findWasteLogBySearchTerm(restaurantId, searchTerm);
       res.json({ wasteLogs: wasteLog });
     } else res.json({ wasteLogs: [] });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
+export async function removeWasteLog(req: Request, res: Response) {
+  try {
+    const wasteLogId = Number(req.params.wasteLogId);
+    if (wasteLogId) {
+      await deleteWasteLog(wasteLogId);
+      res.status(200).json({ message: "Waste log deleted." });
+    } else res.status(400).json({ message: "Invalid waste log ID." });
   } catch (error) {
     console.log(error);
     res.status(500).json(error);

@@ -1,4 +1,5 @@
-import { Op } from "sequelize";
+import { Op, WhereOptions } from "sequelize";
+import sequelize from "..";
 import ConsumptionLog from "./consumptionLog.model";
 import { IConsumptionLog } from "../../interfaces/consumptionLog.interface";
 import { deductDeliveryBoxesFromOrder } from "../deliveryBox/deliveryBox.query";
@@ -99,5 +100,161 @@ export async function deductIngredientsAndDeliveryBoxesFromOrder (order: {
     return { deductedIngredients, deductedDeliveryBoxes };
   } catch (error) {
     throw new Error('Error deducting ingredients and delivery boxes from order.');
+  }
+}
+
+export async function findAvgConsumptionOfIngredient(ingredientId: number) {
+  try {
+    const avgConsumption = await ConsumptionLog.findAll({
+      attributes: [
+        [sequelize.fn("AVG", sequelize.col("quantity")), "avgConsumption"],
+      ],
+      where: {
+        itemId: ingredientId,
+      },
+    });
+    return avgConsumption;
+  } catch (error) {
+    throw new Error("Error finding average consumption of ingredient.");
+  }
+}
+
+export async function findAvgConsumptionOfIngredientOfLastTwoWeekForCurrentDay(productId: number) {
+  try {
+    const currentDayOfWeek = new Date().getDay();
+
+    const avgConsumption: any = await ConsumptionLog.findAll({
+      attributes: [
+        [sequelize.fn("AVG", sequelize.col("quantity")), "avgConsumption"],
+      ],
+      where: {
+        itemId: productId,
+        consumedAt: {
+          [Op.gte]: new Date(new Date().getTime() - 14 * 24 * 60 * 60 * 1000),
+          [Op.and]: sequelize.where(sequelize.fn("DAYOFWEEK", sequelize.col("consumedAt")), currentDayOfWeek),
+        },
+      } as WhereOptions<IConsumptionLog>,
+    });
+    return avgConsumption;
+  } catch (error) {
+    throw new Error('Error finding average consumption of ingredient.');
+  }
+}
+
+export async function findAvgConsumptionOfIngredientOfLastTwoMonthForCurrentDay(productId: number) {
+  try {
+    const currentDayOfWeek = new Date().getDay();
+
+    const avgConsumption: any = await ConsumptionLog.findAll({
+      attributes: [
+        [sequelize.fn("AVG", sequelize.col("quantity")), "avgConsumption"],
+      ],
+      where: {
+        itemId: productId,
+        consumedAt: {
+          [Op.gte]: new Date(new Date().getTime() - 60 * 24 * 60 * 60 * 1000),
+          [Op.and]: sequelize.where(sequelize.fn("DAYOFWEEK", sequelize.col("consumedAt")), currentDayOfWeek),
+        },
+      } as WhereOptions<IConsumptionLog>,
+    });
+    return avgConsumption;
+  } catch (error) {
+    throw new Error('Error finding average consumption of ingredient.');
+  }
+}
+
+export async function findAvgConsumptionOfIngredientOfLastTwoWeekForSpecificDaysAhead(productId: number, daysAhead: number) {
+  try {
+    const currentDayOfWeek = new Date().getDay();
+
+    const avgConsumption: any = await ConsumptionLog.findAll({
+      attributes: [
+        [sequelize.fn("AVG", sequelize.col("quantity")), "avgConsumption"],
+      ],
+      where: {
+        itemId: productId,
+        consumedAt: {
+          [Op.gte]: new Date(new Date().getTime() - 14 * 24 * 60 * 60 * 1000),
+          [Op.and]: sequelize.where(sequelize.fn("DAYOFWEEK", sequelize.col("consumedAt")), (currentDayOfWeek + daysAhead) % 7),
+        },
+      } as WhereOptions<IConsumptionLog>,
+    });
+    return avgConsumption;
+  } catch (error) {
+    throw new Error('Error finding average consumption of ingredient.');
+  }
+}
+
+export async function findAvgConsumptionOfIngredientOfLastTwoWeekWithfutureDays(productId: number, futureDays: number) {
+  try {
+    const currentDayOfWeek = new Date().getDay();
+
+    const futureDayArray = Array.from({ length: futureDays }, (_, index) => (currentDayOfWeek + index + 1) % 7);
+
+    const avgConsumption: any = await ConsumptionLog.findAll({
+      attributes: [
+        [sequelize.fn("AVG", sequelize.col("quantity")), "avgConsumption"],
+      ],
+      where: {
+        itemId: productId,
+        consumedAt: {
+          [Op.gte]: new Date(new Date().getTime() - 14 * 24 * 60 * 60 * 1000),
+          [Op.and]: sequelize.where(sequelize.fn("DAYOFWEEK", sequelize.col("consumedAt")), {
+            [Op.or]: futureDayArray,
+          }),
+        },
+      } as WhereOptions<IConsumptionLog>,
+    });
+    return avgConsumption;
+  } catch (error) {
+    throw new Error('Error finding average consumption of ingredient.');
+  }
+}
+
+export async function findAvgConsumptionOfIngredientOfLastTwoMonthWithfutureDays(productId: number, futureDays: number) {
+  try {
+    const currentDayOfWeek = new Date().getDay();
+
+    const futureDayArray = Array.from({ length: futureDays }, (_, index) => (currentDayOfWeek + index + 1) % 7);
+
+    const avgConsumption: any = await ConsumptionLog.findAll({
+      attributes: [
+        [sequelize.fn("AVG", sequelize.col("quantity")), "avgConsumption"],
+      ],
+      where: {
+        itemId: productId,
+        consumedAt: {
+          [Op.gte]: new Date(new Date().getTime() - 60 * 24 * 60 * 60 * 1000),
+          [Op.and]: sequelize.where(sequelize.fn("DAYOFWEEK", sequelize.col("consumedAt")), {
+            [Op.or]: futureDayArray,
+          }),
+        },
+      } as WhereOptions<IConsumptionLog>,
+    });
+    return avgConsumption;
+  } catch (error) {
+    throw new Error('Error finding average consumption of ingredient.');
+  }
+}
+
+export async function findAvgConsumptionOfIngredientOfToday(productId: number) {
+  try {
+    const currentDayOfWeek = new Date().getDay();
+
+    const avgConsumption: any = await ConsumptionLog.findAll({
+      attributes: [
+        [sequelize.fn("AVG", sequelize.col("quantity")), "avgConsumption"],
+      ],
+      where: {
+        itemId: productId,
+        consumedAt: {
+          [Op.gte]: new Date(new Date().getTime() - 60 * 24 * 60 * 60 * 1000),
+          [Op.and]: sequelize.where(sequelize.fn("DAYOFWEEK", sequelize.col("consumedAt")), currentDayOfWeek),
+        },
+      } as WhereOptions<IConsumptionLog>,
+    });
+    return avgConsumption;
+  } catch (error) {
+    throw new Error('Error finding average consumption of ingredient.');
   }
 }

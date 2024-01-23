@@ -10,4 +10,5 @@ export interface IWasteLog {
   expirationDate: Date;
   ingredientId: number;
   restaurantId: number;
+  orderId: number;
 }

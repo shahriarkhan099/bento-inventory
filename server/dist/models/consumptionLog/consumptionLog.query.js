@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deductIngredientsAndDeliveryBoxesFromOrder = exports.deleteConsumptionLog = exports.updateConsumptionLog = exports.createConsumptionLogOfRestaurantFromDeduction = exports.createConsumptionLogOfRestaurant = exports.findConsumptionLogsByIngredientName = exports.findAllConsumptionLogsOfRestaurant = void 0;
+exports.findAvgConsumptionOfIngredientOfLastTwoMonths = exports.findAvgConsumptionOfIngredientOfLastTwoWeeks = exports.findAvgConsumptionOfIngredient = exports.deductIngredientsAndDeliveryBoxesFromOrder = exports.deleteConsumptionLog = exports.updateConsumptionLog = exports.createConsumptionLogOfRestaurantFromDeduction = exports.createConsumptionLogOfRestaurant = exports.findConsumptionLogsByIngredientName = exports.findAllConsumptionLogsOfRestaurant = void 0;
 const sequelize_1 = require("sequelize");
 const consumptionLog_model_1 = __importDefault(require("./consumptionLog.model"));
 const deliveryBox_query_1 = require("../deliveryBox/deliveryBox.query");
 const ingredient_query_1 = require("../ingredient/ingredient.query");
+const __1 = __importDefault(require(".."));
 function findAllConsumptionLogsOfRestaurant(restaurantId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -125,3 +126,66 @@ function deductIngredientsAndDeliveryBoxesFromOrder(order) {
     });
 }
 exports.deductIngredientsAndDeliveryBoxesFromOrder = deductIngredientsAndDeliveryBoxesFromOrder;
+function findAvgConsumptionOfIngredient(ingredientId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const avgConsumption = yield consumptionLog_model_1.default.findAll({
+                attributes: [
+                    [__1.default.fn('AVG', __1.default.col('quantity')), 'avgConsumption'],
+                ],
+                where: {
+                    itemId: ingredientId,
+                },
+            });
+            return avgConsumption;
+        }
+        catch (error) {
+            throw new Error('Error finding average consumption of ingredient.');
+        }
+    });
+}
+exports.findAvgConsumptionOfIngredient = findAvgConsumptionOfIngredient;
+function findAvgConsumptionOfIngredientOfLastTwoWeeks(productId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const avgConsumption = yield consumptionLog_model_1.default.findAll({
+                attributes: [
+                    [__1.default.fn("AVG", __1.default.col("quantity")), "avgConsumption"],
+                ],
+                where: {
+                    itemId: productId,
+                    consumedAt: {
+                        [sequelize_1.Op.gte]: new Date(new Date().getTime() - 14 * 24 * 60 * 60 * 1000),
+                    },
+                },
+            });
+            return avgConsumption;
+        }
+        catch (error) {
+            throw new Error('Error finding average consumption of ingredient.');
+        }
+    });
+}
+exports.findAvgConsumptionOfIngredientOfLastTwoWeeks = findAvgConsumptionOfIngredientOfLastTwoWeeks;
+function findAvgConsumptionOfIngredientOfLastTwoMonths(productId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const avgConsumption = yield consumptionLog_model_1.default.findAll({
+                attributes: [
+                    [__1.default.fn("AVG", __1.default.col("quantity")), "avgConsumption"],
+                ],
+                where: {
+                    itemId: productId,
+                    consumedAt: {
+                        [sequelize_1.Op.gte]: new Date(new Date().getTime() - 60 * 24 * 60 * 60 * 1000),
+                    },
+                },
+            });
+            return avgConsumption;
+        }
+        catch (error) {
+            throw new Error('Error finding average consumption of ingredient.');
+        }
+    });
+}
+exports.findAvgConsumptionOfIngredientOfLastTwoMonths = findAvgConsumptionOfIngredientOfLastTwoMonths;

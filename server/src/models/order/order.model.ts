@@ -3,6 +3,7 @@ import { IOrder } from '../../interfaces/order.interface';
 import sequelize from '..';
 import IngredientBatch from '../ingredientBatch/ingredientBatch.model';
 import DeliveryBoxBatch from '../deliveryBoxBatch/deliveryBoxBatch.model';
+import WasteLog from '../wasteLog/wasteLog.model';
 
 interface OrderCreationAttributes extends Optional<IOrder, 'id'> {};
 
@@ -63,6 +64,15 @@ Order.hasMany(DeliveryBoxBatch, {
 
 DeliveryBoxBatch.belongsTo(Order, {
   foreignKey: 'orderId'
+});
+
+Order.hasMany(WasteLog, {
+  sourceKey: "id",
+  foreignKey: "orderId",
+});
+
+WasteLog.belongsTo(Order, {
+  foreignKey: "orderId",
 });
 
 export default Order;
