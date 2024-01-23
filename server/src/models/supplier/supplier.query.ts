@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import Supplier from "./supplier.model";
 import { ISupplier } from "../../interfaces/supplier.interface";
+import axios from "axios";
 
 export async function findAllSuppliers (restaurantId: number) {
     try {
@@ -82,3 +83,31 @@ export async function findSupplierByLabel (restaurantId: number, label: string) 
     }
 }
 
+export async function checkSupplierAndFindWhichHasEarliestDeliveryDate (restaurantId: number) {
+  try {
+    const suppliers = await findAllSuppliers(restaurantId);
+    const dayName = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+    let earliestSupplier;
+
+    for (const supplier of suppliers) {
+      const vendor = await axios.get(`http://localhost:5000/v1/vendor/${supplier.vendorId}`);
+      if (vendor.data.data) {
+        const openingHours = vendor.data.data.openingHours.start;
+        const workingDays = vendor.data.data.workingDays;
+        if (workingDays.includes(dayName)) {
+          const openingHour = Number(openingHours.split(":")[0]);
+          const currentHour = new Date().getHours();
+          if (currentHour < openingHour) {
+            earliestSupplier = supplier;
+          }
+        }
+      }
+    }
+
+    return earliestSupplier;
+  }
+  catch (error) {
+    console.log(error);
+    throw new Error("Error finding supplier with earliest delivery date.");
+  }
+}

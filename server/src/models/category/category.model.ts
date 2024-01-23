@@ -2,7 +2,6 @@ import { Model, DataTypes, Optional } from "sequelize";
 import { ICategory } from "../../interfaces/category.interface";
 import sequelize from "..";
 import Ingredient from "../ingredient/ingredient.model";
-import WasteLog from "../wasteLog/wasteLog.model";
 
 interface CategoryCreationAttributes extends Optional<ICategory, "id"> {}
 

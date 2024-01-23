@@ -11,7 +11,7 @@ import { IDeliveryBoxBatch } from "../../interfaces/deliveryBoxBatch.interface";
 import { addDeliveryBoxToRestaurant } from "../deliveryBoxBatch/deliveryBoxBatch.query";
 import Supplier from "../supplier/supplier.model";
 import axios from 'axios';
-import { addSupplier } from "../supplier/supplier.query";
+import { addSupplier, findAllSuppliers } from "../supplier/supplier.query";
 
 export async function findAllOrderOfRestaurantWithBatch(restaurantId: number) {
   try {
@@ -293,3 +293,13 @@ export async function checkSupplierHasProduct(supplierId: number, uniqueIngredie
   }
 }
 
+export async function sendAutoPilotOrderToVendor (vendorId: number, order: any) {
+  try {
+    const vendor = await axios.post(`http://localhost:5000/v1/vendor/${vendorId}/order`, order);
+    return vendor;
+  }
+  catch (error) {
+    console.log(error);
+    throw new Error("Error sending auto pilot order to vendor.");
+  }
+}
