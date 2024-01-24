@@ -18,6 +18,7 @@ import autoPilotRouter from "./routers/autoPilot.router";
 import cron from "node-cron";
 import checkExpiryDateAndRemove from "./utils/expiryCheck.util";
 import activateAutoPilot from "./utils/autoPilotChecker";
+import axios from 'axios';
 
 
 const app: Express = express();
