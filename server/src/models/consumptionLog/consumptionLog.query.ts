@@ -95,9 +95,15 @@ export async function deductIngredientsAndDeliveryBoxesFromOrder (order: {
 }) {
   try {
     const { orderType, ingredientsToReduce, deliveryBoxesToReduce, restaurantId } = order;
-    const deductedIngredients = await deductIngredientsFromOrder({ingredientsToReduce, orderType, restaurantId});
-    const deductedDeliveryBoxes = await deductDeliveryBoxesFromOrder({deliveryBoxesToReduce, orderType, restaurantId});
-    return { deductedIngredients, deductedDeliveryBoxes };
+
+    if (ingredientsToReduce.length !== 0) {
+      await deductIngredientsFromOrder({ingredientsToReduce, orderType, restaurantId});
+    }
+    if (deliveryBoxesToReduce.length !== 0) {
+      await deductDeliveryBoxesFromOrder({deliveryBoxesToReduce, orderType, restaurantId});
+    }
+
+    return { success: true };
   } catch (error) {
     throw new Error('Error deducting ingredients and delivery boxes from order.');
   }

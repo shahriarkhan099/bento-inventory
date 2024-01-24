@@ -2,6 +2,7 @@ import { Op } from "sequelize";
 import Supplier from "./supplier.model";
 import { ISupplier } from "../../interfaces/supplier.interface";
 import axios from "axios";
+import config from "../../config";
 
 export async function findAllSuppliers (restaurantId: number) {
     try {
@@ -90,7 +91,7 @@ export async function checkSupplierAndFindWhichHasEarliestDeliveryDate (restaura
     let earliestSupplier;
 
     for (const supplier of suppliers) {
-      const vendor = await axios.get(`https://bento-vendor.onrender.com/v1/vendor/${supplier.vendorId}`);
+      const vendor = await axios.get(`${config.HELPER_API}/v1/vendor/${supplier.vendorId}`);
       if (vendor.data.data) {
         const openingHours = vendor.data.data.openingHours.start;
         const workingDays = vendor.data.data.workingDays;

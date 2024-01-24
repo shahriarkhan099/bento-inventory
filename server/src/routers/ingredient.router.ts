@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { getAllIngredientOfRestaurant, postIngredientToRestaurant, searchIngredient, 
     updateIngredient, deleteIngredient, getIngredientWithCategory, getIngredientsByCategoryName,
-    getAllIngredientOfRestaurantWithCategoryAndIngredientBatch, deductIngredientsController, getIngredientbyId  } from '../controllers/ingredient.controller';
+    getAllIngredientOfRestaurantWithCategoryAndIngredientBatch, deductIngredientsController, 
+    getIngredientbyId, getIngredientByIngredientUniqueId  } from '../controllers/ingredient.controller';
 
 const router = Router();
 
@@ -18,5 +19,7 @@ router.get('/restaurant/:restaurantId/ingredients/categories/:categoryName', get
 router.get('/restaurant/:restaurantId/ingredients', getAllIngredientOfRestaurantWithCategoryAndIngredientBatch);
 router.get('/restaurant/ingredients/:ingredientId', getIngredientbyId);
 router.post('/restaurant/:restaurantId/deductIngredients', deductIngredientsController);
+
+router.get('/restaurant/:restaurantId/:ingredientUniqueId', getIngredientByIngredientUniqueId);
 
 export default router;

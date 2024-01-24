@@ -16,6 +16,7 @@ exports.checkSupplierAndFindWhichHasEarliestDeliveryDate = exports.findSupplierB
 const sequelize_1 = require("sequelize");
 const supplier_model_1 = __importDefault(require("./supplier.model"));
 const axios_1 = __importDefault(require("axios"));
+const config_1 = __importDefault(require("../../config"));
 function findAllSuppliers(restaurantId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -119,7 +120,7 @@ function checkSupplierAndFindWhichHasEarliestDeliveryDate(restaurantId) {
             const dayName = new Date().toLocaleDateString('en-US', { weekday: 'long' });
             let earliestSupplier;
             for (const supplier of suppliers) {
-                const vendor = yield axios_1.default.get(`http://localhost:5000/v1/vendor/${supplier.vendorId}`);
+                const vendor = yield axios_1.default.get(`${config_1.default.HELPER_API}/v1/vendor/${supplier.vendorId}`);
                 if (vendor.data.data) {
                     const openingHours = vendor.data.data.openingHours.start;
                     const workingDays = vendor.data.data.workingDays;

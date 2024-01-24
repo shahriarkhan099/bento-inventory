@@ -12,6 +12,7 @@ import { addDeliveryBoxToRestaurant } from "../deliveryBoxBatch/deliveryBoxBatch
 import Supplier from "../supplier/supplier.model";
 import axios from 'axios';
 import { addSupplier, findAllSuppliers } from "../supplier/supplier.query";
+import config from "../../config";
 
 export async function findAllOrderOfRestaurantWithBatch(restaurantId: number) {
   try {
@@ -250,7 +251,7 @@ export async function addOrderToRestaurantWithAllBatches(order: IOrder, ingredie
 
 export async function addSupplierIfNoExists(order: IOrder) {
   try {
-    const vendor = await axios.get(`https://bento-vendor.onrender.com/v1/vendor/${order.supplierId}`);
+    const vendor = await axios.get(`${config.HELPER_API}/v1/vendor/${order.supplierId}`);
         
     if (vendor.data) {
       console.log({...vendor.data.data});
@@ -274,28 +275,9 @@ export async function addSupplierIfNoExists(order: IOrder) {
   }
 }
 
-export async function checkSupplierHasProduct(supplierId: number, uniqueIngredientId: number) {
-  try {
-    const vendor = await axios.get(`https://bento-vendor.onrender.com/v1/vendor/${supplierId}`);
-    const products = await axios.get(`https://bento-vendor.onrender.com/v1/product/vendor/${supplierId}`);
-    const currentDayOfWeek = new Date().getDay();
-    console.log(products.data.data);
-    for (const product of products.data.data) {
-      if (product.uniqueIngredientId === uniqueIngredientId) {
-        return true;
-      }
-    }
-    return false;
-  }
-  catch (error) {
-    console.log(error);
-    throw new Error("Error checking supplier has product.");
-  }
-}
-
 export async function sendAutoPilotOrderToVendor (vendorId: number, order: any) {
   try {
-    const vendor = await axios.post(`https://bento-vendor.onrender.com/v1/vendor/${vendorId}/order`, order);
+    const vendor = await axios.post(`${config.HELPER_API}/v1/vendor/${vendorId}/order`, order);
     return vendor;
   }
   catch (error) {

@@ -9,7 +9,8 @@ import {
   findIngredientsByCategoryName,
   findAllIngredientOfRestaurantWithCategoryAndIngredientBatch,
   deductIngredientsFromOrder,
-  findIngredientbyId
+  findIngredientbyId,
+  findIngredientByIngredientUniqueId
 } from "../models/ingredient/ingredient.query";
 import { IngredientToReduce, DeductedIngredient } from "../interfaces/deductIngredient.interface";
 
@@ -19,6 +20,20 @@ export async function getIngredientbyId(req: Request, res: Response) {
     if (ingredientId) {
       const ingredient = await findIngredientbyId(ingredientId);
       res.json({ ingredient: ingredient });
+    } else res.status(400).json({ message: "Invalid ingredient ID." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
+export async function getIngredientByIngredientUniqueId(req: Request, res: Response) {
+  try {
+    const restaurantId = Number(req.params.restaurantId);
+    const ingredientUniqueId = Number(req.params.ingredientUniqueId);
+    if (restaurantId) {
+      const ingredient = await findIngredientByIngredientUniqueId(restaurantId, ingredientUniqueId);
+      res.status(200).json({ ingredient: ingredient });
     } else res.status(400).json({ message: "Invalid ingredient ID." });
   } catch (error) {
     console.log(error);

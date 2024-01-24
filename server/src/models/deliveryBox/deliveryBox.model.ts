@@ -28,7 +28,7 @@ const DeliveryBox = sequelize.define<DeliveryBoxInstance>("deliveryBoxes", {
   currentStockQuantity: {
     type: DataTypes.FLOAT,
     allowNull: false,
-    defaultValue: 0,
+    defaultValue: 100,
   },
   unitOfPrice: {
     type: DataTypes.ENUM("cents", "usd"),

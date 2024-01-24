@@ -27,6 +27,20 @@ export async function findIngredientbyId(ingredientId: number) {
   }
 }
 
+export async function findIngredientByIngredientUniqueId (restaurantId: number, ingredientUniqueId: number) {
+  try {
+    const ingredient = await Ingredient.findOne({
+      where: {
+        uniqueIngredientId: ingredientUniqueId,
+        restaurantId: restaurantId
+      }
+    });
+    return ingredient;
+  } catch (error) {
+    throw new Error("Error finding global ingredient.");
+  }
+}
+
 export async function findAllIngredientOfRestaurant(restaurantId: number) {
   try {
     const ingredient = await Ingredient.findAll({
