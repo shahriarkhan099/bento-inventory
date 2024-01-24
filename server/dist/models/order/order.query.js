@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addSupplierIfNoExists = exports.addOrderToRestaurantWithAllBatches = exports.addOrderToRestaurantWithDeliveryBoxBatches = exports.addOrderToRestaurantWithIngredientBatches = exports.deleteOrderOfRestaurant = exports.updateOrderOfRestaurant = exports.addOrderToRestaurant = exports.findAllOrderOfRestaurantWithPendingBatch = exports.findAllOrderOfRestaurantWithBatch = void 0;
+exports.sendAutoPilotOrderToVendor = exports.checkSupplierHasProduct = exports.addSupplierIfNoExists = exports.addOrderToRestaurantWithAllBatches = exports.addOrderToRestaurantWithDeliveryBoxBatches = exports.addOrderToRestaurantWithIngredientBatches = exports.deleteOrderOfRestaurant = exports.updateOrderOfRestaurant = exports.addOrderToRestaurant = exports.findAllOrderOfRestaurantWithPendingBatch = exports.findAllOrderOfRestaurantWithBatch = void 0;
 const sequelize_1 = require("sequelize");
 const order_model_1 = __importDefault(require("./order.model"));
 const ingredientBatch_model_1 = __importDefault(require("../ingredientBatch/ingredientBatch.model"));
@@ -292,3 +292,37 @@ function addSupplierIfNoExists(order) {
     });
 }
 exports.addSupplierIfNoExists = addSupplierIfNoExists;
+function checkSupplierHasProduct(supplierId, uniqueIngredientId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const vendor = yield axios_1.default.get(`http://localhost:5000/v1/vendor/${supplierId}`);
+            const products = yield axios_1.default.get(`http://localhost:5000/v1/product/vendor/${supplierId}`);
+            const currentDayOfWeek = new Date().getDay();
+            console.log(products.data.data);
+            for (const product of products.data.data) {
+                if (product.uniqueIngredientId === uniqueIngredientId) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        catch (error) {
+            console.log(error);
+            throw new Error("Error checking supplier has product.");
+        }
+    });
+}
+exports.checkSupplierHasProduct = checkSupplierHasProduct;
+function sendAutoPilotOrderToVendor(vendorId, order) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const vendor = yield axios_1.default.post(`http://localhost:5000/v1/vendor/${vendorId}/order`, order);
+            return vendor;
+        }
+        catch (error) {
+            console.log(error);
+            throw new Error("Error sending auto pilot order to vendor.");
+        }
+    });
+}
+exports.sendAutoPilotOrderToVendor = sendAutoPilotOrderToVendor;

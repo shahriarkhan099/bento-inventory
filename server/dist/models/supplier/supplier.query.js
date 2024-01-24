@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findSupplierByLabel = exports.deleteSupplier = exports.findSupplierBySearchTerm = exports.updateSupplier = exports.addSupplier = exports.findAllSuppliers = void 0;
+exports.checkSupplierAndFindWhichHasEarliestDeliveryDate = exports.findSupplierByLabel = exports.deleteSupplier = exports.findSupplierBySearchTerm = exports.updateSupplier = exports.addSupplier = exports.findAllSuppliers = void 0;
 const sequelize_1 = require("sequelize");
 const supplier_model_1 = __importDefault(require("./supplier.model"));
+const axios_1 = __importDefault(require("axios"));
 function findAllSuppliers(restaurantId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -111,3 +112,32 @@ function findSupplierByLabel(restaurantId, label) {
     });
 }
 exports.findSupplierByLabel = findSupplierByLabel;
+function checkSupplierAndFindWhichHasEarliestDeliveryDate(restaurantId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const suppliers = yield findAllSuppliers(restaurantId);
+            const dayName = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+            let earliestSupplier;
+            for (const supplier of suppliers) {
+                const vendor = yield axios_1.default.get(`http://localhost:5000/v1/vendor/${supplier.vendorId}`);
+                if (vendor.data.data) {
+                    const openingHours = vendor.data.data.openingHours.start;
+                    const workingDays = vendor.data.data.workingDays;
+                    if (workingDays.includes(dayName)) {
+                        const openingHour = Number(openingHours.split(":")[0]);
+                        const currentHour = new Date().getHours();
+                        if (currentHour < openingHour) {
+                            earliestSupplier = supplier;
+                        }
+                    }
+                }
+            }
+            return earliestSupplier;
+        }
+        catch (error) {
+            console.log(error);
+            throw new Error("Error finding supplier with earliest delivery date.");
+        }
+    });
+}
+exports.checkSupplierAndFindWhichHasEarliestDeliveryDate = checkSupplierAndFindWhichHasEarliestDeliveryDate;

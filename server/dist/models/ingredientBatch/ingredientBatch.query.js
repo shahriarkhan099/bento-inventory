@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findIngredientsByCategoryName = exports.findIngredientWithCategory = exports.deleteIngredientOfRestaurant = exports.deductIngredientBatchesInFIFO = exports.updateIngredientOfRestaurant = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = void 0;
+exports.getTotalAmountOfIngredientThatExpiresInSpecificDate = exports.findIngredientsByCategoryName = exports.findIngredientWithCategory = exports.deleteIngredientOfRestaurant = exports.deductIngredientBatchesInFIFO = exports.updateIngredientOfRestaurant = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = void 0;
 const sequelize_1 = require("sequelize");
 const ingredientBatch_model_1 = __importDefault(require("./ingredientBatch.model"));
 const category_model_1 = __importDefault(require("../category/category.model"));
 const consumptionLog_query_1 = require("../consumptionLog/consumptionLog.query");
+const __1 = __importDefault(require(".."));
 function findAllIngredientOfRestaurant(restaurantId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -169,3 +170,29 @@ function findIngredientsByCategoryName(restaurantId, categoryName) {
     });
 }
 exports.findIngredientsByCategoryName = findIngredientsByCategoryName;
+function getTotalAmountOfIngredientThatExpiresInSpecificDate(ingredientId, date) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const ingredientBatches = yield ingredientBatch_model_1.default.findAll({
+                attributes: [
+                    [__1.default.fn("SUM", __1.default.col("currentStockQuantity")), "totalAmount"],
+                ],
+                where: {
+                    ingredientId: ingredientId,
+                    currentStockQuantity: {
+                        [sequelize_1.Op.gt]: 0,
+                    },
+                    expirationDate: {
+                        [sequelize_1.Op.lte]: date,
+                    },
+                },
+            });
+            const totalAmount = ingredientBatches.length > 0 ? ingredientBatches[0].get('totalAmount') : 0;
+            return totalAmount;
+        }
+        catch (error) {
+            throw new Error('Error finding ingredient.');
+        }
+    });
+}
+exports.getTotalAmountOfIngredientThatExpiresInSpecificDate = getTotalAmountOfIngredientThatExpiresInSpecificDate;

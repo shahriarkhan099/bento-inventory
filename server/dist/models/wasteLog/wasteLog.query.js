@@ -17,7 +17,6 @@ const sequelize_1 = require("sequelize");
 const wasteLog_model_1 = __importDefault(require("./wasteLog.model"));
 const ingredientBatch_model_1 = __importDefault(require("../ingredientBatch/ingredientBatch.model"));
 const ingredient_model_1 = __importDefault(require("../ingredient/ingredient.model"));
-const order_model_1 = __importDefault(require("../order/order.model"));
 function findAllWasteLogWithIngredient(restaurantId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -28,9 +27,6 @@ function findAllWasteLogWithIngredient(restaurantId) {
                 include: [
                     {
                         model: ingredient_model_1.default,
-                    },
-                    {
-                        model: order_model_1.default,
                     }
                 ],
             });
@@ -95,7 +91,8 @@ function addToWasteLogByCheckingExpirationDateOfAllIngredientBatchesOfAllRestaur
                         expirationDate: ingredientBatch.expirationDate,
                         ingredientId: ingredientBatch.ingredientId,
                         restaurantId: ingredientBatch.restaurantId,
-                        orderId: ingredientBatch.orderId,
+                        consumptionQuantity: ingredientBatch.purchaseQuantity - ingredientBatch.currentStockQuantity,
+                        wastagePercentage: (ingredientBatch.purchaseQuantity - ingredientBatch.currentStockQuantity) / ingredientBatch.purchaseQuantity * 100
                     };
                     yield addWasteLog(wasteLog, ingredientBatch.restaurantId);
                 }

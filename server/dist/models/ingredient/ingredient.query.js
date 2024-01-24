@@ -12,13 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findOneIngredientOfRestaurantWithUniqueIngredientId = exports.deductIngredientsFromOrder = exports.updateIngredientInfoOfRestaurantWithNewIngredientBatch = exports.updateCurrentStockQuantityOfIngredient = exports.findOneIngredientOfRestaurant = exports.findAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.findIngredientsByCategoryName = exports.findIngredientsByIngredientName = exports.findIngredientWithCategory = exports.deleteIngredientOfRestaurant = exports.updateIngredientOfRestaurant = exports.findIngredientBySearchTerm = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = exports.findIngredientbyId = void 0;
+exports.checkAllIngredientOfRestaurantIfNeededToOrderListWithFrequencyDays = exports.checkAllIngredientOfAllRestaurantsIfNeededToOrderList = exports.findOneIngredientOfRestaurantWithUniqueIngredientId = exports.deductIngredientsFromOrder = exports.updateIngredientInfoOfRestaurantWithNewIngredientBatch = exports.updateCurrentStockQuantityOfIngredient = exports.findOneIngredientOfRestaurant = exports.findAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.findIngredientsByCategoryName = exports.findIngredientsByIngredientName = exports.findIngredientWithCategory = exports.deleteIngredientOfRestaurant = exports.updateIngredientOfRestaurant = exports.findIngredientBySearchTerm = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = exports.findIngredientbyId = void 0;
 const sequelize_1 = require("sequelize");
 const index_1 = __importDefault(require("../index"));
 const ingredient_model_1 = __importDefault(require("./ingredient.model"));
 const category_model_1 = __importDefault(require("../category/category.model"));
 const ingredientBatch_model_1 = __importDefault(require("../ingredientBatch/ingredientBatch.model"));
 const ingredientBatch_query_1 = require("../ingredientBatch/ingredientBatch.query");
+const consumptionLog_query_1 = require("../consumptionLog/consumptionLog.query");
 function findIngredientbyId(ingredientId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -273,16 +274,10 @@ function updateIngredientInfoOfRestaurantWithNewIngredientBatch(ingredientBatch)
                         },
                     },
                 });
-                const unit = ingredient.unitOfStock;
-                let scaleUnit = 1;
-                if (unit === "gm" || unit === "ml") {
-                    scaleUnit = 1000;
-                }
                 updatedIngredient = yield ingredient_model_1.default.update({
                     costPerUnit: averageCostPerUnit
                         ? averageCostPerUnit.dataValues.costPerUnit
                         : 0,
-                    reorderPoint: ((ingredientBatch.purchaseQuantity / 100) * 20) / scaleUnit,
                 }, {
                     where: {
                         id: ingredientBatch.ingredientId,
@@ -315,9 +310,9 @@ function deductIngredientsFromOrder(order) {
                     updateCurrentStockQuantityOfIngredient(ingredient.id);
                     deductedIngredients.push({ ingredientId: ingredient.id, deductedIngredientBatches: deductedBatches, });
                     // check reorder point by ingredient id
-                    if (ingredient.currentStockQuantity <= ingredient.reorderPoint) {
-                        console.log("Reorder point reached.");
-                    }
+                    // if (ingredient.currentStockQuantity <= ingredient.reorderPoint) {
+                    //   console.log("Reorder point reached.");
+                    // }
                 }
                 else {
                     throw new Error(`Ingredient with ID ${id} not found.`);
@@ -349,3 +344,89 @@ function findOneIngredientOfRestaurantWithUniqueIngredientId(uniqueIngredientId,
     });
 }
 exports.findOneIngredientOfRestaurantWithUniqueIngredientId = findOneIngredientOfRestaurantWithUniqueIngredientId;
+function checkAllIngredientOfAllRestaurantsIfNeededToOrderList() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const ingredients = yield ingredient_model_1.default.findAll();
+            let ingredientsToOrder = [];
+            for (const ingredient of ingredients) {
+                const hundredPercentIngredientAmount = yield (0, consumptionLog_query_1.findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays)(ingredient.id, 3);
+                const todayDateWithOnlyDate = new Date(new Date().setHours(0, 0, 0, 0));
+                const totalAmountOfIngredientThatExpiresToday = yield (0, ingredientBatch_query_1.getTotalAmountOfIngredientThatExpiresInSpecificDate)(ingredient.id, todayDateWithOnlyDate);
+                const totalAmountOfIngredientThatExpiresTomorrow = yield (0, ingredientBatch_query_1.getTotalAmountOfIngredientThatExpiresInSpecificDate)(ingredient.id, new Date(todayDateWithOnlyDate.setDate(todayDateWithOnlyDate.getDate() + 1)));
+                const totalAmountOfIngredientThatExpiresInThreeDays = yield (0, ingredientBatch_query_1.getTotalAmountOfIngredientThatExpiresInSpecificDate)(ingredient.id, new Date(todayDateWithOnlyDate.setDate(todayDateWithOnlyDate.getDate() + 2)));
+                if ((ingredient.currentStockQuantity <= ingredient.reorderPoint && ingredient.reorderPoint !== 0)
+                    || ingredient.currentStockQuantity <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+                    ingredientsToOrder.push(ingredient);
+                }
+                else if (totalAmountOfIngredientThatExpiresToday) {
+                    if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresToday) <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+                        ingredientsToOrder.push(ingredient);
+                    }
+                }
+                else if (totalAmountOfIngredientThatExpiresTomorrow) {
+                    if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresTomorrow) <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+                        ingredientsToOrder.push(ingredient);
+                    }
+                }
+                else if (totalAmountOfIngredientThatExpiresInThreeDays) {
+                    if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresInThreeDays) <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+                        ingredientsToOrder.push(ingredient);
+                    }
+                }
+            }
+            return ingredients;
+        }
+        catch (error) {
+            throw new Error("Error finding global ingredient.");
+        }
+    });
+}
+exports.checkAllIngredientOfAllRestaurantsIfNeededToOrderList = checkAllIngredientOfAllRestaurantsIfNeededToOrderList;
+function checkAllIngredientOfRestaurantIfNeededToOrderListWithFrequencyDays(frequencyDays) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const ingredients = yield ingredient_model_1.default.findAll();
+            let ingredientsToOrder = [];
+            for (const ingredient of ingredients) {
+                const hundredPercentIngredientAmount = yield (0, consumptionLog_query_1.findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays)(ingredient.id, frequencyDays);
+                const todayDateWithOnlyDate = new Date(new Date().setHours(0, 0, 0, 0));
+                if ((ingredient.currentStockQuantity <= ingredient.reorderPoint && ingredient.reorderPoint !== 0)
+                    || ingredient.currentStockQuantity <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+                    ingredientsToOrder.push(ingredient);
+                }
+                else {
+                    for (let i = 0; i < frequencyDays; i++) {
+                        let currentDate = new Date(todayDateWithOnlyDate.getTime());
+                        currentDate.setDate(currentDate.getDate() + i);
+                        const totalWastageAmount = yield (0, ingredientBatch_query_1.getTotalAmountOfIngredientThatExpiresInSpecificDate)(ingredient.id, currentDate);
+                        if (totalWastageAmount) {
+                            if ((ingredient.currentStockQuantity - totalWastageAmount) <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+                                ingredientsToOrder.push(ingredient);
+                            }
+                        }
+                    }
+                }
+            }
+            console.log("Before Converting", ingredientsToOrder);
+            let ingredientsWithRestaurants = sortIngredientsByRestaurant(ingredientsToOrder);
+            console.log("After Converting", ingredientsWithRestaurants);
+            return ingredientsWithRestaurants;
+        }
+        catch (error) {
+            throw new Error("Error finding global ingredient.");
+        }
+    });
+}
+exports.checkAllIngredientOfRestaurantIfNeededToOrderListWithFrequencyDays = checkAllIngredientOfRestaurantIfNeededToOrderListWithFrequencyDays;
+function sortIngredientsByRestaurant(ingredients) {
+    const ingredientsByRestaurant = {};
+    ingredients.forEach((ingredient) => {
+        const { restaurantId } = ingredient;
+        if (!ingredientsByRestaurant[restaurantId]) {
+            ingredientsByRestaurant[restaurantId] = [];
+        }
+        ingredientsByRestaurant[restaurantId].push(ingredient);
+    });
+    return ingredientsByRestaurant;
+}

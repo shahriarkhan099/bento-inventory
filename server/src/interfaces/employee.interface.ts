@@ -1,0 +1,20 @@
+export interface IEmployee {
+    id: number,
+    restaurantId: number,
+    name: string,
+    email: string,
+    experience?: [string],
+    phoneNumber?: number,
+    // joiningDate: Date,
+    address?: string,
+    skillTags?: [string],
+    hourlyRate?: number,
+    efficiency?: string,
+    imageUrl?: string,
+    positionId?: number,
+    // position: string,
+    applicantId?: number,
+    // scheduleId?: number,
+    attendanceId?: number,
+    payrollId?: number
+}

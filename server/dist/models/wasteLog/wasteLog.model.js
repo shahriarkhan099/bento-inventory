@@ -44,6 +44,14 @@ const WasteLog = __1.default.define("wasteLogs", {
         type: sequelize_1.DataTypes.DATE,
         allowNull: false,
     },
+    consumptionQuantity: {
+        type: sequelize_1.DataTypes.FLOAT,
+        allowNull: false,
+    },
+    wastagePercentage: {
+        type: sequelize_1.DataTypes.FLOAT,
+        allowNull: false,
+    },
     ingredientId: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
