@@ -250,7 +250,7 @@ export async function addOrderToRestaurantWithAllBatches(order: IOrder, ingredie
 
 export async function addSupplierIfNoExists(order: IOrder) {
   try {
-    const vendor = await axios.get(`http://localhost:5000/v1/vendor/${order.supplierId}`);
+    const vendor = await axios.get(`https://bento-vendor.onrender.com/v1/vendor/${order.supplierId}`);
         
     if (vendor.data) {
       console.log({...vendor.data.data});
@@ -276,8 +276,8 @@ export async function addSupplierIfNoExists(order: IOrder) {
 
 export async function checkSupplierHasProduct(supplierId: number, uniqueIngredientId: number) {
   try {
-    const vendor = await axios.get(`http://localhost:5000/v1/vendor/${supplierId}`);
-    const products = await axios.get(`http://localhost:5000/v1/product/vendor/${supplierId}`);
+    const vendor = await axios.get(`https://bento-vendor.onrender.com/v1/vendor/${supplierId}`);
+    const products = await axios.get(`https://bento-vendor.onrender.com/v1/product/vendor/${supplierId}`);
     const currentDayOfWeek = new Date().getDay();
     console.log(products.data.data);
     for (const product of products.data.data) {
@@ -295,7 +295,7 @@ export async function checkSupplierHasProduct(supplierId: number, uniqueIngredie
 
 export async function sendAutoPilotOrderToVendor (vendorId: number, order: any) {
   try {
-    const vendor = await axios.post(`http://localhost:5000/v1/vendor/${vendorId}/order`, order);
+    const vendor = await axios.post(`https://bento-vendor.onrender.com/v1/vendor/${vendorId}/order`, order);
     return vendor;
   }
   catch (error) {

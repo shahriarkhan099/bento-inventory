@@ -90,7 +90,7 @@ export async function checkSupplierAndFindWhichHasEarliestDeliveryDate (restaura
     let earliestSupplier;
 
     for (const supplier of suppliers) {
-      const vendor = await axios.get(`http://localhost:5000/v1/vendor/${supplier.vendorId}`);
+      const vendor = await axios.get(`https://bento-vendor.onrender.com/v1/vendor/${supplier.vendorId}`);
       if (vendor.data.data) {
         const openingHours = vendor.data.data.openingHours.start;
         const workingDays = vendor.data.data.workingDays;
