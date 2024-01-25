@@ -127,6 +127,8 @@ export async function addOrderToRestaurantWithIngredientBatches(order: IOrder, i
       if (!supplier) {
         const newSupplier = await addSupplierIfNoExists(order);
         order.supplierId = newSupplier!.id as number; 
+      } else {
+        order.supplierId = supplier.id as number;
       }
     }
 
