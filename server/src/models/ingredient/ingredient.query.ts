@@ -57,13 +57,20 @@ export async function findAllIngredientOfRestaurant(restaurantId: number) {
 
 export async function addIngredientToRestaurant(ingredient: IIngredient) {
   try {
-    if (ingredient.unitOfStock === "kg") {
-      ingredient.unitOfStock = "gm";
-    } else if (ingredient.unitOfStock === "litre") {
-      ingredient.unitOfStock = "ml";
+    const checkExistent = await findIngredientByIngredientUniqueId(ingredient.restaurantId, ingredient.uniqueIngredientId);
+
+    if (!checkExistent) {
+      if (ingredient.unitOfStock === "kg") {
+        ingredient.unitOfStock = "gm";
+      } else if (ingredient.unitOfStock === "litre") {
+        ingredient.unitOfStock = "ml";
+      }
+      const newIngredient = await Ingredient.create(ingredient);
+      return newIngredient;
+    } else {
+      throw new Error("Ingredient already exists.");
     }
-    const newIngredient = await Ingredient.create(ingredient);
-    return newIngredient;
+
   } catch (error) {
     console.log(error);
     throw new Error("Error creating global ingredient.");
