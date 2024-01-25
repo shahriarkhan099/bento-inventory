@@ -116,9 +116,13 @@ function deductIngredientsAndDeliveryBoxesFromOrder(order) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { orderType, ingredientsToReduce, deliveryBoxesToReduce, restaurantId } = order;
-            const deductedIngredients = yield (0, ingredient_query_1.deductIngredientsFromOrder)({ ingredientsToReduce, orderType, restaurantId });
-            const deductedDeliveryBoxes = yield (0, deliveryBox_query_1.deductDeliveryBoxesFromOrder)({ deliveryBoxesToReduce, orderType, restaurantId });
-            return { deductedIngredients, deductedDeliveryBoxes };
+            if (ingredientsToReduce.length !== 0) {
+                yield (0, ingredient_query_1.deductIngredientsFromOrder)({ ingredientsToReduce, orderType, restaurantId });
+            }
+            if (deliveryBoxesToReduce.length !== 0) {
+                yield (0, deliveryBox_query_1.deductDeliveryBoxesFromOrder)({ deliveryBoxesToReduce, orderType, restaurantId });
+            }
+            return { success: true };
         }
         catch (error) {
             throw new Error('Error deducting ingredients and delivery boxes from order.');

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.getIngredientsByCategoryName = exports.getIngredientWithCategory = exports.deleteIngredient = exports.updateIngredient = exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = exports.deductIngredientsController = exports.getIngredientbyId = void 0;
+exports.getAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.getIngredientsByCategoryName = exports.getIngredientWithCategory = exports.deleteIngredient = exports.updateIngredient = exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = exports.deductIngredientsController = exports.getIngredientByIngredientUniqueId = exports.getIngredientbyId = void 0;
 const ingredient_query_1 = require("../models/ingredient/ingredient.query");
 function getIngredientbyId(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -29,6 +29,25 @@ function getIngredientbyId(req, res) {
     });
 }
 exports.getIngredientbyId = getIngredientbyId;
+function getIngredientByIngredientUniqueId(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const restaurantId = Number(req.params.restaurantId);
+            const ingredientUniqueId = Number(req.params.ingredientUniqueId);
+            if (restaurantId) {
+                const ingredient = yield (0, ingredient_query_1.findIngredientByIngredientUniqueId)(restaurantId, ingredientUniqueId);
+                res.status(200).json({ ingredient: ingredient });
+            }
+            else
+                res.status(400).json({ message: "Invalid ingredient ID." });
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.getIngredientByIngredientUniqueId = getIngredientByIngredientUniqueId;
 function deductIngredientsController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

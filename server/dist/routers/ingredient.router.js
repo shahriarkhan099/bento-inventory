@@ -14,4 +14,5 @@ router.get('/restaurant/:restaurantId/ingredients/categories/:categoryName', ing
 router.get('/restaurant/:restaurantId/ingredients', ingredient_controller_1.getAllIngredientOfRestaurantWithCategoryAndIngredientBatch);
 router.get('/restaurant/ingredients/:ingredientId', ingredient_controller_1.getIngredientbyId);
 router.post('/restaurant/:restaurantId/deductIngredients', ingredient_controller_1.deductIngredientsController);
+router.get('/restaurant/:restaurantId/:ingredientUniqueId', ingredient_controller_1.getIngredientByIngredientUniqueId);
 exports.default = router;

@@ -115,6 +115,8 @@ export async function deleteConsumptionLogOfRestaurant(req: Request, res: Respon
 export async function postConsumptionLogToRestaurantWithOrder (req: Request, res: Response) {
   try {
     const { orderType, restaurantId, ingredientsToReduce, deliveryBoxesToReduce } = req.body;
+    console.log(req.body);
+    
 
     const orderWithIngredients = { orderType: orderType, restaurantId: restaurantId, ingredientsToReduce: ingredientsToReduce as IngredientToReduce[]};
     const orderWithDeliveryBoxes = { orderType: orderType, restaurantId: restaurantId, deliveryBoxesToReduce: deliveryBoxesToReduce as DeliveryBoxToReduce[]};
