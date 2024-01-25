@@ -115,7 +115,7 @@ export async function deleteConsumptionLogOfRestaurant(req: Request, res: Respon
 export async function postConsumptionLogToRestaurantWithOrder (req: Request, res: Response) {
   try {
     const { orderType, restaurantId, ingredientsToReduce, deliveryBoxesToReduce } = req.body;
-    console.log(req.body);
+    console.log('data that has come from skeleton/kds to minus from inventory', req.body);
     
 
     const orderWithIngredients = { orderType: orderType, restaurantId: restaurantId, ingredientsToReduce: ingredientsToReduce as IngredientToReduce[]};
