@@ -68,6 +68,8 @@ export async function findAllOrderOfRestaurantWithPendingBatch(
 
 export async function addOrderToRestaurant(order: IOrder) {
   try {
+    console.log("Order that I'm receiving", order);
+    
     const newOrder = await Order.create(order);
     return newOrder;
   } catch (error) {
