@@ -84,6 +84,7 @@ exports.findAllOrderOfRestaurantWithPendingBatch = findAllOrderOfRestaurantWithP
 function addOrderToRestaurant(order) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            console.log("Order that I'm receiving", order);
             const newOrder = yield order_model_1.default.create(order);
             return newOrder;
         }
@@ -147,6 +148,9 @@ function addOrderToRestaurantWithIngredientBatches(order, ingredientBatches) {
                 if (!supplier) {
                     const newSupplier = yield addSupplierIfNoExists(order);
                     order.supplierId = newSupplier.id;
+                }
+                else {
+                    order.supplierId = supplier.id;
                 }
             }
             const newOrder = yield addOrderToRestaurant(order);

@@ -125,6 +125,7 @@ function postConsumptionLogToRestaurantWithOrder(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { orderType, restaurantId, ingredientsToReduce, deliveryBoxesToReduce } = req.body;
+            console.log('data that has come from skeleton/kds to minus from inventory', req.body);
             const orderWithIngredients = { orderType: orderType, restaurantId: restaurantId, ingredientsToReduce: ingredientsToReduce };
             const orderWithDeliveryBoxes = { orderType: orderType, restaurantId: restaurantId, deliveryBoxesToReduce: deliveryBoxesToReduce };
             yield (0, ingredient_query_1.deductIngredientsFromOrder)(orderWithIngredients);

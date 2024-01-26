@@ -18,11 +18,22 @@ const activateAutoPilot = async () => {
       for (const ingredientId of ingredientIdsArray) {
         const ingredient = await findOneIngredientOfRestaurant(ingredientId);
         const supplier = await checkSupplierAndFindWhichHasEarliestDeliveryDate(Number(restaurantId));
-    
-        // const newIngredientBatch = await addIngredientToRestaurant(Number(restaurantId), ingredientId, supplier.id, ingredient.quantity);
-        // const deliveryBox = await addDeliveryBoxToRestaurant(Number(restaurantId), supplier.id, ingredient.quantity);
-        // const newDeliveryBoxBatch = await updateDeliveryBoxInfoOfRestaurantWithNewDeliveryBoxBatch(Number(restaurantId), supplier.id, deliveryBox.quantity);
-        // const newIngredient = await updateIngredientInfoOfRestaurantWithNewIngredientBatch(Number(restaurantId), ingredientId, newIngredientBatch.quantity);
+
+        if (ingredient && supplier) {
+          const newIngredientBatch: any = {
+            uniqueIngredientId: ingredient.uniqueIngredientId, 
+            ingredientName: ingredient.ingredientName, 
+            unitOfStock: ingredient.unitOfStock,
+            currentStockQuantity: ingredient.currentStockQuantity,
+            unitOfPrice: ingredient.unitOfPrice,
+            costPerUnit: ingredient.costPerUnit,
+            restaurantId: Number(restaurantId),
+            categoryId: ingredient.categoryId,
+          };
+
+          await addIngredientToRestaurant(newIngredientBatch);
+          await updateIngredientInfoOfRestaurantWithNewIngredientBatch(newIngredientBatch);
+        }
       }
     }
     

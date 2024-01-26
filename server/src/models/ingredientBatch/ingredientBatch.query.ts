@@ -4,6 +4,7 @@ import Category from "../category/category.model";
 import { IIngredientBatch } from "../../interfaces/ingredientBatch.interface";
 import { createConsumptionLogOfRestaurantFromDeduction } from "../consumptionLog/consumptionLog.query";
 import sequelize from "..";
+import { findOneIngredientOfRestaurantWithUniqueIngredientId } from "../ingredient/ingredient.query";
 
 export async function findAllIngredientOfRestaurant (restaurantId: number) {
     try {

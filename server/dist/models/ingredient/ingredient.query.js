@@ -73,14 +73,20 @@ exports.findAllIngredientOfRestaurant = findAllIngredientOfRestaurant;
 function addIngredientToRestaurant(ingredient) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            if (ingredient.unitOfStock === "kg") {
-                ingredient.unitOfStock = "gm";
+            const checkExistent = yield findIngredientByIngredientUniqueId(ingredient.restaurantId, ingredient.uniqueIngredientId);
+            if (!checkExistent) {
+                if (ingredient.unitOfStock === "kg") {
+                    ingredient.unitOfStock = "gm";
+                }
+                else if (ingredient.unitOfStock === "litre") {
+                    ingredient.unitOfStock = "ml";
+                }
+                const newIngredient = yield ingredient_model_1.default.create(ingredient);
+                return newIngredient;
             }
-            else if (ingredient.unitOfStock === "litre") {
-                ingredient.unitOfStock = "ml";
+            else {
+                throw new Error("Ingredient already exists.");
             }
-            const newIngredient = yield ingredient_model_1.default.create(ingredient);
-            return newIngredient;
         }
         catch (error) {
             console.log(error);

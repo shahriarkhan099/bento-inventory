@@ -104,7 +104,6 @@ export async function deleteOrderOfRestaurant(orderId: number) {
   }
 }
 
-// create vendor if not exists
 export async function addOrderToRestaurantWithIngredientBatches(order: IOrder, ingredientBatches: IIngredientBatch[]) {
   try {
     order.totalPrice = 0;

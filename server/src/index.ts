@@ -54,7 +54,7 @@ cron.schedule("0 9 * * *", async () => {
   } catch (error) {
     console.error('Error in auto-pilot:', error);
   }
-})
+});
 
 async function bootstrap() {
   try {
