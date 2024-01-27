@@ -127,7 +127,6 @@ function deleteOrderOfRestaurant(orderId) {
     });
 }
 exports.deleteOrderOfRestaurant = deleteOrderOfRestaurant;
-// create vendor if not exists
 function addOrderToRestaurantWithIngredientBatches(order, ingredientBatches) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

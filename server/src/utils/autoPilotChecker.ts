@@ -7,6 +7,8 @@ import { checkSupplierAndFindWhichHasEarliestDeliveryDate } from "../models/supp
 const activateAutoPilot = async () => {
     console.log('Auto-Pilot check starting');
     const ingredientList = await checkAllIngredientOfAllRestaurantsIfNeededToOrderList();
+    console.log('ingredientList', ingredientList);
+    
     console.log('Auto-Pilot check completed');
 
     const restaurantIds = Object.keys(ingredientList);
@@ -14,8 +16,11 @@ const activateAutoPilot = async () => {
     for (const restaurantId of restaurantIds) {
       const ingredientIds = ingredientList[parseInt(restaurantId, 10)] || [];
       const ingredientIdsArray = Array.isArray(ingredientIds) ? ingredientIds : Object.values(ingredientIds);
-
+      console.log('ingredientIdsArray', ingredientIdsArray);
+      
       for (const ingredientId of ingredientIdsArray) {
+        console.log('ingredientId', ingredientId);
+        
         const ingredient = await findOneIngredientOfRestaurant(ingredientId);
         const supplier = await checkSupplierAndFindWhichHasEarliestDeliveryDate(Number(restaurantId));
 
