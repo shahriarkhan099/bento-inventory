@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { getAllIngredientOfRestaurant, postIngredientToRestaurant, searchIngredient, 
     updateIngredient, deleteIngredient, getIngredientWithCategory, getIngredientsByCategoryName,
     getAllIngredientOfRestaurantWithCategoryAndIngredientBatch, deductIngredientsController, 
-    getIngredientbyId, getIngredientByIngredientUniqueId  } from '../controllers/ingredient.controller';
+    getIngredientbyId, getIngredientByIngredientUniqueId, checkAllIngredientOfAllRestaurantsIfNeededToOrderListController  } from '../controllers/ingredient.controller';
 
 const router = Router();
 
@@ -21,5 +21,7 @@ router.get('/restaurant/ingredients/:ingredientId', getIngredientbyId);
 router.post('/restaurant/:restaurantId/deductIngredients', deductIngredientsController);
 
 router.get('/restaurant/:restaurantId/:ingredientUniqueId', getIngredientByIngredientUniqueId);
+
+router.get('/autoPilot', checkAllIngredientOfAllRestaurantsIfNeededToOrderListController);
 
 export default router;

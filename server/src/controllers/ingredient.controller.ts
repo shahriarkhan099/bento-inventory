@@ -10,7 +10,8 @@ import {
   findAllIngredientOfRestaurantWithCategoryAndIngredientBatch,
   deductIngredientsFromOrder,
   findIngredientbyId,
-  findIngredientByIngredientUniqueId
+  findIngredientByIngredientUniqueId,
+  checkAllIngredientOfAllRestaurantsIfNeededToOrderList
 } from "../models/ingredient/ingredient.query";
 import { IngredientToReduce, DeductedIngredient } from "../interfaces/deductIngredient.interface";
 
@@ -193,6 +194,16 @@ export async function getAllIngredientOfRestaurantWithCategoryAndIngredientBatch
         );
       res.json({ ingredients: ingredient });
     } else res.status(400).json({ message: "Invalid restaurant ID." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
+export async function checkAllIngredientOfAllRestaurantsIfNeededToOrderListController(req: Request, res: Response) {
+  try {
+    const ingredientList = await checkAllIngredientOfAllRestaurantsIfNeededToOrderList();
+    res.json({ ingredientList: ingredientList });
   } catch (error) {
     console.log(error);
     res.status(500).json(error);
