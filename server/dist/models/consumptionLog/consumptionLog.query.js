@@ -192,7 +192,7 @@ function findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays(productId,
                     consumedAt: {
                         [sequelize_1.Op.gte]: new Date(new Date().getTime() - 14 * 24 * 60 * 60 * 1000),
                         [sequelize_1.Op.and]: __1.default.where(__1.default.fn("DAYOFWEEK", __1.default.col("consumedAt")), {
-                            [sequelize_1.Op.or]: frequencyDaysArray,
+                            [sequelize_1.Op.or]: 1,
                         }),
                     },
                 },

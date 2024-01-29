@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.getIngredientsByCategoryName = exports.getIngredientWithCategory = exports.deleteIngredient = exports.updateIngredient = exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = exports.deductIngredientsController = exports.getIngredientByIngredientUniqueId = exports.getIngredientbyId = void 0;
+exports.checkAllIngredientOfAllRestaurantsIfNeededToOrderListController = exports.getAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.getIngredientsByCategoryName = exports.getIngredientWithCategory = exports.deleteIngredient = exports.updateIngredient = exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = exports.deductIngredientsController = exports.getIngredientByIngredientUniqueId = exports.getIngredientbyId = void 0;
 const ingredient_query_1 = require("../models/ingredient/ingredient.query");
 function getIngredientbyId(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -229,3 +229,16 @@ function getAllIngredientOfRestaurantWithCategoryAndIngredientBatch(req, res) {
     });
 }
 exports.getAllIngredientOfRestaurantWithCategoryAndIngredientBatch = getAllIngredientOfRestaurantWithCategoryAndIngredientBatch;
+function checkAllIngredientOfAllRestaurantsIfNeededToOrderListController(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const ingredientList = yield (0, ingredient_query_1.checkAllIngredientOfAllRestaurantsIfNeededToOrderList)();
+            res.json({ ingredientList: ingredientList });
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.checkAllIngredientOfAllRestaurantsIfNeededToOrderListController = checkAllIngredientOfAllRestaurantsIfNeededToOrderListController;

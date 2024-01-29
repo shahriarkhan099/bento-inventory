@@ -98,6 +98,48 @@ export async function findOneDeliveryBoxOfRestaurant(deliveryBoxId: number) {
   }
 }
 
+// export async function updateCurrentStockQuantityOfDeliveryBox (deliveryBoxId: number) {
+//   try {
+//     const deliveryBox = await findOneDeliveryBoxOfRestaurant(deliveryBoxId);
+//     let updatedDeliveryBox;
+//     if (deliveryBox) {
+//       let totalStockQuantity = await DeliveryBoxBatch.sum("currentStockQuantity",
+//       {
+//         where: {
+//           currentStockQuantity: {
+//             [Op.ne]: 0,
+//           },
+//           deliveryBoxId: deliveryBox.id,
+//         },
+//       }
+//     );
+
+//     if (!totalStockQuantity) {
+//       totalStockQuantity = 0;
+//     }
+
+//     updatedDeliveryBox = await DeliveryBox.update(
+//       {
+//         currentStockQuantity: totalStockQuantity,
+//       },
+//       {
+//         where: {
+//           id: deliveryBox.id,
+//         },
+//       }
+//     );
+//     }
+//     else {
+//       throw new Error('Delivery box not found.');
+//     }
+
+//     return updatedDeliveryBox;
+//   } catch (error) {
+//     console.log(error);
+//     throw new Error("Error updating global delivery box.");
+//   }
+// }
+
 export async function updateCurrentStockQuantityOfDeliveryBox (deliveryBoxId: number) {
   try {
     const deliveryBox = await findOneDeliveryBoxOfRestaurant(deliveryBoxId);
@@ -115,7 +157,7 @@ export async function updateCurrentStockQuantityOfDeliveryBox (deliveryBoxId: nu
     );
 
     if (!totalStockQuantity) {
-      totalStockQuantity = 0;
+      totalStockQuantity = (deliveryBox.currentStockQuantity - 1);
     }
 
     updatedDeliveryBox = await DeliveryBox.update(
@@ -180,42 +222,42 @@ export async function updateDeliveryBoxInfoOfRestaurantWithNewDeliveryBoxBatch(d
     }
   }
 
-  export async function deductDeliveryBoxesFromOrder(order: {orderType: string; deliveryBoxesToReduce: DeliveryBoxToReduce[]; restaurantId: number;}) {
+export async function deductDeliveryBoxesFromOrder(order: {orderType: string; deliveryBoxesToReduce: DeliveryBoxToReduce[]; restaurantId: number;}) {
 
-    const { orderType, deliveryBoxesToReduce, restaurantId } = order;
+  const { orderType, deliveryBoxesToReduce, restaurantId } = order;
   
-    const transaction = await sequelize.transaction();
+  const transaction = await sequelize.transaction();
   
-    try {
-      const deductedDeliveryBoxes: DeductedDeliveryBox[] = [];
+  try {
+    const deductedDeliveryBoxes: DeductedDeliveryBox[] = [];
   
-      for (const deliveryBoxToReduce of deliveryBoxesToReduce) {
-        const { id, quantity } = deliveryBoxToReduce;
+    for (const deliveryBoxToReduce of deliveryBoxesToReduce) {
+      const { id, quantity } = deliveryBoxToReduce;
   
-        const deliveryBox = await findOneDeliveryBoxOfRestaurant(id);
+      const deliveryBox = await findOneDeliveryBoxOfRestaurant(id);
   
-        if (deliveryBox) {
-          const deductedBatches = await deductDeliveryBoxInFIFO(
-            deliveryBox.id,
-            quantity,
-            orderType
-          );
+      if (deliveryBox) {
+        const deductedBatches = await deductDeliveryBoxInFIFO(
+           deliveryBox.id,
+           quantity,
+           orderType
+        );
   
-          updateCurrentStockQuantityOfDeliveryBox(deliveryBox.id);
-          deductedDeliveryBoxes.push({
-            deliveryBoxId: deliveryBox.id,
-            deductedDeliveryBoxBatches: deductedBatches,
-          });
-        } else {
-          throw new Error("Delivery box not found.");
-        }
+        updateCurrentStockQuantityOfDeliveryBox(deliveryBox.id);
+        deductedDeliveryBoxes.push({
+          deliveryBoxId: deliveryBox.id,
+           deductedDeliveryBoxBatches: deductedBatches,
+        });
+       } else {
+        throw new Error("Delivery box not found.");
       }
+    }
   
-      await transaction.commit();
-      return deductedDeliveryBoxes;
-    }
-    catch (error) {
-      await transaction.rollback();
-      throw new Error(`Error deducting delivery boxes: ${error}`);
-    }
+     await transaction.commit();
+    return deductedDeliveryBoxes;
+   }
+   catch (error) {
+    await transaction.rollback();
+     throw new Error(`Error deducting delivery boxes: ${error}`);
   }
+}

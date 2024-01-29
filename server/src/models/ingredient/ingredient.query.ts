@@ -354,24 +354,26 @@ export async function checkAllIngredientOfAllRestaurantsIfNeededToOrderList () {
     for (const ingredient of ingredients) {
 
       const hundredPercentIngredientAmount = await findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays(ingredient.id, 3);
+      console.log("hundredPercentIngredientAmount", hundredPercentIngredientAmount);
+      
       const todayDateWithOnlyDate = new Date(new Date().setHours(0, 0, 0, 0));
       const totalAmountOfIngredientThatExpiresToday = await getTotalAmountOfIngredientThatExpiresInSpecificDate(ingredient.id, todayDateWithOnlyDate);
       const totalAmountOfIngredientThatExpiresTomorrow = await getTotalAmountOfIngredientThatExpiresInSpecificDate(ingredient.id, new Date(todayDateWithOnlyDate.setDate(todayDateWithOnlyDate.getDate() + 1)));
       const totalAmountOfIngredientThatExpiresInThreeDays = await getTotalAmountOfIngredientThatExpiresInSpecificDate(ingredient.id, new Date(todayDateWithOnlyDate.setDate(todayDateWithOnlyDate.getDate() + 2)));
 
       if ((ingredient.currentStockQuantity <= ingredient.reorderPoint && ingredient.reorderPoint !== 0) 
-      || ingredient.currentStockQuantity <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+      || ingredient.currentStockQuantity <= (hundredPercentIngredientAmount * 0.2)) {
         ingredientsToOrder.push(ingredient);
       } else if (totalAmountOfIngredientThatExpiresToday) {
-        if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresToday) <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+        if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresToday) <= (hundredPercentIngredientAmount * 0.2)) {
           ingredientsToOrder.push(ingredient);
         }
       } else if (totalAmountOfIngredientThatExpiresTomorrow) {
-        if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresTomorrow) <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+        if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresTomorrow) <= (hundredPercentIngredientAmount * 0.2)) {
           ingredientsToOrder.push(ingredient);
         }
       } else if (totalAmountOfIngredientThatExpiresInThreeDays) {
-        if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresInThreeDays) <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+        if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresInThreeDays) <= (hundredPercentIngredientAmount * 0.2)) {
           ingredientsToOrder.push(ingredient);
         }
       }
@@ -396,7 +398,7 @@ export async function checkAllIngredientOfRestaurantIfNeededToOrderListWithFrequ
       const todayDateWithOnlyDate = new Date(new Date().setHours(0, 0, 0, 0));
 
       if ( (ingredient.currentStockQuantity <= ingredient.reorderPoint && ingredient.reorderPoint !== 0) 
-      || ingredient.currentStockQuantity <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+      || ingredient.currentStockQuantity <= (hundredPercentIngredientAmount * 0.2)) {
         ingredientsToOrder.push(ingredient);
       } 
       else {
@@ -405,7 +407,7 @@ export async function checkAllIngredientOfRestaurantIfNeededToOrderListWithFrequ
           currentDate.setDate(currentDate.getDate() + i);
           const totalWastageAmount = await getTotalAmountOfIngredientThatExpiresInSpecificDate(ingredient.id, currentDate);
           if (totalWastageAmount) {
-            if ((ingredient.currentStockQuantity - totalWastageAmount) <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+            if ((ingredient.currentStockQuantity - totalWastageAmount) <= (hundredPercentIngredientAmount * 0.2)) {
               ingredientsToOrder.push(ingredient);
             }
           }

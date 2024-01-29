@@ -1,4 +1,4 @@
-import { Op, WhereOptions } from "sequelize";
+import { Op, WhereOptions, QueryTypes } from "sequelize";
 import sequelize from "..";
 import ConsumptionLog from "./consumptionLog.model";
 import { IConsumptionLog } from "../../interfaces/consumptionLog.interface";
@@ -158,23 +158,19 @@ export async function findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDa
   try {
     const currentDayOfWeek = new Date().getDay();
 
-    const frequencyDaysArray = Array.from({ length: frequencyDays }, (_, index) => (currentDayOfWeek + index + 1) % 7);
+    const totalAmount: number[] = [];
 
-    const avgConsumption: any = await ConsumptionLog.findAll({
-      attributes: [
-        [sequelize.fn("AVG", sequelize.col("quantity")), "avgConsumption"],
-      ],
-      where: {
-        itemId: productId,
-        consumedAt: {
-          [Op.gte]: new Date(new Date().getTime() - 14 * 24 * 60 * 60 * 1000),
-          [Op.and]: sequelize.where(sequelize.fn("DAYOFWEEK", sequelize.col("consumedAt")), {
-          [Op.or]: frequencyDaysArray,
-          }),
-        },
-      } as WhereOptions<IConsumptionLog>,
-    });
-    return avgConsumption;
+    for (let i = 0; i < frequencyDays; i++) {
+      const result: any = await sequelize.query("SELECT SUM(currentStockQuantity) as totalAmount FROM ingredientBatches WHERE ingredientId = ? AND currentStockQuantity > 0 AND expirationDate <= DATE_ADD(CURDATE(), INTERVAL ? DAY) AND DAYOFWEEK(expirationDate) = ?", {
+        replacements: [productId, i, (currentDayOfWeek + i + 1) % 7],
+        type: QueryTypes.SELECT,
+      });
+      totalAmount.push(result[0].totalAmount);
+    }
+
+    const sum = totalAmount.reduce((acc, curr) => acc + curr, 0);
+
+    return sum;
   } catch (error) {
     throw new Error('Error finding average consumption of ingredient.');
   }
