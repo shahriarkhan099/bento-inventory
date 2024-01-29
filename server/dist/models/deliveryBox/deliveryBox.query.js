@@ -115,6 +115,44 @@ function findOneDeliveryBoxOfRestaurant(deliveryBoxId) {
     });
 }
 exports.findOneDeliveryBoxOfRestaurant = findOneDeliveryBoxOfRestaurant;
+// export async function updateCurrentStockQuantityOfDeliveryBox (deliveryBoxId: number) {
+//   try {
+//     const deliveryBox = await findOneDeliveryBoxOfRestaurant(deliveryBoxId);
+//     let updatedDeliveryBox;
+//     if (deliveryBox) {
+//       let totalStockQuantity = await DeliveryBoxBatch.sum("currentStockQuantity",
+//       {
+//         where: {
+//           currentStockQuantity: {
+//             [Op.ne]: 0,
+//           },
+//           deliveryBoxId: deliveryBox.id,
+//         },
+//       }
+//     );
+//     if (!totalStockQuantity) {
+//       totalStockQuantity = 0;
+//     }
+//     updatedDeliveryBox = await DeliveryBox.update(
+//       {
+//         currentStockQuantity: totalStockQuantity,
+//       },
+//       {
+//         where: {
+//           id: deliveryBox.id,
+//         },
+//       }
+//     );
+//     }
+//     else {
+//       throw new Error('Delivery box not found.');
+//     }
+//     return updatedDeliveryBox;
+//   } catch (error) {
+//     console.log(error);
+//     throw new Error("Error updating global delivery box.");
+//   }
+// }
 function updateCurrentStockQuantityOfDeliveryBox(deliveryBoxId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -130,7 +168,7 @@ function updateCurrentStockQuantityOfDeliveryBox(deliveryBoxId) {
                     },
                 });
                 if (!totalStockQuantity) {
-                    totalStockQuantity = 0;
+                    totalStockQuantity = (deliveryBox.currentStockQuantity - 1);
                 }
                 updatedDeliveryBox = yield deliveryBox_model_1.default.update({
                     currentStockQuantity: totalStockQuantity,

@@ -374,26 +374,27 @@ function checkAllIngredientOfAllRestaurantsIfNeededToOrderList() {
             let ingredientsToOrder = [];
             for (const ingredient of ingredients) {
                 const hundredPercentIngredientAmount = yield (0, consumptionLog_query_1.findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays)(ingredient.id, 3);
+                console.log("hundredPercentIngredientAmount", hundredPercentIngredientAmount);
                 const todayDateWithOnlyDate = new Date(new Date().setHours(0, 0, 0, 0));
                 const totalAmountOfIngredientThatExpiresToday = yield (0, ingredientBatch_query_1.getTotalAmountOfIngredientThatExpiresInSpecificDate)(ingredient.id, todayDateWithOnlyDate);
                 const totalAmountOfIngredientThatExpiresTomorrow = yield (0, ingredientBatch_query_1.getTotalAmountOfIngredientThatExpiresInSpecificDate)(ingredient.id, new Date(todayDateWithOnlyDate.setDate(todayDateWithOnlyDate.getDate() + 1)));
                 const totalAmountOfIngredientThatExpiresInThreeDays = yield (0, ingredientBatch_query_1.getTotalAmountOfIngredientThatExpiresInSpecificDate)(ingredient.id, new Date(todayDateWithOnlyDate.setDate(todayDateWithOnlyDate.getDate() + 2)));
                 if ((ingredient.currentStockQuantity <= ingredient.reorderPoint && ingredient.reorderPoint !== 0)
-                    || ingredient.currentStockQuantity <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+                    || ingredient.currentStockQuantity <= (hundredPercentIngredientAmount * 0.2)) {
                     ingredientsToOrder.push(ingredient);
                 }
                 else if (totalAmountOfIngredientThatExpiresToday) {
-                    if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresToday) <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+                    if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresToday) <= (hundredPercentIngredientAmount * 0.2)) {
                         ingredientsToOrder.push(ingredient);
                     }
                 }
                 else if (totalAmountOfIngredientThatExpiresTomorrow) {
-                    if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresTomorrow) <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+                    if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresTomorrow) <= (hundredPercentIngredientAmount * 0.2)) {
                         ingredientsToOrder.push(ingredient);
                     }
                 }
                 else if (totalAmountOfIngredientThatExpiresInThreeDays) {
-                    if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresInThreeDays) <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+                    if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresInThreeDays) <= (hundredPercentIngredientAmount * 0.2)) {
                         ingredientsToOrder.push(ingredient);
                     }
                 }
@@ -415,7 +416,7 @@ function checkAllIngredientOfRestaurantIfNeededToOrderListWithFrequencyDays(freq
                 const hundredPercentIngredientAmount = yield (0, consumptionLog_query_1.findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays)(ingredient.id, frequencyDays);
                 const todayDateWithOnlyDate = new Date(new Date().setHours(0, 0, 0, 0));
                 if ((ingredient.currentStockQuantity <= ingredient.reorderPoint && ingredient.reorderPoint !== 0)
-                    || ingredient.currentStockQuantity <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+                    || ingredient.currentStockQuantity <= (hundredPercentIngredientAmount * 0.2)) {
                     ingredientsToOrder.push(ingredient);
                 }
                 else {
@@ -424,7 +425,7 @@ function checkAllIngredientOfRestaurantIfNeededToOrderListWithFrequencyDays(freq
                         currentDate.setDate(currentDate.getDate() + i);
                         const totalWastageAmount = yield (0, ingredientBatch_query_1.getTotalAmountOfIngredientThatExpiresInSpecificDate)(ingredient.id, currentDate);
                         if (totalWastageAmount) {
-                            if ((ingredient.currentStockQuantity - totalWastageAmount) <= (hundredPercentIngredientAmount.avgConsumption * 0.2)) {
+                            if ((ingredient.currentStockQuantity - totalWastageAmount) <= (hundredPercentIngredientAmount * 0.2)) {
                                 ingredientsToOrder.push(ingredient);
                             }
                         }

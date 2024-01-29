@@ -2,8 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const ingredientBatch_controller_1 = require("../controllers/ingredientBatch.controller");
+const auth_middleware_1 = require("../middleware/auth.middleware");
 const router = (0, express_1.Router)();
-router.get('/restaurant/:restaurantId', ingredientBatch_controller_1.getAllIngredientOfRestaurant);
+router.get('/restaurant', auth_middleware_1.authMiddleware, ingredientBatch_controller_1.getAllIngredientOfRestaurant);
 router.post('/restaurant/:restaurantId', ingredientBatch_controller_1.postIngredientToRestaurant);
 router.put('/restaurant/:ingredientId', ingredientBatch_controller_1.updateIngredient);
 router.delete('/restaurant/:ingredientId', ingredientBatch_controller_1.deleteIngredient);

@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
 import { findAllIngredientOfRestaurant, addIngredientToRestaurant, 
   updateIngredientOfRestaurant, deleteIngredientOfRestaurant, findIngredientWithCategory, findIngredientsByCategoryName } from "../models/ingredientBatch/ingredientBatch.query";
+import { AuthRequest } from "../interfaces/authRequest.interface";
 
 
-export async function getAllIngredientOfRestaurant (req: Request, res: Response) {
+export async function getAllIngredientOfRestaurant (req: AuthRequest, res: Response) {
   try {
-    const restaurantId = Number(req.params.restaurantId);
+    // const restaurantId = Number(req.params.restaurantId);
+    const restaurantId = req.user?.employeeInformation.restaurantId
     if (restaurantId) {
       const ingredient = await findAllIngredientOfRestaurant(restaurantId);
       res.json({ ingredients: ingredient });
