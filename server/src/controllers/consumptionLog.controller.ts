@@ -123,9 +123,9 @@ export async function postConsumptionLogToRestaurantWithOrder (req: Request, res
 
 
     await deductIngredientsFromOrder(orderWithIngredients);
-    if (orderWithDeliveryBoxes.deliveryBoxesToReduce.length !== 0) {
-      await deductDeliveryBoxesFromOrder(orderWithDeliveryBoxes);
-    }
+    // if (orderWithDeliveryBoxes.deliveryBoxesToReduce.length !== 0) {
+    //   await deductDeliveryBoxesFromOrder(orderWithDeliveryBoxes);
+    // }
 
     res.status(200).json({message: "Deducted"});
   } catch (error) {
