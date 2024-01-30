@@ -10,7 +10,7 @@ import {
   IngredientToReduce,
   DeductedIngredient,
 } from "../../interfaces/deductIngredient.interface";
-import { findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays } from "../consumptionLog/consumptionLog.query";
+import { findAvgConsumptionOfIngredientOfLastTwoWeeks } from "../consumptionLog/consumptionLog.query";
 
 
 export async function findIngredientbyId(ingredientId: number) {
@@ -353,7 +353,8 @@ export async function checkAllIngredientOfAllRestaurantsIfNeededToOrderList () {
 
     for (const ingredient of ingredients) {
 
-      const hundredPercentIngredientAmount = await findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays(ingredient.id, 3);
+      const hundredPercentIngredientAmount = await findAvgConsumptionOfIngredientOfLastTwoWeeks(ingredient.id, 3);
+      console.log("ingredient", ingredient.ingredientName);
       console.log("hundredPercentIngredientAmount", hundredPercentIngredientAmount);
       
       const todayDateWithOnlyDate = new Date(new Date().setHours(0, 0, 0, 0));
@@ -394,7 +395,7 @@ export async function checkAllIngredientOfRestaurantIfNeededToOrderListWithFrequ
 
     for (const ingredient of ingredients) {
 
-      const hundredPercentIngredientAmount = await findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays(ingredient.id, frequencyDays);
+      const hundredPercentIngredientAmount = await findAvgConsumptionOfIngredientOfLastTwoWeeks(ingredient.id, frequencyDays);
       const todayDateWithOnlyDate = new Date(new Date().setHours(0, 0, 0, 0));
 
       if ( (ingredient.currentStockQuantity <= ingredient.reorderPoint && ingredient.reorderPoint !== 0) 

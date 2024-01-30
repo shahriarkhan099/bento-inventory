@@ -121,8 +121,11 @@ export async function postConsumptionLogToRestaurantWithOrder (req: Request, res
     const orderWithIngredients = { orderType: orderType, restaurantId: restaurantId, ingredientsToReduce: ingredientsToReduce as IngredientToReduce[]};
     const orderWithDeliveryBoxes = { orderType: orderType, restaurantId: restaurantId, deliveryBoxesToReduce: deliveryBoxesToReduce as DeliveryBoxToReduce[]};
 
+
     await deductIngredientsFromOrder(orderWithIngredients);
-    await deductDeliveryBoxesFromOrder(orderWithDeliveryBoxes);
+    if (orderWithDeliveryBoxes.deliveryBoxesToReduce.length !== 0) {
+      await deductDeliveryBoxesFromOrder(orderWithDeliveryBoxes);
+    }
 
     res.status(200).json({message: "Deducted"});
   } catch (error) {

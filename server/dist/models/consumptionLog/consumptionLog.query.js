@@ -182,16 +182,25 @@ function findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays(productId,
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const currentDayOfWeek = new Date().getDay();
-            const totalAmount = [];
+            let avgAmount = 0;
             for (let i = 0; i < frequencyDays; i++) {
-                const result = yield __1.default.query("SELECT SUM(currentStockQuantity) as totalAmount FROM ingredientBatches WHERE ingredientId = ? AND currentStockQuantity > 0 AND expirationDate <= DATE_ADD(CURDATE(), INTERVAL ? DAY) AND DAYOFWEEK(expirationDate) = ?", {
-                    replacements: [productId, i, (currentDayOfWeek + i + 1) % 7],
-                    type: sequelize_1.QueryTypes.SELECT,
+                const consumptionLog = yield consumptionLog_model_1.default.findOne({
+                    attributes: [
+                        [__1.default.fn("AVG", __1.default.col("quantity")), "quantity"],
+                    ],
+                    where: {
+                        itemId: productId,
+                        consumedAt: {
+                            [sequelize_1.Op.gte]: new Date(new Date().getTime() - 14 * 24 * 60 * 60 * 1000),
+                            [sequelize_1.Op.and]: __1.default.where(__1.default.fn("DAYOFWEEK", __1.default.col("consumedAt")), (currentDayOfWeek + i + 1) % 7),
+                        },
+                    },
                 });
-                totalAmount.push(result[0].totalAmount);
+                if (consumptionLog !== null) {
+                    avgAmount += consumptionLog.get("quantity");
+                }
             }
-            const sum = totalAmount.reduce((acc, curr) => acc + curr, 0);
-            return sum;
+            return avgAmount;
         }
         catch (error) {
             throw new Error('Error finding average consumption of ingredient.');
