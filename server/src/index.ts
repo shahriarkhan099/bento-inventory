@@ -46,6 +46,7 @@ app.use("/v1/autoPilot", autoPilotRouter);
 
 cron.schedule("0 0 * * *", checkExpiryDateAndRemove);
 
+// cron.schedule("*/60 * * * * *", async () => {
 cron.schedule("0 9 * * *", async () => {
   console.log('Running auto-pilot check at 9 AM');
   try {

@@ -177,7 +177,7 @@ export async function findAvgConsumptionOfIngredientOfLastTwoWeeks(productId: nu
       avgAmount = 0;
     }
 
-    return Math.ceil(avgAmount);
+    return Math.ceil(avgAmount * frequencyDays);
   } catch (error) {
     console.log(error);
     

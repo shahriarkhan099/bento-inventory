@@ -363,7 +363,7 @@ export async function checkAllIngredientOfAllRestaurantsIfNeededToOrderList () {
       const totalAmountOfIngredientThatExpiresInThreeDays = await getTotalAmountOfIngredientThatExpiresInSpecificDate(ingredient.id, new Date(todayDateWithOnlyDate.setDate(todayDateWithOnlyDate.getDate() + 2)));
 
       if ((ingredient.currentStockQuantity <= ingredient.reorderPoint && ingredient.reorderPoint !== 0) 
-      || ingredient.currentStockQuantity <= (hundredPercentIngredientAmount * 0.2)) {
+      && ingredient.currentStockQuantity <= (hundredPercentIngredientAmount * 0.2)) {
         ingredientsToOrder.push(ingredient);
       } else if (totalAmountOfIngredientThatExpiresToday) {
         if ((ingredient.currentStockQuantity - totalAmountOfIngredientThatExpiresToday) <= (hundredPercentIngredientAmount * 0.2)) {
@@ -381,7 +381,7 @@ export async function checkAllIngredientOfAllRestaurantsIfNeededToOrderList () {
 
     }
 
-    return ingredients;
+    return ingredientsToOrder;
   } catch (error) {
     throw new Error("Error finding global ingredient.");
   }

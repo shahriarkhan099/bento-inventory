@@ -120,6 +120,8 @@ export async function postConsumptionLogToRestaurantWithOrder (req: Request, res
 
     const orderWithIngredients = { orderType: orderType, restaurantId: restaurantId, ingredientsToReduce: ingredientsToReduce as IngredientToReduce[]};
     const orderWithDeliveryBoxes = { orderType: orderType, restaurantId: restaurantId, deliveryBoxesToReduce: deliveryBoxesToReduce as DeliveryBoxToReduce[]};
+    console.log('orderWithDeliveryBoxes', orderWithDeliveryBoxes);
+    
 
 
     await deductIngredientsFromOrder(orderWithIngredients);
