@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findAvgConsumptionOfIngredientOfLastTwoWeekWihSpecificDay = exports.findAvgConsumptionOfIngredientOfLastTwoMonthWithfrequencyDays = exports.findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays = exports.findAvgConsumptionOfIngredientOfLastTwoMonthForCurrentDay = exports.findAvgConsumptionOfIngredientOfLastTwoWeekForCurrentDay = exports.deductIngredientsAndDeliveryBoxesFromOrder = exports.deleteConsumptionLog = exports.updateConsumptionLog = exports.createConsumptionLogOfRestaurantFromDeduction = exports.createConsumptionLogOfRestaurant = exports.findConsumptionLogsByIngredientName = exports.findAllConsumptionLogsOfRestaurant = void 0;
+exports.findAvgConsumptionOfIngredientOfLastTwoWeekWihSpecificDay = exports.findAvgConsumptionOfIngredientOfLastTwoMonthWithfrequencyDays = exports.findAvgConsumptionOfIngredientOfLastTwoWeeks = exports.findAvgConsumptionOfIngredientOfLastTwoMonthForCurrentDay = exports.findAvgConsumptionOfIngredientOfLastTwoWeekForCurrentDay = exports.deductIngredientsAndDeliveryBoxesFromOrder = exports.deleteConsumptionLog = exports.updateConsumptionLog = exports.createConsumptionLogOfRestaurantFromDeduction = exports.createConsumptionLogOfRestaurant = exports.findConsumptionLogsByIngredientName = exports.findAllConsumptionLogsOfRestaurant = void 0;
 const sequelize_1 = require("sequelize");
 const __1 = __importDefault(require(".."));
 const consumptionLog_model_1 = __importDefault(require("./consumptionLog.model"));
@@ -178,36 +178,38 @@ function findAvgConsumptionOfIngredientOfLastTwoMonthForCurrentDay(productId) {
     });
 }
 exports.findAvgConsumptionOfIngredientOfLastTwoMonthForCurrentDay = findAvgConsumptionOfIngredientOfLastTwoMonthForCurrentDay;
-function findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays(productId, frequencyDays) {
+// need to adjust this function to get the average consumption of the last two weeks
+function findAvgConsumptionOfIngredientOfLastTwoWeeks(productId, frequencyDays) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const currentDayOfWeek = new Date().getDay();
-            let avgAmount = 0;
-            for (let i = 0; i < frequencyDays; i++) {
-                const consumptionLog = yield consumptionLog_model_1.default.findOne({
-                    attributes: [
-                        [__1.default.fn("AVG", __1.default.col("quantity")), "quantity"],
-                    ],
-                    where: {
-                        itemId: productId,
-                        consumedAt: {
-                            [sequelize_1.Op.gte]: new Date(new Date().getTime() - 14 * 24 * 60 * 60 * 1000),
-                            [sequelize_1.Op.and]: __1.default.where(__1.default.fn("DAYOFWEEK", __1.default.col("consumedAt")), (currentDayOfWeek + i + 1) % 7),
-                        },
+            const consumptionLogs = yield consumptionLog_model_1.default.findAll({
+                attributes: [
+                    [__1.default.fn('DATE_TRUNC', 'day', __1.default.col('consumedAt')), 'day'],
+                    [__1.default.fn("SUM", __1.default.col("quantity")), "totalQuantity"],
+                ],
+                where: {
+                    itemId: productId,
+                    consumedAt: {
+                        [sequelize_1.Op.gte]: __1.default.literal("CURRENT_DATE - INTERVAL '14 days'"),
                     },
-                });
-                if (consumptionLog !== null) {
-                    avgAmount += consumptionLog.get("quantity");
-                }
+                },
+                group: [__1.default.fn('DATE_TRUNC', 'day', __1.default.col('consumedAt'))],
+                raw: true,
+            });
+            let totalAmount = consumptionLogs.reduce((total, log) => total + log.totalQuantity, 0);
+            let avgAmount = totalAmount / 14;
+            if (!avgAmount) {
+                avgAmount = 0;
             }
-            return avgAmount;
+            return Math.ceil(avgAmount);
         }
         catch (error) {
+            console.log(error);
             throw new Error('Error finding average consumption of ingredient.');
         }
     });
 }
-exports.findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays = findAvgConsumptionOfIngredientOfLastTwoWeekWithfrequencyDays;
+exports.findAvgConsumptionOfIngredientOfLastTwoWeeks = findAvgConsumptionOfIngredientOfLastTwoWeeks;
 function findAvgConsumptionOfIngredientOfLastTwoMonthWithfrequencyDays(productId, frequencyDays) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

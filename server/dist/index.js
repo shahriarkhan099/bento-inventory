@@ -51,6 +51,7 @@ app.use("/v1/deliveryBoxBatch", deliveryBoxBatch_router_1.default);
 app.use("/v1/vendorSide", vendorSide_router_1.default);
 app.use("/v1/autoPilot", autoPilot_router_1.default);
 node_cron_1.default.schedule("0 0 * * *", expiryCheck_util_1.default);
+// cron.schedule("*/60 * * * * *", async () => {
 node_cron_1.default.schedule("0 9 * * *", () => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Running auto-pilot check at 9 AM');
     try {

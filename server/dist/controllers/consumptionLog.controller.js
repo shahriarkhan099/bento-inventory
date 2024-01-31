@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postConsumptionLogToRestaurantWithOrder = exports.deleteConsumptionLogOfRestaurant = exports.putConsumptionLog = exports.postConsumptionLogToRestaurant = exports.searchConsumptionLogs = exports.getAllConsumptionLogsOfRestaurant = void 0;
 const consumptionLog_query_1 = require("../models/consumptionLog/consumptionLog.query");
 const ingredient_query_1 = require("../models/ingredient/ingredient.query");
-const deliveryBox_query_1 = require("../models/deliveryBox/deliveryBox.query");
 function getAllConsumptionLogsOfRestaurant(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -128,8 +127,11 @@ function postConsumptionLogToRestaurantWithOrder(req, res) {
             console.log('data that has come from skeleton/kds to minus from inventory', req.body);
             const orderWithIngredients = { orderType: orderType, restaurantId: restaurantId, ingredientsToReduce: ingredientsToReduce };
             const orderWithDeliveryBoxes = { orderType: orderType, restaurantId: restaurantId, deliveryBoxesToReduce: deliveryBoxesToReduce };
+            console.log('orderWithDeliveryBoxes', orderWithDeliveryBoxes);
             yield (0, ingredient_query_1.deductIngredientsFromOrder)(orderWithIngredients);
-            yield (0, deliveryBox_query_1.deductDeliveryBoxesFromOrder)(orderWithDeliveryBoxes);
+            // if (orderWithDeliveryBoxes.deliveryBoxesToReduce.length !== 0) {
+            //   await deductDeliveryBoxesFromOrder(orderWithDeliveryBoxes);
+            // }
             res.status(200).json({ message: "Deducted" });
         }
         catch (error) {
