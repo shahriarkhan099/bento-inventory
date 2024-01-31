@@ -44,7 +44,7 @@ app.use("/v1/deliveryBox", deliveryBox);
 app.use("/v1/deliveryBoxBatch", deliveryBoxBatch);
 app.use("/v1/vendorSide", vendorSideRouter);
 app.use("/v1/autoPilot", autoPilotRouter);
-app.use("/v1/authRouter", authRouter);
+app.use("/auth", authRouter);
 
 cron.schedule("0 0 * * *", checkExpiryDateAndRemove);
 
