@@ -32,6 +32,7 @@ const autoPilot_router_1 = __importDefault(require("./routers/autoPilot.router")
 const node_cron_1 = __importDefault(require("node-cron"));
 const expiryCheck_util_1 = __importDefault(require("./utils/expiryCheck.util"));
 const autoPilotChecker_1 = __importDefault(require("./utils/autoPilotChecker"));
+const auth_router_1 = __importDefault(require("./routers/auth.router"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
     credentials: true,
@@ -50,6 +51,7 @@ app.use("/v1/deliveryBox", deliveryBox_router_1.default);
 app.use("/v1/deliveryBoxBatch", deliveryBoxBatch_router_1.default);
 app.use("/v1/vendorSide", vendorSide_router_1.default);
 app.use("/v1/autoPilot", autoPilot_router_1.default);
+app.use("/v1/authRouter", auth_router_1.default);
 node_cron_1.default.schedule("0 0 * * *", expiryCheck_util_1.default);
 // cron.schedule("*/60 * * * * *", async () => {
 node_cron_1.default.schedule("0 9 * * *", () => __awaiter(void 0, void 0, void 0, function* () {

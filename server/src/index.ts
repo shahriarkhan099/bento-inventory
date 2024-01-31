@@ -18,6 +18,7 @@ import autoPilotRouter from "./routers/autoPilot.router";
 import cron from "node-cron";
 import checkExpiryDateAndRemove from "./utils/expiryCheck.util";
 import activateAutoPilot from "./utils/autoPilotChecker";
+import authRouter from "./routers/auth.router";
 
 
 const app: Express = express();
@@ -43,6 +44,7 @@ app.use("/v1/deliveryBox", deliveryBox);
 app.use("/v1/deliveryBoxBatch", deliveryBoxBatch);
 app.use("/v1/vendorSide", vendorSideRouter);
 app.use("/v1/autoPilot", autoPilotRouter);
+app.use("/v1/authRouter", authRouter);
 
 cron.schedule("0 0 * * *", checkExpiryDateAndRemove);
 

@@ -194,10 +194,11 @@ function findAvgConsumptionOfIngredientOfLastTwoWeeks(productId, frequencyDays) 
                     },
                 },
                 group: [__1.default.fn('DATE_TRUNC', 'day', __1.default.col('consumedAt'))],
+                having: __1.default.where(__1.default.fn("SUM", __1.default.col("quantity")), '>', 0),
                 raw: true,
             });
             let totalAmount = consumptionLogs.reduce((total, log) => total + log.totalQuantity, 0);
-            let avgAmount = totalAmount / 14;
+            let avgAmount = totalAmount / consumptionLogs.length;
             if (!avgAmount) {
                 avgAmount = 0;
             }
