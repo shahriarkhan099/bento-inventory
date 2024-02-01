@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { findAllIngredientOfRestaurant, addIngredientToRestaurant, 
+import { findAllIngredientOfRestaurant, addIngredientBatchToRestaurant, 
   updateIngredientOfRestaurant, deleteIngredientOfRestaurant, findIngredientWithCategory, findIngredientsByCategoryName } from "../models/ingredientBatch/ingredientBatch.query";
 import { AuthRequest } from "../interfaces/authRequest.interface";
 
@@ -28,7 +28,7 @@ export async function postIngredientToRestaurant (req: Request, res: Response) {
       ingredient.currentStockQuantity = ingredient.purchaseQuantity;
       ingredient.costPerUnit = ingredient.purchasePrice / ingredient.purchaseQuantity;
       if (typeof ingredient.ingredientName === 'string' && typeof ingredient.purchasePrice === 'number') {
-        const newIngredient = await addIngredientToRestaurant(ingredient);
+        const newIngredient = await addIngredientBatchToRestaurant(ingredient);
         res.status(201).json("Created");
       } else res.status(400).json({ message: "Invalid ingredient information." });
     } else res.status(400).json({ message: "Invalid restaurant ID." });

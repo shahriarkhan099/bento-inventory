@@ -18,3 +18,5 @@ export interface IIngredient {
   restaurantId: number;
   categoryId: number;
 }
+
+export type ICreateIngredient = Omit<IIngredient, "id">;

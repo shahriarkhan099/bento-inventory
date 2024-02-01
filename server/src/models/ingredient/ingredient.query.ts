@@ -2,7 +2,7 @@ import { Op } from "sequelize";
 import sequelize from "../index";
 import Ingredient from "./ingredient.model";
 import Category from "../category/category.model";
-import { IIngredient } from "../../interfaces/ingredient.interface";
+import { IIngredient, ICreateIngredient } from "../../interfaces/ingredient.interface";
 import IngredientBatch from "../ingredientBatch/ingredientBatch.model";
 import { IIngredientBatch } from "../../interfaces/ingredientBatch.interface";
 import { deductIngredientBatchesInFIFO, getTotalAmountOfIngredientThatExpiresInSpecificDate } from "../ingredientBatch/ingredientBatch.query";
@@ -55,7 +55,7 @@ export async function findAllIngredientOfRestaurant(restaurantId: number) {
   }
 }
 
-export async function addIngredientToRestaurant(ingredient: IIngredient) {
+export async function addIngredientToRestaurant(ingredient: ICreateIngredient) {
   try {
     const checkExistent = await findIngredientByIngredientUniqueId(ingredient.restaurantId, ingredient.uniqueIngredientId);
 
@@ -338,6 +338,22 @@ export async function findOneIngredientOfRestaurantWithUniqueIngredientId(unique
         uniqueIngredientId: uniqueIngredientId,
         restaurantId: restaurantId
       }
+    });
+    return ingredient;
+  } catch (error) {
+    throw new Error("Error finding global ingredient.");
+  }
+}
+
+export async function findOneIngredientWithUniqueIngredientId(uniqueIngredientId: number) {
+  try {
+    const ingredient = await Ingredient.findOne({
+      where: {
+        uniqueIngredientId: uniqueIngredientId,
+      },
+      order: [
+        ['createdAt', 'ASC']
+      ]
     });
     return ingredient;
   } catch (error) {

@@ -3,9 +3,9 @@ import Order from "./order.model";
 import { IOrder } from "../../interfaces/order.interface";
 import IngredientBatch from "../ingredientBatch/ingredientBatch.model";
 import { IIngredientBatch } from "../../interfaces/ingredientBatch.interface";
-import { updateIngredientInfoOfRestaurantWithNewIngredientBatch, findOneIngredientOfRestaurantWithUniqueIngredientId } from "../ingredient/ingredient.query";
+import { updateIngredientInfoOfRestaurantWithNewIngredientBatch, findOneIngredientOfRestaurantWithUniqueIngredientId, findOneIngredientWithUniqueIngredientId, addIngredientToRestaurant } from "../ingredient/ingredient.query";
 import { updateDeliveryBoxInfoOfRestaurantWithNewDeliveryBoxBatch } from "../deliveryBox/deliveryBox.query";
-import { addIngredientToRestaurant } from "../ingredientBatch/ingredientBatch.query";
+import { addIngredientBatchToRestaurant } from "../ingredientBatch/ingredientBatch.query";
 import DeliveryBoxBatch from "../deliveryBoxBatch/deliveryBoxBatch.model";
 import { IDeliveryBoxBatch } from "../../interfaces/deliveryBoxBatch.interface";
 import { addDeliveryBoxToRestaurant } from "../deliveryBoxBatch/deliveryBoxBatch.query";
@@ -172,7 +172,35 @@ export async function addOrderToRestaurantWithDeliveryBoxBatches(order: IOrder, 
 async function processIngredientBatches(ingredientBatches: IIngredientBatch[], newOrder: IOrder) {
   try {
     for (const ingredientBatch of ingredientBatches) {
-      const ingredient = await findOneIngredientOfRestaurantWithUniqueIngredientId(ingredientBatch.uniqueIngredientId, newOrder.restaurantId);
+      let ingredient = await findOneIngredientOfRestaurantWithUniqueIngredientId(ingredientBatch.uniqueIngredientId, newOrder.restaurantId);
+
+      if (!ingredient) {
+        const similarIngredient = await findOneIngredientWithUniqueIngredientId(ingredientBatch.uniqueIngredientId);
+        
+        if (similarIngredient) {
+          let newIngredient = {
+            uniqueIngredientId: ingredientBatch.uniqueIngredientId,
+            ingredientName: similarIngredient.ingredientName,
+            unitOfStock: similarIngredient.unitOfStock,
+            unitOfPrice: similarIngredient.unitOfPrice,
+            caloriesPerUnit: similarIngredient.caloriesPerUnit,
+            reorderPoint: similarIngredient.reorderPoint,
+            liquid: similarIngredient.liquid,
+            perishable: similarIngredient.perishable,
+            description: similarIngredient.description,
+            unitOfIdealStoringTemperature: similarIngredient.unitOfIdealStoringTemperature,
+            idealStoringTemperature: similarIngredient.idealStoringTemperature,
+            categoryId: similarIngredient.categoryId,
+
+            currentStockQuantity: 0,
+            costPerUnit: 0,
+            restaurantId: newOrder.restaurantId,
+            expectedStockForToday: 0,
+            expectedStockForTomorrow: 0,
+          }
+          ingredient = await addIngredientToRestaurant(newIngredient);
+        }
+      }
   
       if (ingredient) {
         if (ingredientBatch.unitOfStock === "kg" || ingredientBatch.unitOfStock === "litre") {
@@ -192,7 +220,7 @@ async function processIngredientBatches(ingredientBatches: IIngredientBatch[], n
         ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
         ingredientBatch.costPerUnit = Number(ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity);
     
-        const newIngredientBatch = await addIngredientToRestaurant(ingredientBatch);
+        const newIngredientBatch = await addIngredientBatchToRestaurant(ingredientBatch);
         await updateIngredientInfoOfRestaurantWithNewIngredientBatch(newIngredientBatch);
       } 
       else {

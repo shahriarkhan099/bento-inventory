@@ -20,7 +20,7 @@ export async function findAllIngredientOfRestaurant (restaurantId: number) {
     }
 }
 
-export async function addIngredientToRestaurant (ingredient: IIngredientBatch) {
+export async function addIngredientBatchToRestaurant (ingredient: IIngredientBatch) {
     try {
       const newIngredient = await IngredientBatch.create(ingredient);
       return newIngredient;
