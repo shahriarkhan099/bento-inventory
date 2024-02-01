@@ -4,7 +4,8 @@ import { getAllIngredientOfRestaurant, postIngredientToRestaurant, updateIngredi
 import { authMiddleware } from '../middleware/auth.middleware';
 const router = Router();
 
-router.get('/restaurant', authMiddleware, getAllIngredientOfRestaurant);
+// router.get('/restaurant', authMiddleware, getAllIngredientOfRestaurant);
+router.get('/restaurant/:restaurantId', getAllIngredientOfRestaurant);
 router.post('/restaurant/:restaurantId', postIngredientToRestaurant);
 router.put('/restaurant/:ingredientId', updateIngredient);
 router.delete('/restaurant/:ingredientId', deleteIngredient);

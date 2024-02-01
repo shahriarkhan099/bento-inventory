@@ -4,10 +4,10 @@ import { findAllIngredientOfRestaurant, addIngredientToRestaurant,
 import { AuthRequest } from "../interfaces/authRequest.interface";
 
 
-export async function getAllIngredientOfRestaurant (req: AuthRequest, res: Response) {
+export async function getAllIngredientOfRestaurant (req: Request, res: Response) {
   try {
-    // const restaurantId = Number(req.params.restaurantId);
-    const restaurantId = req.user?.employeeInformation.restaurantId
+    const restaurantId = Number(req.params.restaurantId);
+    // const restaurantId = req.user?.employeeInformation.restaurantId
     if (restaurantId) {
       const ingredient = await findAllIngredientOfRestaurant(restaurantId);
       res.json({ ingredients: ingredient });
