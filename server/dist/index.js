@@ -36,6 +36,7 @@ const auth_router_1 = __importDefault(require("./routers/auth.router"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
     credentials: true,
+    exposedHeaders: ["Authorization"],
 }));
 app.use((0, compression_1.default)());
 app.use((0, cookie_parser_1.default)());
@@ -51,17 +52,17 @@ app.use("/v1/deliveryBox", deliveryBox_router_1.default);
 app.use("/v1/deliveryBoxBatch", deliveryBoxBatch_router_1.default);
 app.use("/v1/vendorSide", vendorSide_router_1.default);
 app.use("/v1/autoPilot", autoPilot_router_1.default);
-app.use("/v1/authRouter", auth_router_1.default);
+app.use("/auth", auth_router_1.default);
 node_cron_1.default.schedule("0 0 * * *", expiryCheck_util_1.default);
 // cron.schedule("*/60 * * * * *", async () => {
 node_cron_1.default.schedule("0 9 * * *", () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('Running auto-pilot check at 9 AM');
+    console.log("Running auto-pilot check at 9 AM");
     try {
         yield (0, autoPilotChecker_1.default)();
-        console.log('Auto-pilot completed');
+        console.log("Auto-pilot completed");
     }
     catch (error) {
-        console.error('Error in auto-pilot:', error);
+        console.error("Error in auto-pilot:", error);
     }
 }));
 function bootstrap() {

@@ -5,6 +5,6 @@ import { authMiddleware, restaurantId } from '../middleware/auth.middleware';
 const router = Router();
 
 router.get('/token/:code', getToken);
-// router.get('/resId', authMiddleware, restaurantId);
+router.get('/resId', restaurantId);
 
 export default router;
