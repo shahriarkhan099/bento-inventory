@@ -20,12 +20,12 @@ import checkExpiryDateAndRemove from "./utils/expiryCheck.util";
 import activateAutoPilot from "./utils/autoPilotChecker";
 import authRouter from "./routers/auth.router";
 
-
 const app: Express = express();
 
 app.use(
   cors({
     credentials: true,
+    exposedHeaders: ["Authorization"],
   })
 );
 
@@ -50,12 +50,12 @@ cron.schedule("0 0 * * *", checkExpiryDateAndRemove);
 
 // cron.schedule("*/60 * * * * *", async () => {
 cron.schedule("0 9 * * *", async () => {
-  console.log('Running auto-pilot check at 9 AM');
+  console.log("Running auto-pilot check at 9 AM");
   try {
     await activateAutoPilot();
-    console.log('Auto-pilot completed');
+    console.log("Auto-pilot completed");
   } catch (error) {
-    console.error('Error in auto-pilot:', error);
+    console.error("Error in auto-pilot:", error);
   }
 });
 
