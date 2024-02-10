@@ -127,6 +127,9 @@ export async function findIngredientWithCategory(restaurantId: number) {
         restaurantId: restaurantId,
       },
       include: [Category],
+      order: [
+        ['updatedAt', 'DESC']
+      ]
     });
     return ingredient;
   } catch (error) {
