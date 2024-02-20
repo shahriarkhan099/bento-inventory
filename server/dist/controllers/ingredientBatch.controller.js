@@ -12,11 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getIngredientsByCategoryName = exports.getIngredientWithCategory = exports.deleteIngredient = exports.updateIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = void 0;
 const ingredientBatch_query_1 = require("../models/ingredientBatch/ingredientBatch.query");
 function getAllIngredientOfRestaurant(req, res) {
-    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            // const restaurantId = Number(req.params.restaurantId);
-            const restaurantId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.employeeInformation.restaurantId;
+            const restaurantId = Number(req.params.restaurantId);
+            // const restaurantId = req.user?.employeeInformation.restaurantId
             if (restaurantId) {
                 const ingredient = yield (0, ingredientBatch_query_1.findAllIngredientOfRestaurant)(restaurantId);
                 res.json({ ingredients: ingredient });
@@ -41,7 +40,7 @@ function postIngredientToRestaurant(req, res) {
                 ingredient.currentStockQuantity = ingredient.purchaseQuantity;
                 ingredient.costPerUnit = ingredient.purchasePrice / ingredient.purchaseQuantity;
                 if (typeof ingredient.ingredientName === 'string' && typeof ingredient.purchasePrice === 'number') {
-                    const newIngredient = yield (0, ingredientBatch_query_1.addIngredientToRestaurant)(ingredient);
+                    const newIngredient = yield (0, ingredientBatch_query_1.addIngredientBatchToRestaurant)(ingredient);
                     res.status(201).json("Created");
                 }
                 else

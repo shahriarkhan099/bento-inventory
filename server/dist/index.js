@@ -33,6 +33,7 @@ const node_cron_1 = __importDefault(require("node-cron"));
 const expiryCheck_util_1 = __importDefault(require("./utils/expiryCheck.util"));
 const autoPilotChecker_1 = __importDefault(require("./utils/autoPilotChecker"));
 const auth_router_1 = __importDefault(require("./routers/auth.router"));
+const deductIngredsMQ_service_1 = require("./services/deductIngredsMQ.service");
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
     credentials: true,
@@ -69,6 +70,8 @@ function bootstrap() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield models_1.default.sync();
+            // Connecting RabbitMQ Here
+            yield (0, deductIngredsMQ_service_1.connectAndConsumeMQDataToReduceIngreds)();
             app.listen(config_1.default.PORT, () => {
                 console.log(`[server]: Server is running on port ${config_1.default.PORT}`);
             });
@@ -79,3 +82,9 @@ function bootstrap() {
     });
 }
 bootstrap();
+// Handle Server Shutdown. Close MQ Connection
+process.on('SIGINT', () => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('Closing MQ connection');
+    yield (0, deductIngredsMQ_service_1.closeMQConnection)();
+    process.exit(0);
+}));

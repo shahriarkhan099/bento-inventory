@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTotalAmountOfIngredientThatExpiresInSpecificDate = exports.findIngredientsByCategoryName = exports.findIngredientWithCategory = exports.deleteIngredientOfRestaurant = exports.deductIngredientBatchesInFIFO = exports.updateIngredientOfRestaurant = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = void 0;
+exports.getTotalAmountOfIngredientThatExpiresInSpecificDate = exports.findIngredientsByCategoryName = exports.findIngredientWithCategory = exports.deleteIngredientOfRestaurant = exports.deductIngredientBatchesInFIFO = exports.updateIngredientOfRestaurant = exports.addIngredientBatchToRestaurant = exports.findAllIngredientOfRestaurant = void 0;
 const sequelize_1 = require("sequelize");
 const ingredientBatch_model_1 = __importDefault(require("./ingredientBatch.model"));
 const category_model_1 = __importDefault(require("../category/category.model"));
@@ -34,7 +34,7 @@ function findAllIngredientOfRestaurant(restaurantId) {
     });
 }
 exports.findAllIngredientOfRestaurant = findAllIngredientOfRestaurant;
-function addIngredientToRestaurant(ingredient) {
+function addIngredientBatchToRestaurant(ingredient) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const newIngredient = yield ingredientBatch_model_1.default.create(ingredient);
@@ -46,7 +46,7 @@ function addIngredientToRestaurant(ingredient) {
         }
     });
 }
-exports.addIngredientToRestaurant = addIngredientToRestaurant;
+exports.addIngredientBatchToRestaurant = addIngredientBatchToRestaurant;
 function updateIngredientOfRestaurant(ingredientId, ingredient) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

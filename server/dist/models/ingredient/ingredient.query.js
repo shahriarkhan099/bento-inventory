@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkAllIngredientOfRestaurantIfNeededToOrderListWithFrequencyDays = exports.checkAllIngredientOfAllRestaurantsIfNeededToOrderList = exports.findOneIngredientOfRestaurantWithUniqueIngredientId = exports.deductIngredientsFromOrder = exports.updateIngredientInfoOfRestaurantWithNewIngredientBatch = exports.updateCurrentStockQuantityOfIngredient = exports.findOneIngredientOfRestaurant = exports.findAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.findIngredientsByCategoryName = exports.findIngredientsByIngredientName = exports.findIngredientWithCategory = exports.deleteIngredientOfRestaurant = exports.updateIngredientOfRestaurant = exports.findIngredientBySearchTerm = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = exports.findIngredientByIngredientUniqueId = exports.findIngredientbyId = void 0;
+exports.checkAllIngredientOfRestaurantIfNeededToOrderListWithFrequencyDays = exports.checkAllIngredientOfAllRestaurantsIfNeededToOrderList = exports.findOneIngredientWithUniqueIngredientId = exports.findOneIngredientOfRestaurantWithUniqueIngredientId = exports.deductIngredientsFromOrder = exports.updateIngredientInfoOfRestaurantWithNewIngredientBatch = exports.updateCurrentStockQuantityOfIngredient = exports.findOneIngredientOfRestaurant = exports.findAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.findIngredientsByCategoryName = exports.findIngredientsByIngredientName = exports.findIngredientWithCategory = exports.deleteIngredientOfRestaurant = exports.updateIngredientOfRestaurant = exports.findIngredientBySearchTerm = exports.addIngredientToRestaurant = exports.findAllIngredientOfRestaurant = exports.findIngredientByIngredientUniqueId = exports.findIngredientbyId = void 0;
 const sequelize_1 = require("sequelize");
 const index_1 = __importDefault(require("../index"));
 const ingredient_model_1 = __importDefault(require("./ingredient.model"));
@@ -152,6 +152,9 @@ function findIngredientWithCategory(restaurantId) {
                     restaurantId: restaurantId,
                 },
                 include: [category_model_1.default],
+                order: [
+                    ['updatedAt', 'DESC']
+                ]
             });
             return ingredient;
         }
@@ -367,6 +370,25 @@ function findOneIngredientOfRestaurantWithUniqueIngredientId(uniqueIngredientId,
     });
 }
 exports.findOneIngredientOfRestaurantWithUniqueIngredientId = findOneIngredientOfRestaurantWithUniqueIngredientId;
+function findOneIngredientWithUniqueIngredientId(uniqueIngredientId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const ingredient = yield ingredient_model_1.default.findOne({
+                where: {
+                    uniqueIngredientId: uniqueIngredientId,
+                },
+                order: [
+                    ['createdAt', 'ASC']
+                ]
+            });
+            return ingredient;
+        }
+        catch (error) {
+            throw new Error("Error finding global ingredient.");
+        }
+    });
+}
+exports.findOneIngredientWithUniqueIngredientId = findOneIngredientWithUniqueIngredientId;
 function checkAllIngredientOfAllRestaurantsIfNeededToOrderList() {
     return __awaiter(this, void 0, void 0, function* () {
         try {

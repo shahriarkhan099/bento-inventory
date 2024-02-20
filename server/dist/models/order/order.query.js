@@ -193,7 +193,32 @@ function processIngredientBatches(ingredientBatches, newOrder) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             for (const ingredientBatch of ingredientBatches) {
-                const ingredient = yield (0, ingredient_query_1.findOneIngredientOfRestaurantWithUniqueIngredientId)(ingredientBatch.uniqueIngredientId, newOrder.restaurantId);
+                let ingredient = yield (0, ingredient_query_1.findOneIngredientOfRestaurantWithUniqueIngredientId)(ingredientBatch.uniqueIngredientId, newOrder.restaurantId);
+                if (!ingredient) {
+                    const similarIngredient = yield (0, ingredient_query_1.findOneIngredientWithUniqueIngredientId)(ingredientBatch.uniqueIngredientId);
+                    if (similarIngredient) {
+                        let newIngredient = {
+                            uniqueIngredientId: ingredientBatch.uniqueIngredientId,
+                            ingredientName: similarIngredient.ingredientName,
+                            unitOfStock: similarIngredient.unitOfStock,
+                            unitOfPrice: similarIngredient.unitOfPrice,
+                            caloriesPerUnit: similarIngredient.caloriesPerUnit,
+                            reorderPoint: similarIngredient.reorderPoint,
+                            liquid: similarIngredient.liquid,
+                            perishable: similarIngredient.perishable,
+                            description: similarIngredient.description,
+                            unitOfIdealStoringTemperature: similarIngredient.unitOfIdealStoringTemperature,
+                            idealStoringTemperature: similarIngredient.idealStoringTemperature,
+                            categoryId: similarIngredient.categoryId,
+                            currentStockQuantity: 0,
+                            costPerUnit: 0,
+                            restaurantId: newOrder.restaurantId,
+                            expectedStockForToday: 0,
+                            expectedStockForTomorrow: 0,
+                        };
+                        ingredient = yield (0, ingredient_query_1.addIngredientToRestaurant)(newIngredient);
+                    }
+                }
                 if (ingredient) {
                     if (ingredientBatch.unitOfStock === "kg" || ingredientBatch.unitOfStock === "litre") {
                         ingredientBatch.purchaseQuantity *= 1000;
@@ -211,7 +236,7 @@ function processIngredientBatches(ingredientBatches, newOrder) {
                     ingredientBatch.supplierId = newOrder.supplierId;
                     ingredientBatch.currentStockQuantity = ingredientBatch.purchaseQuantity;
                     ingredientBatch.costPerUnit = Number(ingredientBatch.purchasePrice / ingredientBatch.purchaseQuantity);
-                    const newIngredientBatch = yield (0, ingredientBatch_query_1.addIngredientToRestaurant)(ingredientBatch);
+                    const newIngredientBatch = yield (0, ingredientBatch_query_1.addIngredientBatchToRestaurant)(ingredientBatch);
                     yield (0, ingredient_query_1.updateIngredientInfoOfRestaurantWithNewIngredientBatch)(newIngredientBatch);
                 }
                 else {

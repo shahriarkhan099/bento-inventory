@@ -19,6 +19,7 @@ import cron from "node-cron";
 import checkExpiryDateAndRemove from "./utils/expiryCheck.util";
 import activateAutoPilot from "./utils/autoPilotChecker";
 import authRouter from "./routers/auth.router";
+import { closeMQConnection, connectAndConsumeMQDataToReduceIngreds } from "./services/deductIngredsMQ.service";
 
 const app: Express = express();
 
@@ -62,12 +63,27 @@ cron.schedule("0 9 * * *", async () => {
 async function bootstrap() {
   try {
     await sequelize.sync();
+
+    // Connecting RabbitMQ Here
+    await connectAndConsumeMQDataToReduceIngreds();
+
     app.listen(config.PORT, () => {
       console.log(`[server]: Server is running on port ${config.PORT}`);
     });
+
+
   } catch (error) {
     console.log(error);
   }
 }
 
 bootstrap();
+
+// Handle Server Shutdown. Close MQ Connection
+process.on('SIGINT', async () => {
+  console.log('Closing MQ connection');
+  await closeMQConnection()
+  process.exit(0);
+
+})
+
