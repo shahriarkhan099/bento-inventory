@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findAvgConsumptionOfIngredientOfLastTwoWeekWihSpecificDay = exports.findAvgConsumptionOfIngredientOfLastTwoMonthWithfrequencyDays = exports.findAvgConsumptionOfIngredientOfLastTwoWeeks = exports.findAvgConsumptionOfIngredientOfLastTwoMonthForCurrentDay = exports.findAvgConsumptionOfIngredientOfLastTwoWeekForCurrentDay = exports.deductIngredientsAndDeliveryBoxesFromOrder = exports.deleteConsumptionLog = exports.updateConsumptionLog = exports.createConsumptionLogOfRestaurantFromDeduction = exports.createConsumptionLogOfRestaurant = exports.findConsumptionLogsByIngredientName = exports.findAllConsumptionLogsOfRestaurant = void 0;
+exports.getSevenMostConsumedIngredients = exports.findAvgConsumptionOfIngredientOfLastTwoWeekWihSpecificDay = exports.findAvgConsumptionOfIngredientOfLastTwoMonthWithfrequencyDays = exports.findAvgConsumptionOfIngredientOfLastTwoWeeks = exports.findAvgConsumptionOfIngredientOfLastTwoMonthForCurrentDay = exports.findAvgConsumptionOfIngredientOfLastTwoWeekForCurrentDay = exports.deductIngredientsAndDeliveryBoxesFromOrder = exports.deleteConsumptionLog = exports.updateConsumptionLog = exports.createConsumptionLogOfRestaurantFromDeduction = exports.createConsumptionLogOfRestaurant = exports.findConsumptionLogsByIngredientName = exports.findAllConsumptionLogsOfRestaurant = void 0;
 const sequelize_1 = require("sequelize");
 const __1 = __importDefault(require(".."));
 const consumptionLog_model_1 = __importDefault(require("./consumptionLog.model"));
@@ -261,3 +261,25 @@ function findAvgConsumptionOfIngredientOfLastTwoWeekWihSpecificDay(productId, da
     });
 }
 exports.findAvgConsumptionOfIngredientOfLastTwoWeekWihSpecificDay = findAvgConsumptionOfIngredientOfLastTwoWeekWihSpecificDay;
+function getSevenMostConsumedIngredients(restaurantId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const consumptionLogs = yield findAllConsumptionLogsOfRestaurant(restaurantId);
+            let ingredientCount = new Map();
+            consumptionLogs.forEach((log) => {
+                if (ingredientCount.has(log.itemName)) {
+                    ingredientCount.set(log.itemName, ingredientCount.get(log.itemName) + log.quantity);
+                }
+                else {
+                    ingredientCount.set(log.itemName, log.quantity);
+                }
+            });
+            let sortedIngredients = Array.from(ingredientCount).sort((a, b) => b[1] - a[1]);
+            return sortedIngredients.slice(0, 7);
+        }
+        catch (error) {
+            throw new Error('Error finding seven most consumed ingredients.');
+        }
+    });
+}
+exports.getSevenMostConsumedIngredients = getSevenMostConsumedIngredients;

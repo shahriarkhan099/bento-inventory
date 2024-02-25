@@ -5,6 +5,7 @@ import {
   createConsumptionLogOfRestaurant,
   updateConsumptionLog,
   deleteConsumptionLog,
+  getSevenMostConsumedIngredients,
   deductIngredientsAndDeliveryBoxesFromOrder
 } from "../models/consumptionLog/consumptionLog.query";
 import { IngredientToReduce } from "../interfaces/deductIngredient.interface";
@@ -133,5 +134,18 @@ export async function postConsumptionLogToRestaurantWithOrder (req: Request, res
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+export async function findSevenMostConsumedIngredients(req: Request, res: Response) {
+  try {
+    const restaurantId = Number(req.params.restaurantId);
+    if (restaurantId) {
+      const consumptionLogs = await getSevenMostConsumedIngredients(restaurantId);
+      res.json({ consumptionLogs: consumptionLogs });
+    } else res.status(400).json({ message: "Invalid restaurant ID." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
   }
 }

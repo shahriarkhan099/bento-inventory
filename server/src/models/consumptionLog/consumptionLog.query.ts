@@ -232,3 +232,26 @@ export async function findAvgConsumptionOfIngredientOfLastTwoWeekWihSpecificDay(
     throw new Error('Error finding average consumption of ingredient.');
   }
 }
+
+export async function getSevenMostConsumedIngredients(restaurantId: number) {
+  try {
+    const consumptionLogs = await findAllConsumptionLogsOfRestaurant(restaurantId);
+    let ingredientCount = new Map();
+    consumptionLogs.forEach((log) => {
+      if (ingredientCount.has(log.itemName)) {
+        ingredientCount.set(
+          log.itemName,
+          ingredientCount.get(log.itemName) + log.quantity
+        );
+      } else {
+        ingredientCount.set(log.itemName, log.quantity);
+      }
+    });
+    let sortedIngredients = Array.from(ingredientCount).sort(
+      (a, b) => b[1] - a[1]
+    );
+    return sortedIngredients.slice(0, 7);
+  } catch (error) {
+    throw new Error('Error finding seven most consumed ingredients.');
+  }
+}

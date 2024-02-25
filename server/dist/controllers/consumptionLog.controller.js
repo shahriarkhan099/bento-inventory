@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postConsumptionLogToRestaurantWithOrder = exports.deleteConsumptionLogOfRestaurant = exports.putConsumptionLog = exports.postConsumptionLogToRestaurant = exports.searchConsumptionLogs = exports.getAllConsumptionLogsOfRestaurant = void 0;
+exports.findSevenMostConsumedIngredients = exports.postConsumptionLogToRestaurantWithOrder = exports.deleteConsumptionLogOfRestaurant = exports.putConsumptionLog = exports.postConsumptionLogToRestaurant = exports.searchConsumptionLogs = exports.getAllConsumptionLogsOfRestaurant = void 0;
 const consumptionLog_query_1 = require("../models/consumptionLog/consumptionLog.query");
 const ingredient_query_1 = require("../models/ingredient/ingredient.query");
 function getAllConsumptionLogsOfRestaurant(req, res) {
@@ -141,3 +141,21 @@ function postConsumptionLogToRestaurantWithOrder(req, res) {
     });
 }
 exports.postConsumptionLogToRestaurantWithOrder = postConsumptionLogToRestaurantWithOrder;
+function findSevenMostConsumedIngredients(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const restaurantId = Number(req.params.restaurantId);
+            if (restaurantId) {
+                const consumptionLogs = yield (0, consumptionLog_query_1.getSevenMostConsumedIngredients)(restaurantId);
+                res.json({ consumptionLogs: consumptionLogs });
+            }
+            else
+                res.status(400).json({ message: "Invalid restaurant ID." });
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.findSevenMostConsumedIngredients = findSevenMostConsumedIngredients;
