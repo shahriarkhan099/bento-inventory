@@ -5,6 +5,7 @@ import {
   updateWasteLog,
   findWasteLogBySearchTerm,
   deleteWasteLog,
+  getSevenMostWastedIngredients,
 } from "../models/wasteLog/wasteLog.query";
 
 export async function getAllWasteLogWithIngredient (req: Request, res: Response) {
@@ -71,6 +72,17 @@ export async function removeWasteLog(req: Request, res: Response) {
       await deleteWasteLog(wasteLogId);
       res.status(200).json({ message: "Waste log deleted." });
     } else res.status(400).json({ message: "Invalid waste log ID." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
+export async function getSevenMostWastedIngredientsForRestaurant(req: Request, res: Response) {
+  try {
+    const restaurantId = Number(req.params.restaurantId);
+    const sevenMostWastedIngredients = await getSevenMostWastedIngredients(restaurantId);
+    res.status(200).json(sevenMostWastedIngredients);
   } catch (error) {
     console.log(error);
     res.status(500).json(error);

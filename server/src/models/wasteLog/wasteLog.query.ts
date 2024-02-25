@@ -1,8 +1,9 @@
-import { Op } from "sequelize";
+import { Op, QueryTypes } from "sequelize";
 import WasteLog from "./wasteLog.model";
 import IngredientBatch from "../ingredientBatch/ingredientBatch.model";
 import { IWasteLog } from "../../interfaces/wasteLog.interface";
 import Ingredient from "../ingredient/ingredient.model";
+import sequelize from "..";
 
 
 export async function findAllWasteLogWithIngredient (restaurantId: number) {
@@ -124,5 +125,20 @@ export async function deleteWasteLog(wasteLogId: number) {
     return deletedWasteLog;
   } catch (error) {
     throw new Error("Error deleting waste log.");
+  }
+}
+
+export async function getSevenMostWastedIngredients (restaurantId: number) {
+  try {
+    const sevenMostWastedIngredients = await sequelize.query(
+      `SELECT "ingredientName", SUM("totalQuantity") as "totalWaste" FROM "wasteLogs" WHERE "restaurantId" = :restaurantId GROUP BY "ingredientName" ORDER BY "totalWaste" DESC LIMIT 7;`,
+      {
+        replacements: { restaurantId },
+        type: QueryTypes.SELECT,
+      }
+    );
+    return sevenMostWastedIngredients;
+  } catch (error) {
+    throw new Error('Error finding seven most wasted ingredients.');
   }
 }
