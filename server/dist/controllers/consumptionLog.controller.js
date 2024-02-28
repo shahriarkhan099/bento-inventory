@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findSevenMostConsumedIngredients = exports.postConsumptionLogToRestaurantWithOrder = exports.deleteConsumptionLogOfRestaurant = exports.putConsumptionLog = exports.postConsumptionLogToRestaurant = exports.searchConsumptionLogs = exports.getAllConsumptionLogsOfRestaurant = void 0;
 const consumptionLog_query_1 = require("../models/consumptionLog/consumptionLog.query");
+const ingredient_query_1 = require("../models/ingredient/ingredient.query");
 function getAllConsumptionLogsOfRestaurant(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -122,15 +123,15 @@ exports.deleteConsumptionLogOfRestaurant = deleteConsumptionLogOfRestaurant;
 function postConsumptionLogToRestaurantWithOrder(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            // const { orderType, restaurantId, ingredientsToReduce, deliveryBoxesToReduce } = req.body;
-            // console.log('data that has come from skeleton/kds to minus from inventory', req.body);
-            // const orderWithIngredients = { orderType: orderType, restaurantId: restaurantId, ingredientsToReduce: ingredientsToReduce as IngredientToReduce[]};
-            // const orderWithDeliveryBoxes = { orderType: orderType, restaurantId: restaurantId, deliveryBoxesToReduce: deliveryBoxesToReduce as DeliveryBoxToReduce[]};
-            // console.log('orderWithDeliveryBoxes', orderWithDeliveryBoxes);
-            // await deductIngredientsFromOrder(orderWithIngredients);
-            // // if (orderWithDeliveryBoxes.deliveryBoxesToReduce.length !== 0) {
-            // //   await deductDeliveryBoxesFromOrder(orderWithDeliveryBoxes);
-            // // }
+            const { orderType, restaurantId, ingredientsToReduce, deliveryBoxesToReduce } = req.body;
+            console.log('data that has come from skeleton/kds to minus from inventory', req.body);
+            const orderWithIngredients = { orderType: orderType, restaurantId: restaurantId, ingredientsToReduce: ingredientsToReduce };
+            const orderWithDeliveryBoxes = { orderType: orderType, restaurantId: restaurantId, deliveryBoxesToReduce: deliveryBoxesToReduce };
+            console.log('orderWithDeliveryBoxes', orderWithDeliveryBoxes);
+            yield (0, ingredient_query_1.deductIngredientsFromOrder)(orderWithIngredients);
+            // if (orderWithDeliveryBoxes.deliveryBoxesToReduce.length !== 0) {
+            //   await deductDeliveryBoxesFromOrder(orderWithDeliveryBoxes);
+            // }
             res.status(200).json({ message: "Deducted" });
         }
         catch (error) {
