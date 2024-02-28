@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.removeWasteLog = exports.searchWasteLog = exports.editWasteLog = exports.createWasteLog = exports.getAllWasteLogWithIngredient = void 0;
+exports.getSevenMostWastedIngredientsForRestaurant = exports.removeWasteLog = exports.searchWasteLog = exports.editWasteLog = exports.createWasteLog = exports.getAllWasteLogWithIngredient = void 0;
 const wasteLog_query_1 = require("../models/wasteLog/wasteLog.query");
 function getAllWasteLogWithIngredient(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -104,3 +104,17 @@ function removeWasteLog(req, res) {
     });
 }
 exports.removeWasteLog = removeWasteLog;
+function getSevenMostWastedIngredientsForRestaurant(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const restaurantId = Number(req.params.restaurantId);
+            const sevenMostWastedIngredients = yield (0, wasteLog_query_1.getSevenMostWastedIngredients)(restaurantId);
+            res.status(200).json(sevenMostWastedIngredients);
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.getSevenMostWastedIngredientsForRestaurant = getSevenMostWastedIngredientsForRestaurant;

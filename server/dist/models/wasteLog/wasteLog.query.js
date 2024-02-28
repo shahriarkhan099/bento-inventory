@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteWasteLog = exports.findWasteLogBySearchTerm = exports.updateWasteLog = exports.addToWasteLogByCheckingExpirationDateOfAllIngredientBatchesOfAllRestaurant = exports.addWasteLog = exports.findAllWasteLogWithIngredient = void 0;
+exports.getSevenMostWastedIngredients = exports.deleteWasteLog = exports.findWasteLogBySearchTerm = exports.updateWasteLog = exports.addToWasteLogByCheckingExpirationDateOfAllIngredientBatchesOfAllRestaurant = exports.addWasteLog = exports.findAllWasteLogWithIngredient = void 0;
 const sequelize_1 = require("sequelize");
 const wasteLog_model_1 = __importDefault(require("./wasteLog.model"));
 const ingredientBatch_model_1 = __importDefault(require("../ingredientBatch/ingredientBatch.model"));
 const ingredient_model_1 = __importDefault(require("../ingredient/ingredient.model"));
+const __1 = __importDefault(require(".."));
 function findAllWasteLogWithIngredient(restaurantId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -153,3 +154,18 @@ function deleteWasteLog(wasteLogId) {
     });
 }
 exports.deleteWasteLog = deleteWasteLog;
+function getSevenMostWastedIngredients(restaurantId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const sevenMostWastedIngredients = yield __1.default.query(`SELECT "ingredientName", SUM("totalQuantity") as "totalWaste" FROM "wasteLogs" WHERE "restaurantId" = :restaurantId GROUP BY "ingredientName" ORDER BY "totalWaste" DESC LIMIT 7;`, {
+                replacements: { restaurantId },
+                type: sequelize_1.QueryTypes.SELECT,
+            });
+            return sevenMostWastedIngredients;
+        }
+        catch (error) {
+            throw new Error('Error finding seven most wasted ingredients.');
+        }
+    });
+}
+exports.getSevenMostWastedIngredients = getSevenMostWastedIngredients;

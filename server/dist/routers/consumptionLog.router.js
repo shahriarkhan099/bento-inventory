@@ -10,4 +10,6 @@ router.delete('/restaurant/:consumptionLogId', consumptionLog_controller_1.delet
 router.get('/restaurant/:restaurantId/search', consumptionLog_controller_1.searchConsumptionLogs);
 //Deduct ingredients from restaurant
 router.post('/restaurant/:restaurantId/deduct', consumptionLog_controller_1.postConsumptionLogToRestaurantWithOrder);
+// Get seven most consumed ingredients
+router.get('/restaurant/:restaurantId/sevenMostConsumed', consumptionLog_controller_1.findSevenMostConsumedIngredients);
 exports.default = router;

@@ -115,20 +115,20 @@ export async function deleteConsumptionLogOfRestaurant(req: Request, res: Respon
 
 export async function postConsumptionLogToRestaurantWithOrder (req: Request, res: Response) {
   try {
-    const { orderType, restaurantId, ingredientsToReduce, deliveryBoxesToReduce } = req.body;
-    console.log('data that has come from skeleton/kds to minus from inventory', req.body);
+    // const { orderType, restaurantId, ingredientsToReduce, deliveryBoxesToReduce } = req.body;
+    // console.log('data that has come from skeleton/kds to minus from inventory', req.body);
     
 
-    const orderWithIngredients = { orderType: orderType, restaurantId: restaurantId, ingredientsToReduce: ingredientsToReduce as IngredientToReduce[]};
-    const orderWithDeliveryBoxes = { orderType: orderType, restaurantId: restaurantId, deliveryBoxesToReduce: deliveryBoxesToReduce as DeliveryBoxToReduce[]};
-    console.log('orderWithDeliveryBoxes', orderWithDeliveryBoxes);
+    // const orderWithIngredients = { orderType: orderType, restaurantId: restaurantId, ingredientsToReduce: ingredientsToReduce as IngredientToReduce[]};
+    // const orderWithDeliveryBoxes = { orderType: orderType, restaurantId: restaurantId, deliveryBoxesToReduce: deliveryBoxesToReduce as DeliveryBoxToReduce[]};
+    // console.log('orderWithDeliveryBoxes', orderWithDeliveryBoxes);
     
 
 
-    await deductIngredientsFromOrder(orderWithIngredients);
-    // if (orderWithDeliveryBoxes.deliveryBoxesToReduce.length !== 0) {
-    //   await deductDeliveryBoxesFromOrder(orderWithDeliveryBoxes);
-    // }
+    // await deductIngredientsFromOrder(orderWithIngredients);
+    // // if (orderWithDeliveryBoxes.deliveryBoxesToReduce.length !== 0) {
+    // //   await deductDeliveryBoxesFromOrder(orderWithDeliveryBoxes);
+    // // }
 
     res.status(200).json({message: "Deducted"});
   } catch (error) {

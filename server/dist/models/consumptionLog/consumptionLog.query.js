@@ -264,18 +264,11 @@ exports.findAvgConsumptionOfIngredientOfLastTwoWeekWihSpecificDay = findAvgConsu
 function getSevenMostConsumedIngredients(restaurantId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const consumptionLogs = yield findAllConsumptionLogsOfRestaurant(restaurantId);
-            let ingredientCount = new Map();
-            consumptionLogs.forEach((log) => {
-                if (ingredientCount.has(log.itemName)) {
-                    ingredientCount.set(log.itemName, ingredientCount.get(log.itemName) + log.quantity);
-                }
-                else {
-                    ingredientCount.set(log.itemName, log.quantity);
-                }
+            const sevenMostConsumedIngredients = yield __1.default.query(`SELECT "itemName", SUM(quantity) as "totalConsumption" FROM "consumptionLogs" WHERE "restaurantId" = :restaurantId GROUP BY "itemName" ORDER BY "totalConsumption" DESC LIMIT 7;`, {
+                replacements: { restaurantId },
+                type: sequelize_1.QueryTypes.SELECT,
             });
-            let sortedIngredients = Array.from(ingredientCount).sort((a, b) => b[1] - a[1]);
-            return sortedIngredients.slice(0, 7);
+            return sevenMostConsumedIngredients;
         }
         catch (error) {
             throw new Error('Error finding seven most consumed ingredients.');
