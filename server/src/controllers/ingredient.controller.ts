@@ -216,11 +216,11 @@ export async function getIngredientIdByIngredientNameAndRestaurantId(req: Reques
     const restaurantId = Number(req.params.restaurantId);
     const ingredientName = req.params.ingredientName;
     if (restaurantId) {
-      const ingredientId = await findIngredientIdByIngredientNameAndRestaurantId(
+      const data = await findIngredientIdByIngredientNameAndRestaurantId(
         restaurantId,
         ingredientName
       );
-      res.json({ ingredientId: ingredientId });
+      res.json({ data });
     } else res.status(400).json({ message: "Invalid restaurant ID or Ingredient Name" });
   } catch (error) {
     console.log(error);
