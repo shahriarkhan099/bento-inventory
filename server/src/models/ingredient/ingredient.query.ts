@@ -47,6 +47,9 @@ export async function findAllIngredientOfRestaurant(restaurantId: number) {
       where: {
         restaurantId: restaurantId,
       },
+      order: [
+        ['ingredientName', 'ASC']
+      ]
     });
 
     return ingredient;
