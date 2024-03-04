@@ -461,3 +461,18 @@ function sortIngredientsByRestaurant(ingredients: IIngredient[]): Record<number,
 
   return ingredientsByRestaurant;
 }
+
+export async function findIngredientIdByIngredientNameAndRestaurantId(restaurantId: number, ingredientName: string) {
+  try {
+    const ingredient = await Ingredient.findOne({
+      where: {
+        ingredientName: ingredientName,
+        restaurantId: restaurantId
+      }
+    });
+
+    return ingredient;
+  } catch (error) {
+    throw new Error("Error finding ingredient by IngredientName and RestaurantId.");
+  }
+}
