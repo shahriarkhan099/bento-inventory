@@ -1,4 +1,4 @@
-import { Op } from "sequelize";
+import { Op, QueryTypes } from "sequelize";
 import sequelize from "../index";
 import Ingredient from "./ingredient.model";
 import Category from "../category/category.model";
@@ -268,22 +268,25 @@ export async function updateIngredientInfoOfRestaurantWithNewIngredientBatch(ing
 
       await updateCurrentStockQuantityOfIngredient(ingredient.id);
 
-      const averageCostPerUnit = await IngredientBatch.findOne({
-        attributes: [
-          [sequelize.fn("AVG", sequelize.col("costPerUnit")), "costPerUnit"],
-        ],
-        where: {
-          ingredientId: ingredient.id,
-          receivedAt: {
-            [Op.gte]: sequelize.literal("NOW() - INTERVAL '1 YEAR'"),
-          },
-        },
+      const result: { averageCostPerUnit: number }[] = await sequelize.query(`
+        SELECT 
+          (SUM(costPerUnit) / COUNT(costPerUnit)) as averageCostPerUnit
+        FROM 
+          IngredientBatch
+        WHERE 
+          ingredientId = :ingredientId AND
+          receivedAt >= (NOW() - INTERVAL '1 YEAR')
+      `, {
+        replacements: { ingredientId: ingredient.id },
+        type: QueryTypes.SELECT
       });
+
+      const averageCostPerUnit = result[0].averageCostPerUnit;
 
       updatedIngredient = await Ingredient.update(
         {
           costPerUnit: averageCostPerUnit
-            ? averageCostPerUnit.dataValues.costPerUnit
+            ? averageCostPerUnit
             : 0,
         },
         {
