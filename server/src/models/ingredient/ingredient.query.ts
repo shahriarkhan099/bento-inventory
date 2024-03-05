@@ -268,20 +268,7 @@ export async function updateIngredientInfoOfRestaurantWithNewIngredientBatch(ing
 
       await updateCurrentStockQuantityOfIngredient(ingredient.id);
 
-      const result: { averageCostPerUnit: number }[] = await sequelize.query(`
-        SELECT 
-          (SUM(costPerUnit) / COUNT(costPerUnit)) as averageCostPerUnit
-        FROM 
-          IngredientBatch
-        WHERE 
-          ingredientId = :ingredientId AND
-          receivedAt >= (NOW() - INTERVAL '1 YEAR')
-      `, {
-        replacements: { ingredientId: ingredient.id },
-        type: QueryTypes.SELECT
-      });
-
-      const averageCostPerUnit = result[0].averageCostPerUnit;
+      const averageCostPerUnit = ingredientBatch.costPerUnit ? ingredientBatch.costPerUnit : 0;
 
       updatedIngredient = await Ingredient.update(
         {
