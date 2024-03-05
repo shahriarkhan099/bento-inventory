@@ -120,6 +120,7 @@ export async function addOrderToRestaurantWithIngredientBatches(order: IOrder, i
       const supplier = await Supplier.findOne({
         where: {
           vendorId: order.supplierId,
+          restaurantId: order.restaurantId,
         },
       });
 
