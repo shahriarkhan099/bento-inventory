@@ -20,7 +20,7 @@ export async function postAutoPilotToRestaurant(req: Request, res: Response) {
     if (restaurantId) {
       let {restaurantId, autoPilotSwitch} = req.body;
       if (restaurantId) {
-        const newAutoPilot = await createAutoPilotOfRestaurant(restaurantId, autoPilotSwitch);
+        await createAutoPilotOfRestaurant(restaurantId, autoPilotSwitch);
         res.status(201).json("Created");
       } else {
         res.status(400).json({ message: "Invalid autoPilot information." });
@@ -39,7 +39,7 @@ export async function putAutoPilotOfRestaurant(req: Request, res: Response) {
       let autoPilot = req.body;
       autoPilot.restaurantId = restaurantId;
       if (restaurantId) {
-        const newAutoPilot = await updateAutoPilotOfRestaurant(autoPilot.restaurantId, autoPilot.autoPilotSwitch);
+        await updateAutoPilotOfRestaurant(autoPilot.restaurantId, autoPilot.autoPilotSwitch);
         res.status(201).json("Updated");
       } else {
         res.status(400).json({ message: "Invalid autoPilot information." });
