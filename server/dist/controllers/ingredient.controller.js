@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkAllIngredientOfAllRestaurantsIfNeededToOrderListController = exports.getAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.getIngredientsByCategoryName = exports.getIngredientWithCategory = exports.deleteIngredient = exports.updateIngredient = exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = exports.deductIngredientsController = exports.getIngredientByIngredientUniqueId = exports.getIngredientbyId = void 0;
+exports.getIngredientIdByIngredientNameAndRestaurantId = exports.checkAllIngredientOfAllRestaurantsIfNeededToOrderListController = exports.getAllIngredientOfRestaurantWithCategoryAndIngredientBatch = exports.getIngredientsByCategoryName = exports.getIngredientWithCategory = exports.deleteIngredient = exports.updateIngredient = exports.searchIngredient = exports.postIngredientToRestaurant = exports.getAllIngredientOfRestaurant = exports.deductIngredientsController = exports.getIngredientByIngredientUniqueId = exports.getIngredientbyId = void 0;
 const ingredient_query_1 = require("../models/ingredient/ingredient.query");
 function getIngredientbyId(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -242,3 +242,22 @@ function checkAllIngredientOfAllRestaurantsIfNeededToOrderListController(req, re
     });
 }
 exports.checkAllIngredientOfAllRestaurantsIfNeededToOrderListController = checkAllIngredientOfAllRestaurantsIfNeededToOrderListController;
+function getIngredientIdByIngredientNameAndRestaurantId(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const restaurantId = Number(req.params.restaurantId);
+            const ingredientName = req.params.ingredientName;
+            if (restaurantId) {
+                const data = yield (0, ingredient_query_1.findIngredientIdByIngredientNameAndRestaurantId)(restaurantId, ingredientName);
+                res.json({ data });
+            }
+            else
+                res.status(400).json({ message: "Invalid restaurant ID or Ingredient Name" });
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.getIngredientIdByIngredientNameAndRestaurantId = getIngredientIdByIngredientNameAndRestaurantId;

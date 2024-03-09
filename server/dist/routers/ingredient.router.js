@@ -16,4 +16,5 @@ router.get('/restaurant/ingredients/:ingredientId', ingredient_controller_1.getI
 router.post('/restaurant/:restaurantId/deductIngredients', ingredient_controller_1.deductIngredientsController);
 router.get('/restaurant/:restaurantId/:ingredientUniqueId', ingredient_controller_1.getIngredientByIngredientUniqueId);
 router.get('/autoPilot', ingredient_controller_1.checkAllIngredientOfAllRestaurantsIfNeededToOrderListController);
+router.get('/restaurant/one-ingredient/:restaurantId/:ingredientName', ingredient_controller_1.getIngredientIdByIngredientNameAndRestaurantId);
 exports.default = router;

@@ -142,6 +142,7 @@ function addOrderToRestaurantWithIngredientBatches(order, ingredientBatches) {
                 const supplier = yield supplier_model_1.default.findOne({
                     where: {
                         vendorId: order.supplierId,
+                        restaurantId: order.restaurantId,
                     },
                 });
                 if (!supplier) {
