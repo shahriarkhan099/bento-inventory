@@ -16,14 +16,17 @@ export async function findAutoPilotOfRestaurant (restaurantId: number) {
     }
 }
 
-export async function createAutoPilotOfRestaurant (restaurantId: number) {
+export async function createAutoPilotOfRestaurant (restaurantId: number, autoPilotSwitch: string) {
         try {
-            const autoPilot = await AutoPilot.create({
-                restaurantId: restaurantId,
-                autoPilotSwitch: "On"
-            });
-    
+          let ifExist = await AutoPilot.findOne({
+            where: {
+              restaurantId: restaurantId
+            }
+          });
+          if (!ifExist) {
+            const autoPilot = await AutoPilot.create({restaurantId, autoPilotSwitch});
             return autoPilot;
+          }
         } catch (error) {
             throw new Error('Error finding category.');
         }

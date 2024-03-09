@@ -6,7 +6,7 @@ export async function getAutoPilotOfRestaurant(req: Request, res: Response) {
     const restaurantId = Number(req.params.restaurantId);
     if (restaurantId) {
       const autoPilot = await findAutoPilotOfRestaurant(restaurantId);
-      res.json({ autoPilot: autoPilot });
+      res.send(autoPilot);
     } else res.status(400).json({ message: "Invalid restaurant ID." });
   } catch (error) {
     console.log(error);
@@ -18,10 +18,9 @@ export async function postAutoPilotToRestaurant(req: Request, res: Response) {
   try {
     const restaurantId = Number(req.params.restaurantId);
     if (restaurantId) {
-      let autoPilot = req.body;
-      autoPilot.restaurantId = restaurantId;
+      let {restaurantId, autoPilotSwitch} = req.body;
       if (restaurantId) {
-        const newAutoPilot = await createAutoPilotOfRestaurant(autoPilot.restaurantId);
+        const newAutoPilot = await createAutoPilotOfRestaurant(restaurantId, autoPilotSwitch);
         res.status(201).json("Created");
       } else {
         res.status(400).json({ message: "Invalid autoPilot information." });
