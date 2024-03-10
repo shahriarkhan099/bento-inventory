@@ -1,5 +1,5 @@
 export interface IAutoPilot {
   id: number;
-  autoPilotSwitch: string;
+  autoPilotSwitch: boolean;
   restaurantId: number;
 }

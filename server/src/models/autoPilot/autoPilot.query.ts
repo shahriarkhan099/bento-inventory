@@ -16,7 +16,7 @@ export async function findAutoPilotOfRestaurant (restaurantId: number) {
     }
 }
 
-export async function createAutoPilotOfRestaurant (restaurantId: number, autoPilotSwitch: string) {
+export async function createAutoPilotOfRestaurant (restaurantId: number, autoPilotSwitch: boolean) {
         try {
           let ifExist = await AutoPilot.findOne({
             where: {
@@ -32,7 +32,7 @@ export async function createAutoPilotOfRestaurant (restaurantId: number, autoPil
         }
 }
 
-export async function updateAutoPilotOfRestaurant (restaurantId: number, autoPilotSwitch: string) {
+export async function updateAutoPilotOfRestaurant (restaurantId: number, autoPilotSwitch: boolean) {
     try {
       const autoPilot = await AutoPilot.update({
         autoPilotSwitch: autoPilotSwitch,

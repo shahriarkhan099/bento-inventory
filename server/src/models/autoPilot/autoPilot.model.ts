@@ -18,9 +18,9 @@ const AutoPilot = sequelize.define<AutoPilotInstance>("autoPilots", {
     unique: true,
   },
   autoPilotSwitch: {
-    type: DataTypes.ENUM('On', 'Off'),
+    type: DataTypes.BOOLEAN,
     allowNull: false,
-    defaultValue: 'On',
+    defaultValue: false,
   },
   restaurantId: {
     type: DataTypes.INTEGER,
