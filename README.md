@@ -44,7 +44,7 @@ The Bento inventory system is designed to solve critical issues faced by invento
 
 ## Entity-Relationship Diagram (ERD)
 
-![Bento Inventory ERD Diagram](path/to/your/erd_image.png)(bento-inventory-backend/server/src/assets/inventory-erd.png)
+![Bento Inventory ERD Diagram](bento-inventory-backend/server/src/assets/inventory-erd.png)
 
 
 
