@@ -113,7 +113,7 @@ export async function findAvgConsumptionOfIngredientOfLastTwoWeekForCurrentDay(p
   try {
     const currentDayOfWeek = new Date().getDay();
 
-    const avgConsumption: any = await ConsumptionLog.findAll({
+    const avgConsumption = await ConsumptionLog.findAll({
       attributes: [
         [sequelize.fn("AVG", sequelize.col("quantity")), "avgConsumption"],
       ],
@@ -135,7 +135,7 @@ export async function findAvgConsumptionOfIngredientOfLastTwoMonthForCurrentDay(
   try {
     const currentDayOfWeek = new Date().getDay();
 
-    const avgConsumption: any = await ConsumptionLog.findAll({
+    const avgConsumption = await ConsumptionLog.findAll({
       attributes: [
         [sequelize.fn("AVG", sequelize.col("quantity")), "avgConsumption"],
       ],
@@ -156,7 +156,7 @@ export async function findAvgConsumptionOfIngredientOfLastTwoMonthForCurrentDay(
 // need to adjust this function to get the average consumption of the last two weeks
 export async function findAvgConsumptionOfIngredientOfLastTwoWeeks(productId: number, frequencyDays: number) {
   try {
-    const consumptionLogs: any[] = await ConsumptionLog.findAll({ 
+    const consumptionLogs: IConsumptionLog[] = await ConsumptionLog.findAll({ 
       attributes: [
         [sequelize.fn('DATE_TRUNC', 'day', sequelize.col('consumedAt')), 'day'],
         [sequelize.fn("SUM", sequelize.col("quantity")), "totalQuantity"],
@@ -172,7 +172,7 @@ export async function findAvgConsumptionOfIngredientOfLastTwoWeeks(productId: nu
       raw: true,
     });
 
-    let totalAmount = consumptionLogs.reduce((total, log) => total + log.totalQuantity, 0);
+    let totalAmount = consumptionLogs.reduce((total, log) => total + (log.totalQuantity ?? 0), 0);
     let avgAmount = totalAmount / consumptionLogs.length;
 
     if (!avgAmount) {
@@ -193,7 +193,7 @@ export async function findAvgConsumptionOfIngredientOfLastTwoMonthWithfrequencyD
 
     const frequencyDaysArray = Array.from({ length: frequencyDays }, (_, index) => (currentDayOfWeek + index + 1) % 7);
 
-    const avgConsumption: any = await ConsumptionLog.findAll({
+    const avgConsumption = await ConsumptionLog.findAll({
       attributes: [
         [sequelize.fn("AVG", sequelize.col("quantity")), "avgConsumption"],
       ],
@@ -215,7 +215,7 @@ export async function findAvgConsumptionOfIngredientOfLastTwoMonthWithfrequencyD
 
 export async function findAvgConsumptionOfIngredientOfLastTwoWeekWihSpecificDay(productId: number, day: number) {
   try {
-    const avgConsumption: any = await ConsumptionLog.findAll({
+    const avgConsumption = await ConsumptionLog.findAll({
       attributes: [
         [sequelize.fn("AVG", sequelize.col("quantity")), "avgConsumption"],
       ],

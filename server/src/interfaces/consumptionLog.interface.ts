@@ -1,5 +1,5 @@
 export interface IConsumptionLog {
-  id: number;
+  id?: number;
   itemName: string;
   itemType: string;
   unitOfStock: string;
@@ -9,4 +9,5 @@ export interface IConsumptionLog {
   consumedAt: Date;
   itemId: number;
   restaurantId: number;
+  totalQuantity?: number;
 }

@@ -307,7 +307,7 @@ export async function addSupplierIfNoExists(order: IOrder) {
   }
 }
 
-export async function sendAutoPilotOrderToVendor (vendorId: number, order: any) {
+export async function sendAutoPilotOrderToVendor (vendorId: number, order: IOrder) {
   try {
     const vendor = await axios.post(`${config.HELPER_API}/v1/vendor/${vendorId}/order`, order);
     return vendor;
